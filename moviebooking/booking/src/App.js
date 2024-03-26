@@ -13,7 +13,6 @@ import Login from './components/Login';
 function App() {
   const[isAdmin, setIsAdmin] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const storedIsAdmin = localStorage.getItem('isAdmin') === 'true';
@@ -34,7 +33,7 @@ const handleLogout = () => {
   setIsLoggedIn(false); // Update state to reflect logged-out status
   localStorage.removeItem('isAdmin');
   localStorage.removeItem('isLoggedIn'); // Remove logged-in status from local storage
-  navigate('/');
+  window.location.href = '/';
 };
 
   return (
