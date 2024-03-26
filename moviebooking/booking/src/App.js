@@ -12,10 +12,14 @@ import Login from './components/Login';
 
 function App() {
   const[isAdmin, setIsAdmin] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
-  const storedIsAdmin = localStorage.getItem('isAdmin') === 'true';
-  setIsAdmin(storedIsAdmin);
+    const storedIsAdmin = localStorage.getItem('isAdmin') === 'true';
+    const storedIsLoggedIn = localStorage.getItem('isLoggedIn') === 'true'; // Check if the user is logged in
+    setIsAdmin(storedIsAdmin);
+    setIsLoggedIn(storedIsLoggedIn);
 }, []);
 
 const handleLogin = () => {
@@ -27,7 +31,10 @@ const handleLogin = () => {
 const handleLogout = () => {
   // Simulate a logout and clear localStorage
   setIsAdmin(false);
+  setIsLoggedIn(false); // Update state to reflect logged-out status
   localStorage.removeItem('isAdmin');
+  localStorage.removeItem('isLoggedIn'); // Remove logged-in status from local storage
+  navigate('/');
 };
 
   return (
@@ -40,12 +47,14 @@ const handleLogout = () => {
           {isAdmin && <Link to="/manage-promotions">Manage Promotions</Link>}
           {isAdmin && <Link to="/manage-users">Manage Users</Link>}
           {/* Add a login/logout button for demonstration */}
-          
-          {!isAdmin && (
+          {isLoggedIn ? (
               <>
-                <a href="/Login" className="nav-link">Login</a>
-                <a href="/SignUp" className="nav-link">Signup</a>
-                <a href="/EditProfile" className="nav-link">Profile</a>
+                <button onClick={handleLogout} className="nav-link">Logout</button>
+              </>
+            ) : (
+              <>
+                <Link to="/login" className="nav-link">Login</Link>
+                <Link to="/signup" className="nav-link">Signup</Link>
               </>
             )}
         </nav>
@@ -53,7 +62,7 @@ const handleLogout = () => {
           <Route path="/" element={<HomePage />}/>
           <Route path="/login" element={<Login />} />
           <Route path="/SignUp" element={<SignupPage />} />
-          <Route path="/EditProfile" element={<EditProfile />} />
+          <Route path="/EditProfile" element={isLoggedIn ? <EditProfile />  : <Navigate replace to="/login" />} />
           {isAdmin && <Route path="/manage-movies" element={<ManageMovie />} />}
           {isAdmin && <Route path="/manage-promotions" element={<ManagePromotions />} />}
           {isAdmin && <Route path="/manage-users" element={<ManageUsers />} />}
