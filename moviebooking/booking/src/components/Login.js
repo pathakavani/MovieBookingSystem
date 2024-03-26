@@ -23,7 +23,9 @@ function Login() {
         // Check the response data for login status
         console.log(response.data)
         if (response.data === "Login successful as admin") {
+          const isAdmin = response.data == "Login successful as admin";
           // Redirect to homepage upon successful login
+          localStorage.setItem('isAdmin', isAdmin);
           navigate('/');
         } else if (response.data === "Login successful as customer") {
           // Redirect to homepage upon successful login

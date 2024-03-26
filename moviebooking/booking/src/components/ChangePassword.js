@@ -13,7 +13,6 @@ const ChangePassword = () => {
         }
         // API call to change the password would go here
         alert("Your password has been changed successfully!");
-        // Redirect to login page or another appropriate page
     };
 
     return (

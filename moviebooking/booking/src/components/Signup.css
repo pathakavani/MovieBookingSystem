@@ -1,37 +1,89 @@
-.navbar {
+/* Resetting margins and paddings */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: 'Lato', sans-serif;
+    background-color: #f4f4f4; /* Lighter background for contrast */
+  }
+  
+  /* Styling the navbar */
+  .navbar {
     background-color: #01161E;
-}
-.navbar-brand {
-    font-family: 'fantasy';
-}
-body {
-    font-family: Arial, sans-serif;
-    background-color: #124559;
-}
-
-.signup-container {
-    max-width: 400px;
-    margin: 0 auto;
-    margin-top: 50px;
-}
-
-i img {
-    width: 25px; 
-    height: 25px;
-}
-
-/* Custom style for the signup button */
-.custom-signup-button {
-    background-color: #598392; 
+    padding: 1rem;
+  }
+  
+  .navbar-brand {
+    font-family: 'Lilita One', cursive;
+  }
+  
+  
+  /* Form styling */
+  form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .form-label {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #333333;
+  }
+  
+  .form-control {
+    font-size: 1rem;
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    border: 2px solid #dbe2ef;
+    border-radius: 4px;
+    transition: border-color 0.3s;
+  }
+  
+  .form-control:focus {
+    border-color: #3a7bfd; /* Highlight color for focus */
+    outline: none;
+  }
+  
+  /* Password guidance text */
+  .form-text {
+    margin-bottom: 1rem;
+    font-size: 0.875rem;
+  }
+  
+  /* Sign up button styling */
+  .custom-signup-button {
+    background-color: #01161E;
+    color: #ffffff;
+    padding: 10px 15px;
     border: none;
-    color: rgb(157, 187, 215);
-    padding: 10px;
-    border-radius: 5px;
+    border-radius: 4px;
     cursor: pointer;
-    width: 350px;
-}
-
-.custom-signup-button:hover {
-    background-color: #01161E; /* Change button color on hover */
-}
- 
+    transition: background-color 0.3s;
+  }
+  
+  .custom-signup-button:hover {
+    background-color: #3a7bfd; /* Slightly lighter blue on hover */
+  }
+  
+  /* Link to log in page */
+  a {
+    text-decoration: none;
+    color: #3a7bfd;
+    transition: color 0.3s;
+  }
+  
+  a:hover {
+    color: #01161E;
+  }
+  
+  /* Small screen responsiveness */
+  @media (max-width: 768px) {
+    .signup-container {
+      width: 90%;
+      margin: 20px auto;
+    }
+  }
+  

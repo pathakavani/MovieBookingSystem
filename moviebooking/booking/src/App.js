@@ -1,5 +1,5 @@
 import './App.css';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import HomePage from './components/HomePage';
 import ManageMovie from './components/ManageMovie';
@@ -11,17 +11,25 @@ import EditProfile from './components/EditProfile';
 import Login from './components/Login';
 
 function App() {
-  const [isAdmin, setIsAdmin] = useState(false); // Replace this with actual authentication logic
+  const[isAdmin, setIsAdmin] = useState(false);
 
-  const handleLogin = () => {
-    // Placeholder function to simulate an admin login
-    setIsAdmin(true);
-  };
+  useEffect(() => {
+  const storedIsAdmin = localStorage.getItem('isAdmin') === 'true';
+  setIsAdmin(storedIsAdmin);
+}, []);
 
-  const handleLogout = () => {
-    // Placeholder function to simulate a logout
-    setIsAdmin(false);
-  };
+const handleLogin = () => {
+  // Simulate an admin login and set in localStorage
+  setIsAdmin(true);
+  localStorage.setItem('isAdmin', 'true');
+};
+
+const handleLogout = () => {
+  // Simulate a logout and clear localStorage
+  setIsAdmin(false);
+  localStorage.removeItem('isAdmin');
+};
+
   return (
     <MoviesProvider>
     <Router>
@@ -32,11 +40,7 @@ function App() {
           {isAdmin && <Link to="/manage-promotions">Manage Promotions</Link>}
           {isAdmin && <Link to="/manage-users">Manage Users</Link>}
           {/* Add a login/logout button for demonstration */}
-          {!isAdmin ? (
-            <button onClick={handleLogin}>Admin Login</button>
-          ) : (
-            <button onClick={handleLogout}>Logout</button>
-          )}
+          
           {!isAdmin && (
               <>
                 <a href="/Login" className="nav-link">Login</a>
