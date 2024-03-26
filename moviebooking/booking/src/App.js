@@ -8,6 +8,7 @@ import ManageUsers from './components/ManageUsers';
 import { MoviesProvider } from './components/MoviesContext';
 import SignupPage from './components/Signup';
 import EditProfile from './components/EditProfile';
+import Login from './components/Login';
 
 function App() {
   const [isAdmin, setIsAdmin] = useState(false); // Replace this with actual authentication logic
@@ -38,7 +39,7 @@ function App() {
           )}
           {!isAdmin && (
               <>
-                <a href="/Login.html" className="nav-link">Login</a>
+                <a href="/Login" className="nav-link">Login</a>
                 <a href="/SignUp" className="nav-link">Signup</a>
                 <a href="/EditProfile" className="nav-link">Profile</a>
               </>
@@ -46,6 +47,7 @@ function App() {
         </nav>
         <Routes>
           <Route path="/" element={<HomePage />}/>
+          <Route path="/login" element={<Login />} />
           <Route path="/SignUp" element={<SignupPage />} />
           <Route path="/EditProfile" element={<EditProfile />} />
           {isAdmin && <Route path="/manage-movies" element={<ManageMovie />} />}

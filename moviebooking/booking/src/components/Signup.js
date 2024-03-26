@@ -11,7 +11,7 @@ function SignupPage() {
         confirmPassword: '',
         address: '',
         cardType:'',
-        paymentCard: '',
+        paymentInfo: '',
         expirationDate:'',
         promoStatus: 'yes' // Default value for promotions
     });
@@ -44,7 +44,7 @@ function SignupPage() {
         // console.log(event.target.value)
     }
     const handlepc = (event) => {
-        setFormData({...formData, paymentCard: event.target.value})
+        setFormData({...formData, paymentInfo: event.target.value})
         // console.log(event.target.value)
     }
     const handleed = (event) => {
@@ -60,7 +60,8 @@ function SignupPage() {
     },[])
     const validatePassword = () => {
         const { password, confirmPassword } = formData;
-        console.log(formData)
+        console.log("password" + password)
+        console.log("confirm    "  + confirmPassword)
         if (password !== confirmPassword) {
             document.getElementById("confirm").setCustomValidity("The passwords do not match.");
         } else {
@@ -112,12 +113,12 @@ function SignupPage() {
                 </div>
                 <div class="mb-3">
                     <label for="password" class="form-label">Password<sup> *required</sup></label>
-                    <input type="password" class="form-control" id="password" name="password" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" onChange={handlepw}/>
+                    <input type="text" class="form-control" id="password" name="password" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" onChange={handlepw}/>
                     <small class="form-text text-muted">Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one number.</small>
                 </div>
                 <div class="mb-3">
                     <label for="password" class="form-label">Confirm Password<sup> *required</sup></label>
-                    <input type="password" class="form-control" id="confirm" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" onChange={handlecp}/>
+                    <input type="text" class="form-control" id="confirm" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" onChange={handlecp}/>
                 </div>
                 <div class="mb-3">
                     <label for="address" class="form-label">Address <sup> (optional)</sup></label>
@@ -130,11 +131,11 @@ function SignupPage() {
                 </div>
                 <div class="mb-3">
                     <label for="paymentcard" class="form-label">Payment Card <sup> (optional)</sup></label>
-                    <input type="text" class="form-control" id="paymentcard" name="paymentcard" minlength="19" maxlength="19" onChange={handlepc}/>
+                    <input type="text" class="form-control" id="paymentcard" name="paymentcard" onChange={handlepc}/>
                 </div>
                 <div class="mb-3">
                     <label for="expiration_date" class="form-label">Expiration Date <sup> (optional)</sup></label>
-                    <input type="date" class="form-control" id="expiration_date" name="paymentcard" minlength="19" maxlength="19" onChange={handleed}/>
+                    <input type="date" class="form-control" id="expiration_date" name="paymentcard" minlength="16" maxlength="16" onChange={handleed}/>
                 </div>
                 <div class="mb-3">
                     <label for="promostatus" class="form-label">Sign Up for Promotions?</label>
@@ -145,7 +146,7 @@ function SignupPage() {
                 </div>                            
                 <button type="submit" className="custom-signup-button btn btn-primary btn-block">Sign Up</button>
                         </form>
-                        <p className="mt-3">Already have an account? <a href="Login.html">Log In</a></p>
+                        <p className="mt-3">Already have an account? <a href="Login">Log In</a></p>
                     </div>
                 </div>
             </div>
