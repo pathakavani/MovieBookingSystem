@@ -34,6 +34,7 @@ function Login() {
           // Display the response data (error message) if login failed
           console.error('Login failed:', response.data);
           toast.error(response.data);
+          toast.error('Invalid credentals. Please try again.');
         }
       } else {
         // Handle other HTTP status codes (e.g., 400 Bad Request)
@@ -42,6 +43,13 @@ function Login() {
       }
     } catch (error) {
       console.error('Error:', error);
+      if(error.response) {
+        toast.error(error.response.data.message);
+      } else if (error.request) {
+        toast.error('No response received. Check your network connection.');
+      } else {
+        toast.error('Error setting up the request.');
+      }
     }
   };
 
