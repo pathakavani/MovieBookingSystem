@@ -11,7 +11,7 @@ public class PersonalInfo {
     String expirationDate;
     String promotion;
     String address;
-    
+    String paymentMethod;
     PersonalInfo(String firstName,
     String lastName,
     String email,
@@ -21,7 +21,8 @@ public class PersonalInfo {
     String paymentInfo,
     String expirationDate,
     String promotion,
-    String address) {
+    String address,
+    String paymentMethod) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -32,5 +33,6 @@ public class PersonalInfo {
         this.expirationDate = expirationDate;
         this.promotion = promotion;
         this.address = address;
+        this.paymentMethod = paymentMethod;
     }
 }

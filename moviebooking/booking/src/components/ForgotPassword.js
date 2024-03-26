@@ -34,7 +34,6 @@ const LoginPage = () => {
                         </form>
                         <p className="mt-3">Don't have an account? <a href="SignUp.html" id="signupLink">Sign Up</a></p>
                         <p className="mt-3">Go back to login page: <a href="Login.html" id="login">Login</a></p>
-                        <p className="mt-3">Test Change Password: <a href="ChangePassword" id="password">Change</a></p>
                     </div>
                 </div>
             </div>

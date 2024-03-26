@@ -12,7 +12,8 @@ function EditProfile() {
         billingAddress: ''
     });
     const [data, setData] = useState("");
-
+    //password
+    const [wrong, setWrong] = useState(false)
     useEffect(() => {
         axios.get("http://localhost:8080/getInfo")
             .then(data => {
@@ -36,13 +37,45 @@ function EditProfile() {
 
     const handleInputChange = (event) => {
         const { name, value } = event.target;
-        setProfile({ ...profile, [name]: value });
+        //password changed and previous password is the same password for confirmation purposes
+        if (name === "npassword" && value !== profile.password ) {
+            if (document.getElementById("password").value === data.split(", ")[3]) {
+                setProfile({ ...profile, password: value });
+                console.log("profile.password: ", profile.password)
+            }
+            else {
+                setWrong(true)
+            }
+        }
+        
     }
 
     const handleSubmit = (event) => {
         event.preventDefault();
+        //for comparison if data changed
+        var profileString = profile.firstName +", " +
+        profile.lastName +", " +
+        profile.email +", " +
+        profile.password +", " +
+        profile.paymentMethod +", " + 
+        profile.paymentInfo +", " + 
+        profile.billingAddress;
+        if (profileString !== data) {
+            updateInfo();
+        }
         // Handle form submission, send profile data to server
-    }
+     }
+     const updateInfo = async() => {
+        const options = {
+            method: 'POST', // HTTP method
+            headers: {
+                'Content-Type': 'application/json' // Specify content type as JSON
+            },
+            body: JSON.stringify(profile) // Convert data to JSON string
+        };
+        await fetch("http://localhost:8080/postInfo",options)
+        .catch(err => console.log(err));
+     }
 
     return (
         <div className="container mt-5">
@@ -50,6 +83,7 @@ function EditProfile() {
                 <div className="col-md-6">
                     <h1>Edit Profile</h1>
                     <form onSubmit={handleSubmit}>
+                        {wrong && <p style={{color:'red'}}><i>Wrong Password</i></p>}
                         <div className="mb-3">
                             <label htmlFor="firstName" className="form-label">First Name</label>
                             <input type="text" className="form-control" id="firstName" name="firstName" value={profile.firstName} onChange={handleInputChange} placeholder="Your First Name" />
@@ -64,7 +98,11 @@ function EditProfile() {
                         </div>
                         <div className="mb-3">
                             <label htmlFor="password" className="form-label">Password</label>
-                            <input type="password" className="form-control" id="password" name="password" value={profile.password} onChange={handleInputChange} placeholder="New Password" />
+                            <input type="password" className="form-control" id="password" name="password"  onChange={handleInputChange} />
+                        </div>
+                        <div className="mb-3">
+                            <label htmlFor="npassword" className="form-label">New Password</label>
+                            <input type="password" className="form-control" id="npassword" name="npassword"  onChange={handleInputChange} />
                         </div>
                         <div className="mb-3">
                             <label htmlFor="paymentMethod" className="form-label">Payment Method</label>

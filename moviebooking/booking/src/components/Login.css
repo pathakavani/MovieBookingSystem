@@ -1,0 +1,38 @@
+.navbar {
+    background-color: #01161E;
+}
+
+.navbar-brand {
+    font-family: 'fantasy';
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #124559;
+}
+
+.login-container {
+    max-width: 400px;
+    margin: 0 auto;
+    margin-top: 50px;
+}
+
+i img {
+    width: 25px;
+    height: 25px;
+}
+
+/* Custom style for the login button */
+.custom-login-button {
+    background-color: #598392;
+    border: none;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 350px;
+}
+
+.custom-login-button:hover {
+    background-color: #01161E; /* Change button color on hover */
+}
