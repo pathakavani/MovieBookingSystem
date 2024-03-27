@@ -12,6 +12,8 @@ import EditProfile from './components/EditProfile';
 import Login from './components/Login';
 import ForgetPassword from './components/ForgotPassword';
 import EmailConfirmation from './components/EmailConfirmation';
+import RegConfirmation from './components/RegConfirmation';
+import ChangePassword from './components/ChangePassword';
 
 function App() {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -64,7 +66,6 @@ function App() {
             <Route path="/regConfirmation" element={<RegConfirmation />} />
             <Route path="/EmailConfirmation" element={<EmailConfirmation />} />
             <Route path="/regConfirmation" element={<RegConfirmation />} />
-            
             <Route path="/editprofile" element={isLoggedIn ? <EditProfile /> : <Navigate replace to="/login" />} />
             {isAdmin && <Route path="/manage-movies" element={<ManageMovie />} />}
             {isAdmin && <Route path="/manage-promotions" element={<ManagePromotions />} />}
