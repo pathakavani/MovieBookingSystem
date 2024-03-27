@@ -45,6 +45,7 @@ function App() {
               <Link to="/login" className="nav-link">Login</Link>
               <Link to="/signup" className="nav-link">Signup</Link>
               <Link to="/EditProfile">Edit Profile</Link>
+              <Link to="/Logout">Edit Profile</Link>
             {isAdmin && <>
               <Link to="/manage-movies">Manage Movies</Link>
               <Link to="/manage-promotions">Manage Promotions</Link>

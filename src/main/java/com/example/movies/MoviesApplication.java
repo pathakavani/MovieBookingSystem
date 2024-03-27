@@ -10,6 +10,9 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +23,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -346,6 +351,25 @@ public class MoviesApplication {
         } catch (SQLException e) {
             System.err.println("Error updating password: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error activating the account.");
+        }
+    }
+
+    @PostMapping("/logout")
+    @ResponseBody
+    public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            // Clear session data
+            HttpSession session = request.getSession(false);
+            if (session != null) {
+                session.invalidate(); // Invalidate the session
+            }
+            
+            // Redirect to homepage
+            response.sendRedirect("/"); // Replace "/" with the actual URL of your homepage
+            
+            return ResponseEntity.ok("Logged out successfully");
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error redirecting to homepage");
         }
     }
 }
