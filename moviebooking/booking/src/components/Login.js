@@ -31,25 +31,20 @@ function Login() {
           navigate('/');
         } else {
           console.error('Login failed:', response.data);
-         // toast.error("Invalid credentials. Please try again.");
-          alert("Invalid credentials. Please try again.");
+          alert(response.data);
         }
       } else {
         // Handle other HTTP status codes
         console.error('Login failed:', response.statusText);
-      //  toast.error("Invalid credentials. Please try again.");
-        alert("Invalid credentials. Please try again.");
+        alert(response.statusText);
       }
     } catch (error) {
       console.error('Error:', error);
-      if(error.response) {
-      //  toast.error("Invalid credentials. Please try again.");
-        alert("Invalid credentials. Please try again.");
+      if (error.response) {
+        alert(error.response.data);
       } else if (error.request) {
-      //  toast.error("No response received. Check your network connection.");
         alert("No response received. Check your network connection.");
       } else {
-      //  toast.error("Error setting up the request.");
         alert("Error setting up the request.");
       }
     }

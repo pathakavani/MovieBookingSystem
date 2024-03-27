@@ -11,10 +11,11 @@ function SignupPage() {
         email: '',
         password: '',
         confirmPassword: '',
+        phoneNumber: '',
         address: '',
         cardType:'',
         paymentInfo: '',
-        expirationDate:'',
+        expirationDate: '',
         promoStatus: 'yes' // Default value for promotions
     });
     const handlefn = (event) => {
@@ -35,6 +36,10 @@ function SignupPage() {
     }
     const handlecp = (event) => {
         setFormData({...formData, confirmPassword: event.target.value})
+        // console.log(event.target.value)
+    }
+    const handleph = (event) => {
+        setFormData({...formData, phoneNumber: event.target.value})
         // console.log(event.target.value)
     }
     const handleadd = (event) => {
@@ -123,17 +128,26 @@ function SignupPage() {
                     <input type="password" class="form-control" id="confirm" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" onChange={handlecp}/>
                 </div>
                 <div class="mb-3">
+                    <label for="phoneNumber" class="form-label">Phone Number <sup> *required</sup></label>
+                    <input type="text" class="form-control" id="phoneNumber" name="phoneNumber" onChange={handleph}/>
+                </div>
+                <div class="mb-3">
                     <label for="address" class="form-label">Address <sup> (optional)</sup></label>
                     <input type="text" class="form-control" id="address" name="address" onChange={handleadd}/>
                     <small class="form-text text-muted">Example: 123 Movie St.</small>
                 </div>
                 <div class="mb-3">
                     <label for="cardType" class="form-label">Card Type <sup> (optional)</sup></label>
-                    <input type="text" class="form-control" id="cardType" name="paymentcard" onChange={handlect}/>
+                    <select class="form-select" id="cardType" name="cardType" onChange={handlect}>
+                        <option value="Visa">Visa</option>
+                        <option value="MasterCard">MasterCard</option>
+                        <option value="AmericanExpress">American Express</option>
+                        <option value="Discover">Discover</option>
+                    </select>
                 </div>
                 <div class="mb-3">
                     <label for="paymentcard" class="form-label">Payment Card <sup> (optional)</sup></label>
-                    <input type="password" class="form-control" id="paymentcard" name="paymentcard" onChange={handlepc}/>
+                    <input type="text" class="form-control" id="paymentcard" name="paymentcard" onChange={handlepc}/>
                 </div>
                 <div class="mb-3">
                     <label for="expiration_date" class="form-label">Expiration Date <sup> (optional)</sup></label>

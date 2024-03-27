@@ -18,7 +18,7 @@ function RegConfirmation() {
           <p>A registration confirmation has been sent to your email.</p>
         </div>
       </div>
-      <p className="mt-3">Already have an account? <a href="Login.html">Log In</a></p>
+      <p className="mt-3">Already have an account? <a href="Login">Log In</a></p>
     </div>
   );
 }

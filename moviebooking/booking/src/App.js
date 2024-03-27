@@ -14,11 +14,13 @@ import ForgetPassword from './components/ForgotPassword';
 import EmailConfirmation from './components/EmailConfirmation';
 import RegConfirmation from './components/RegConfirmation';
 import ChangePassword from './components/ChangePassword';
+import Activation from './components/Activation';
 
 function App() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   let { token, email } = useParams();
+  let { emailId } = useParams();
   useEffect(() => {
     const storedIsAdmin = localStorage.getItem('isAdmin') === 'true';
     const storedIsLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
@@ -66,6 +68,7 @@ function App() {
             <Route path="/regConfirmation" element={<RegConfirmation />} />
             <Route path="/EmailConfirmation" element={<EmailConfirmation />} />
             <Route path="/regConfirmation" element={<RegConfirmation />} />
+            <Route path="/activation" element={<Activation emailId={emailId} />} />
             <Route path="/editprofile" element={isLoggedIn ? <EditProfile /> : <Navigate replace to="/login" />} />
             {isAdmin && <Route path="/manage-movies" element={<ManageMovie />} />}
             {isAdmin && <Route path="/manage-promotions" element={<ManagePromotions />} />}

@@ -97,31 +97,38 @@ public class MoviesApplication {
         try {
             // Inserting information with password encryption
             String passwordEncrypted = Base64.getEncoder().encodeToString(pi.password.getBytes());
-            String sql = "INSERT into user (firstName, lastName, email, password, enrollforPromotions) VALUES (\"" +
+            String sql = "INSERT into user (firstName, lastName, email, password, enrollforPromotions, phone, address, status, userType) VALUES (\""
+                    +
                     pi.firstName + "\", \"" +
                     pi.lastName + "\", \"" +
                     pi.email + "\", \"" +
                     passwordEncrypted + "\", " +
-                    pi.promotion + ")";
+                    pi.promotion + ", \"" +
+                    pi.phoneNumber + "\", \"" +
+                    pi.address + "\", 2, 2)";
 
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.executeUpdate();
-            String getID = "SELECT UserID FROM user WHERE firstName = \"" + pi.firstName + "\"";
+            String getID = "SELECT UserID FROM user WHERE email = \"" + pi.email + "\"";
             statement = connection.prepareStatement(getID);
             ResultSet rst = statement.executeQuery();
             while (rst.next()) {
                 userID = rst.getInt("UserID");
             }
-            String sql2 = "INSERT into payment_card (UserID, cardType, cardNumber, expirationDate, billingAddress) VALUES ("
-                    +
-                    userID + ", \"" +
-                    pi.cardType + "\", \"" +
-                    pi.paymentInfo + "\", \"" +
-                    pi.expirationDate + "\", \"" +
-                    pi.address + "\")";
-            statement = connection.prepareStatement(sql2);
-            statement.executeUpdate();
-            sendConfirmationEmail(pi.firstName + " " + pi.lastName, pi.email, "http://localhost:3000/");
+            if (!pi.expirationDate.isEmpty()) {
+                String paymentInfoEncrypted = Base64.getEncoder().encodeToString(pi.paymentInfo.getBytes());
+                String sql2 = "INSERT into payment_card (UserID, cardType, cardNumber, expirationDate, billingAddress) VALUES ("
+                        +
+                        userID + ", \"" +
+                        pi.cardType + "\", \"" +
+                        paymentInfoEncrypted + "\", \"" +
+                        pi.expirationDate + "\", \"" +
+                        pi.address + "\")";
+                statement = connection.prepareStatement(sql2);
+                statement.executeUpdate();
+            }
+            sendConfirmationEmail(pi.firstName + " " + pi.lastName, pi.email,
+                    "http://localhost:3000/activation?email=" + pi.email);
             System.out.println("Sent confirmation");
         } catch (SQLException e) {
             System.out.println(e);
@@ -138,12 +145,13 @@ public class MoviesApplication {
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 String decodePassword = new String(Base64.getDecoder().decode(resultSet.getString("password")));
+                String decodeCardNumber = new String(Base64.getDecoder().decode(resultSet.getString("cardNumber")));
                 output += resultSet.getString("firstName") + ", " +
                         resultSet.getString("lastName") + ", " +
                         resultSet.getString("email") + ", " +
                         decodePassword + ", " +
                         resultSet.getString("cardType") + ", " +
-                        resultSet.getString("cardNumber") + ", " +
+                        decodeCardNumber + ", " +
                         resultSet.getDate("expirationDate") + ", " +
                         resultSet.getString("billingAddress");
             }
@@ -298,12 +306,7 @@ public class MoviesApplication {
             @RequestParam("email") String email, @RequestParam("password") String newPassword) {
         // Update the password in the database
         try {
-            System.out.println("resetPassword");
-            System.out.println("token: " + token);
-            System.out.println("email: " + email);
-            System.out.println("newPassword: " + newPassword);
             String passwordEncrypted = Base64.getEncoder().encodeToString(newPassword.getBytes());
-            System.out.println("passwordEncrypted: " + passwordEncrypted);
             String sql = "UPDATE user SET password = ? WHERE email = ?";
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setString(1, passwordEncrypted);
@@ -319,6 +322,30 @@ public class MoviesApplication {
         } catch (SQLException e) {
             System.err.println("Error updating password: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error resetting password.");
+        }
+    }
+
+    @PostMapping("/activation")
+    @ResponseBody
+    public ResponseEntity<String> activation(@RequestParam("email") String email) {
+        // Update the status in the database
+        try {
+            System.out.println("email: " + email);
+            String sql = "UPDATE user SET status = ? WHERE email = ?";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, 1);
+            statement.setString(2, email);
+            int rowsAffected = statement.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println("Account Activated successfully.");
+                return ResponseEntity.ok("Account Activated successfully");
+            } else {
+                System.out.println("Account cannot be Activated");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error activating the account.");
+            }
+        } catch (SQLException e) {
+            System.err.println("Error updating password: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error activating the account.");
         }
     }
 }
