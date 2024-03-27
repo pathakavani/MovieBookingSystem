@@ -16,7 +16,7 @@ function SignupPage() {
         cardType:'',
         paymentInfo: '',
         expirationDate: '',
-        promoStatus: 'yes' // Default value for promotions
+        promotion: 'yes' // Default value for promotions
     });
     const handlefn = (event) => {
         setFormData({...formData, firstName: event.target.value})
@@ -59,7 +59,8 @@ function SignupPage() {
         // console.log(
     }
     const handlest = (event) => {
-        setFormData({...formData, promoStatus: event.target.value == "yes" ? 1 : 0})
+        var val = event.target.value === "yes" ? 1 : 0;
+        setFormData({...formData, promotion: val})
         // console.log(event.target.value)
     }
     useEffect(() => {
