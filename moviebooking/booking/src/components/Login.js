@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
+//import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './Login.css';
 import axios from 'axios';
@@ -19,8 +19,7 @@ function Login() {
           password: encodedPassword
         }
       });
-      if (response.status === 200) { // Use triple equals for strict comparison
-        // Check the response data for login status
+      if (response.status === 200) {
         console.log(response.data)
         if (response.data === "Login successful as admin") {
           const isAdmin = response.data === "Login successful as admin";
@@ -31,24 +30,27 @@ function Login() {
           // Redirect to homepage upon successful login
           navigate('/');
         } else {
-          // Display the response data (error message) if login failed
           console.error('Login failed:', response.data);
-          toast.error(response.data);
-          toast.error('Invalid credentals. Please try again.');
+         // toast.error("Invalid credentials. Please try again.");
+          alert("Invalid credentials. Please try again.");
         }
       } else {
-        // Handle other HTTP status codes (e.g., 400 Bad Request)
+        // Handle other HTTP status codes
         console.error('Login failed:', response.statusText);
-        toast.error(response.data);
+      //  toast.error("Invalid credentials. Please try again.");
+        alert("Invalid credentials. Please try again.");
       }
     } catch (error) {
       console.error('Error:', error);
       if(error.response) {
-        toast.error(error.response.data.message);
+      //  toast.error("Invalid credentials. Please try again.");
+        alert("Invalid credentials. Please try again.");
       } else if (error.request) {
-        toast.error('No response received. Check your network connection.');
+      //  toast.error("No response received. Check your network connection.");
+        alert("No response received. Check your network connection.");
       } else {
-        toast.error('Error setting up the request.');
+      //  toast.error("Error setting up the request.");
+        alert("Error setting up the request.");
       }
     }
   };

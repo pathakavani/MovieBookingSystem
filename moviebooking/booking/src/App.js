@@ -1,5 +1,6 @@
 import './App.css';
 import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
 import HomePage from './components/HomePage';
 import ManageMovie from './components/ManageMovie';
@@ -11,11 +12,13 @@ import EditProfile from './components/EditProfile';
 import Login from './components/Login';
 import ForgetPassword from './components/ForgotPassword';
 import EmailConfirmation from './components/EmailConfirmation';
+import RegConfirmation from './components/RegConfirmation';
+import ChangePassword from './components/ChangePassword';
 
 function App() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-
+  let { token, email } = useParams();
   useEffect(() => {
     const storedIsAdmin = localStorage.getItem('isAdmin') === 'true';
     const storedIsLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
@@ -59,6 +62,8 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/forgetPassword" element={<ForgetPassword />} />
+            <Route path="/resetPassword" element={<ChangePassword token={token} email={email} />}/>
+            <Route path="/regConfirmation" element={<RegConfirmation />} />
             <Route path="/EmailConfirmation" element={<EmailConfirmation />} />
             <Route path="/editprofile" element={isLoggedIn ? <EditProfile /> : <Navigate replace to="/login" />} />
             {isAdmin && <Route path="/manage-movies" element={<ManageMovie />} />}

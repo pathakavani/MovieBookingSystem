@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import 'bootstrap/dist/css/bootstrap.min.css';
+//import 'bootstrap/dist/css/bootstrap.min.css';
 
 const ChangePassword = () => {
     const [newPassword, setNewPassword] = useState('');
@@ -32,12 +32,21 @@ const ChangePassword = () => {
 
         try {
             // Make an API call to change the password
-            const response = await axios.post('/resetPassword', {
-                token: token,
-                email: email,
-                password: newPassword
+            const response = await axios.post('http://localhost:8080/resetPassword', null, {
+                params: {
+                    token: token,
+                    email: email,
+                    password: newPassword
+                }
             });
-            alert("Your password has been changed successfully!");
+            if (response.status === 200) {
+                console.log(response.data)
+                alert("Your password has been changed successfully!");
+            }
+            else{
+                console.error(response.data);
+                alert("Failed to change password. Please try again.");
+            }
         } catch (error) {
             console.error("Error changing password:", error);
             alert("Failed to change password. Please try again.");

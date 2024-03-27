@@ -42,7 +42,7 @@ public class MoviesApplication {
         movies = new ArrayList<>();
         String jdbcUrl = "jdbc:mysql://localhost:3306/Movie_Booking";
         String username = "root";// change this
-        String password = "inava123"; // and that
+        String password = "root123@"; // and that
 
         try {
             connection = DriverManager.getConnection(jdbcUrl, username, password);
@@ -199,7 +199,6 @@ public class MoviesApplication {
     public ResponseEntity<String> login(@RequestParam("email") String email,
             @RequestParam("password") String password) {
         try {
-            System.err.println("password: " + password);
             byte[] decodedBytes = Base64.getDecoder().decode(password);
             String decodedpassword = new String(decodedBytes);
             PreparedStatement statement = connection.prepareStatement(
@@ -299,16 +298,27 @@ public class MoviesApplication {
             @RequestParam("email") String email, @RequestParam("password") String newPassword) {
         // Update the password in the database
         try {
-            String sql = "UPDATE users SET password = ? WHERE email = ?";
+            System.out.println("resetPassword");
+            System.out.println("token: " + token);
+            System.out.println("email: " + email);
+            System.out.println("newPassword: " + newPassword);
+            String passwordEncrypted = Base64.getEncoder().encodeToString(newPassword.getBytes());
+            System.out.println("passwordEncrypted: " + passwordEncrypted);
+            String sql = "UPDATE user SET password = ? WHERE email = ?";
             PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setString(1, newPassword);
+            statement.setString(1, passwordEncrypted);
             statement.setString(2, email);
-            statement.executeUpdate();
-            System.out.println("Password updated successfully.");
+            int rowsAffected = statement.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println("Password updated successfully.");
+                return ResponseEntity.ok("Password updated successfully");
+            } else {
+                System.out.println("Email not found or password already updated.");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error resetting password.");
+            }
         } catch (SQLException e) {
             System.err.println("Error updating password: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error resetting password.");
         }
-        return null;
     }
 }
