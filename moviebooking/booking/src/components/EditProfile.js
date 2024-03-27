@@ -105,11 +105,12 @@ function EditProfile() {
                             <input type="password" className="form-control" id="npassword" name="npassword"  onChange={handleInputChange} />
                         </div>
                         <div className="mb-3">
-                            <label htmlFor="paymentMethod" className="form-label">Payment Method</label>
+                            <label htmlFor="paymentMethod" className="form-label">Card Type</label>
                             <select className="form-select" id="paymentMethod" name="paymentMethod" value={profile.paymentMethod} onChange={handleInputChange}>
-                                <option value="credit">Credit Card</option>
-                                <option value="debit">Debit Card</option>
-                                <option value="paypal">PayPal</option>
+                            <option value="Visa">Visa</option>
+                            <option value="MasterCard">MasterCard</option>
+                            <option value="AmericanExpress">American Express</option>
+                            <option value="Discover">Discover</option>
                             </select>
                         </div>
                         <div className="mb-3">
