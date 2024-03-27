@@ -1,6 +1,6 @@
 import './App.css';
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Route, Routes, Link, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
 import HomePage from './components/HomePage';
 import ManageMovie from './components/ManageMovie';
 import ManagePromotions from './components/ManagePromotions';
@@ -26,7 +26,7 @@ function App() {
     setIsLoggedIn(false);
     localStorage.removeItem('isAdmin');
     localStorage.removeItem('isLoggedIn');
-    window.location.href = '/';
+    window.location.href = '/'; // Redirect to home page
   };
 
   return (
@@ -53,16 +53,14 @@ function App() {
             )}
           </nav>
           <Routes>
-            <Route path="/" element={<HomePage />}/>
+            <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<SignupPage />} />
-            <Route path="/EditProfile" element={isLoggedIn ? <EditProfile /> : <Navigate replace to="/login" />} />
+            <Route path="/editprofile" element={isLoggedIn ? <EditProfile /> : <Navigate replace to="/login" />} />
             {isAdmin && <Route path="/manage-movies" element={<ManageMovie />} />}
             {isAdmin && <Route path="/manage-promotions" element={<ManagePromotions />} />}
             {isAdmin && <Route path="/manage-users" element={<ManageUsers />} />}
-            <Route path="/manage-movies" element={<p>Access denied. Admins only.</p>} />
-            <Route path="/manage-promotions" element={<p>Access denied. Admins only.</p>} />
-            <Route path="/manage-users" element={<p>Access denied.</p>} />
+            <Route path="*" element={<Navigate replace to="/" />} />
           </Routes>
         </div>
       </Router>
