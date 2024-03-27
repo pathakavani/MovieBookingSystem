@@ -42,22 +42,15 @@ function App() {
         <div>
           <nav>
             <Link to="/">Home</Link>
+              <Link to="/login" className="nav-link">Login</Link>
+              <Link to="/signup" className="nav-link">Signup</Link>
+              <Link to="/EditProfile">Edit Profile</Link>
             {isAdmin && <>
               <Link to="/manage-movies">Manage Movies</Link>
               <Link to="/manage-promotions">Manage Promotions</Link>
               <Link to="/manage-users">Manage Users</Link>
             </>}
-            {isLoggedIn && !isAdmin && <>
-              <Link to="/EditProfile">Edit Profile</Link>
-            </>}
-            {isLoggedIn ? (
-              <button onClick={handleLogout} className="nav-link">Logout</button>
-            ) : (
-              <>
-                <Link to="/login" className="nav-link">Login</Link>
-                <Link to="/signup" className="nav-link">Signup</Link>
-              </>
-            )}
+            <button onClick={handleLogout} className="nav-link">Logout</button>
           </nav>
           <Routes>
             <Route path="/" element={<HomePage />} />
@@ -69,7 +62,7 @@ function App() {
             <Route path="/EmailConfirmation" element={<EmailConfirmation />} />
             <Route path="/regConfirmation" element={<RegConfirmation />} />
             <Route path="/activation" element={<Activation emailId={emailId} />} />
-            <Route path="/editprofile" element={isLoggedIn ? <EditProfile /> : <Navigate replace to="/login" />} />
+            <Route path="/editprofile" element={<EditProfile />} />
             {isAdmin && <Route path="/manage-movies" element={<ManageMovie />} />}
             {isAdmin && <Route path="/manage-promotions" element={<ManagePromotions />} />}
             {isAdmin && <Route path="/manage-users" element={<ManageUsers />} />}
