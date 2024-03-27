@@ -2,43 +2,30 @@ package com.example.movies;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+import java.util.UUID;
 import java.util.Base64;
 // import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.stereotype.Service;
-
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.boot.autoconfigure.security.SecurityProperties.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
-
-import com.fasterxml.jackson.annotation.JsonCreator.Mode;
-import com.fasterxml.jackson.databind.util.JSONPObject;
-
-import java.sql.Array;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
+
 
 @Controller
 @CrossOrigin("http://localhost:3000")
@@ -56,11 +43,11 @@ public class MoviesApplication {
         movies = new ArrayList<>();
         String jdbcUrl = "jdbc:mysql://localhost:3306/Movie_Booking";
         String username = "root";// change this
-        String password = "root123@"; // and that
+        String password = "inava123"; // and that
 
         try {
             connection = DriverManager.getConnection(jdbcUrl, username, password);
-            System.out.println("Connection secured");
+            System.out.println("Database connection secured");
             // Movie
             String sql = "SELECT * FROM movies";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -272,4 +259,56 @@ public class MoviesApplication {
         }
     }
 
+    private void sendPasswordResetEmail(String email, String resetLink) {
+        MimeMessage message = emailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message);
+
+        try {
+            helper.setTo(email);
+            helper.setSubject("Password Reset");
+            helper.setText("Dear User,\n\nPlease click the following link to reset your password:\n"
+                    + resetLink);
+            emailSender.send(message);
+            System.out.println("Password reset email sent successfully!");
+        } catch (MessagingException e) {
+            e.printStackTrace();
+            System.err.println("Failed to send password reset email: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/forgotPassword")
+    @ResponseBody
+    public ResponseEntity<String> forgotPassword(@RequestParam("email") String email) {
+        try {
+            // Generate a unique token
+            String token = UUID.randomUUID().toString();
+            // Construct the password reset link with the token and email as query parameters
+            String resetLink = "http://localhost:3000/resetPassword?token=" + token + "&email=" + email;
+
+            sendPasswordResetEmail(email, resetLink);
+
+            return ResponseEntity.ok("Password reset link sent to your email.");
+        } catch (Exception e) {
+            System.err.println("Error during forgot password: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error processing forgot password.");
+        }
+    }
+
+    @PostMapping("/resetPassword")
+    @ResponseBody
+    public ResponseEntity<String> resetPassword(@RequestParam("token") String token, @RequestParam("email") String email, @RequestParam("password") String newPassword) {
+        // Update the password in the database
+        try {
+            String sql = "UPDATE users SET password = ? WHERE email = ?";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setString(1, newPassword);
+            statement.setString(2, email);
+            statement.executeUpdate();
+            System.out.println("Password updated successfully.");
+        } catch (SQLException e) {
+            System.err.println("Error updating password: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error resetting password.");
+        }
+        return null;
+        }
 }

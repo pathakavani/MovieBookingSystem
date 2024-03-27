@@ -1,18 +1,47 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const ChangePassword = () => {
     const [newPassword, setNewPassword] = useState('');
     const [confirmNewPassword, setConfirmNewPassword] = useState('');
+    const [token, setToken] = useState('');
+    const [email, setEmail] = useState('');
 
-    const handleSubmit = (e) => {
+    useEffect(() => {
+        // Function to parse the query parameters from the URL
+        const getUrlParams = () => {
+            const searchParams = new URLSearchParams(window.location.search);
+            const token = searchParams.get('token');
+            const email = searchParams.get('email');
+            return { token, email };
+        };
+
+        // Extract token and email from the URL query parameters
+        const { token, email } = getUrlParams();
+        setToken(token);
+        setEmail(email);
+    }, []);
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (newPassword !== confirmNewPassword) {
             alert("Passwords do not match!");
             return;
         }
-        // API call to change the password would go here
-        alert("Your password has been changed successfully!");
+
+        try {
+            // Make an API call to change the password
+            const response = await axios.post('/resetPassword', {
+                token: token,
+                email: email,
+                password: newPassword
+            });
+            alert("Your password has been changed successfully!");
+        } catch (error) {
+            console.error("Error changing password:", error);
+            alert("Failed to change password. Please try again.");
+        }
     };
 
     return (
