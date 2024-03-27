@@ -73,7 +73,7 @@ function EditProfile() {
             },
             body: JSON.stringify(profile) // Convert data to JSON string
         };
-        await fetch("http://localhost:8080/postInfo",options)
+        await fetch("http://localhost:8080/updateInfo",options)
         .catch(err => console.log(err));
      }
 

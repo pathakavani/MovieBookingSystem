@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.mysql.cj.x.protobuf.MysqlxCrud.Update;
+
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -79,14 +81,30 @@ public class MoviesApplication {
 
         try {
             helper.setTo(recipientEmail);
-            helper.setSubject("Confirmation Email");
-            helper.setText("Dear " + name + ",\n\nPlease click the following link to confirm your email:\n"
+            helper.setSubject("MovieHUB Account Created");
+            helper.setText("Dear " + name + ",\n\nPlease click the following link to activate your account:\n"
                     + confirmationLink);
             emailSender.send(message);
             System.out.println("Confirmation email sent successfully!");
         } catch (MessagingException e) {
             e.printStackTrace();
             System.err.println("Failed to send confirmation email: " + e.getMessage());
+        }
+    }
+
+    public void sendUpdateConfirmationEmail(String name, String recipientEmail) {
+        MimeMessage message = emailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message);
+
+        try {
+            helper.setTo(recipientEmail);
+            helper.setSubject("Your Profile is updated");
+            helper.setText("Dear " + name + ",\n\nYour Profile has been updated\n");
+            emailSender.send(message);
+            System.out.println("Update Confirmation email sent successfully!");
+        } catch (MessagingException e) {
+            e.printStackTrace();
+            System.err.println("Failed to send update confirmation email: " + e.getMessage());
         }
     }
 
@@ -117,7 +135,7 @@ public class MoviesApplication {
             while (rst.next()) {
                 userID = rst.getInt("UserID");
             }
-            if (!pi.expirationDate.isEmpty()) {
+            if (pi.expirationDate != null && !pi.expirationDate.isEmpty()) {
                 String paymentInfoEncrypted = Base64.getEncoder().encodeToString(pi.paymentInfo.getBytes());
                 String sql2 = "INSERT into payment_card (UserID, cardType, cardNumber, expirationDate, billingAddress) VALUES ("
                         +
@@ -132,6 +150,88 @@ public class MoviesApplication {
             sendConfirmationEmail(pi.firstName + " " + pi.lastName, pi.email,
                     "http://localhost:3000/activation?email=" + pi.email);
             System.out.println("Sent confirmation");
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+    }
+
+    @PostMapping("/updateInfo")
+    @ResponseBody
+    public void updateInfo(@RequestBody PersonalInfo pi) {
+        System.out.println("entered updateInfo");
+        System.out.println(pi.firstName);
+        int rowsAffected = 0;
+        try {
+            // Inserting information with password encryption
+            String passwordEncrypted = Base64.getEncoder().encodeToString(pi.password.getBytes());
+            // Update query for the 'user' table
+            String sqlUpdateUser = "UPDATE user SET";
+            if (pi.firstName != null && !pi.firstName.isEmpty()) {
+                sqlUpdateUser += " firstName = \"" + pi.firstName + "\",";
+            }
+            if (pi.lastName != null && !pi.lastName.isEmpty()) {
+                sqlUpdateUser += " lastName = \"" + pi.lastName + "\",";
+            }
+            if (pi.email != null && !pi.email.isEmpty()) {
+                sqlUpdateUser += " email = \"" + pi.email + "\",";
+            }
+            if (passwordEncrypted != null && !passwordEncrypted.isEmpty()) {
+                System.out.println(passwordEncrypted);
+                sqlUpdateUser += " password = \"" + passwordEncrypted + "\",";
+            }
+            if (pi.promotion != 0) {
+                sqlUpdateUser += " enrollforPromotions = " + pi.promotion + ",";
+            }
+            if (pi.phoneNumber != null && !pi.phoneNumber.isEmpty()) {
+                sqlUpdateUser += " phone = \"" + pi.phoneNumber + "\",";
+            }
+            if (pi.address != null && !pi.address.isEmpty()) {
+                sqlUpdateUser += " address = \"" + pi.address + "\",";
+            }
+            // Remove the last comma if there are columns to update
+            if (sqlUpdateUser.endsWith(",")) {
+                sqlUpdateUser = sqlUpdateUser.substring(0, sqlUpdateUser.length() - 1);
+            }
+            // Add the condition for updating based on userID
+            sqlUpdateUser += " WHERE firstName = \"" + pi.firstName + "\";";
+            System.out.println(sqlUpdateUser);
+            PreparedStatement statement = connection.prepareStatement(sqlUpdateUser);
+            rowsAffected = statement.executeUpdate();
+            String getID = "SELECT UserID FROM user WHERE firstName = \"" + pi.firstName + "\"";
+            statement = connection.prepareStatement(getID);
+            ResultSet rst = statement.executeQuery();
+            while (rst.next()) {
+                userID = rst.getInt("UserID");
+            }
+            if (pi.expirationDate != null && !pi.expirationDate.isEmpty()) {
+                String paymentInfoEncrypted = Base64.getEncoder().encodeToString(pi.paymentInfo.getBytes());
+                // Update query for the 'payment_card' table
+                String sqlUpdatePaymentCard = "UPDATE payment_card SET";
+                if (pi.cardType != null && !pi.cardType.isEmpty()) {
+                    sqlUpdatePaymentCard += " cardType = \"" + pi.cardType + "\",";
+                }
+                if (paymentInfoEncrypted != null && !paymentInfoEncrypted.isEmpty()) {
+                    sqlUpdatePaymentCard += " cardNumber = \"" + paymentInfoEncrypted + "\",";
+                }
+                if (pi.expirationDate != null && !pi.expirationDate.isEmpty()) {
+                    sqlUpdatePaymentCard += " expirationDate = \"" + pi.expirationDate + "\",";
+                }
+                if (pi.address != null && !pi.address.isEmpty()) {
+                    sqlUpdatePaymentCard += " billingAddress = \"" + pi.address + "\",";
+                }
+                // Remove the last comma if there are columns to update
+                if (sqlUpdatePaymentCard.endsWith(",")) {
+                    sqlUpdatePaymentCard = sqlUpdatePaymentCard.substring(0, sqlUpdatePaymentCard.length() - 1);
+                }
+                // Add the condition for updating based on userID
+                sqlUpdatePaymentCard += " WHERE UserID = \"" + userID + "\";";
+                statement = connection.prepareStatement(sqlUpdatePaymentCard);
+                rowsAffected = statement.executeUpdate();
+            }
+            if (rowsAffected > 0 && pi.email != null) {
+                sendUpdateConfirmationEmail(pi.firstName + " " + pi.lastName, pi.email);
+                System.out.println("Sent confirmation");
+            }
         } catch (SQLException e) {
             System.out.println(e);
         }
