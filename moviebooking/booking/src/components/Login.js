@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './Login.css';
 import axios from 'axios';
@@ -23,7 +23,7 @@ function Login() {
         // Check the response data for login status
         console.log(response.data)
         if (response.data === "Login successful as admin") {
-          const isAdmin = response.data == "Login successful as admin";
+          const isAdmin = response.data === "Login successful as admin";
           // Redirect to homepage upon successful login
           localStorage.setItem('isAdmin', isAdmin);
           navigate('/');
@@ -98,10 +98,7 @@ function Login() {
                 <button type="submit" className="custom-login-button btn btn-primary btn-block">Login</button>
                 </form>
                 <p className="mt-3">Don't have an account? <a href="#" onClick={() => navigate('/signup')}>Sign Up</a></p>
-                <p className="mt-3">Forgot password? <a href="#" onClick={() => {
-                  console.log('Forgot password link clicked');
-                  navigate('/forgotPassword');
-                }}>Reset Password</a></p>
+                <p className="mt-3">Forgot password? <a href="#" onClick={() => navigate('/forgetPassword')}>Reset Password</a></p>
             </div>
             </div>
         </div>

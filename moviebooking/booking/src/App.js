@@ -9,6 +9,8 @@ import { MoviesProvider } from './components/MoviesContext';
 import SignupPage from './components/Signup';
 import EditProfile from './components/EditProfile';
 import Login from './components/Login';
+import ForgetPassword from './components/ForgotPassword';
+import EmailConfirmation from './components/EmailConfirmation';
 
 function App() {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -56,6 +58,8 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<SignupPage />} />
+            <Route path="/forgetPassword" element={<ForgetPassword />} />
+            <Route path="/EmailConfirmation" element={<EmailConfirmation />} />
             <Route path="/editprofile" element={isLoggedIn ? <EditProfile /> : <Navigate replace to="/login" />} />
             {isAdmin && <Route path="/manage-movies" element={<ManageMovie />} />}
             {isAdmin && <Route path="/manage-promotions" element={<ManagePromotions />} />}

@@ -26,7 +26,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-
 @Controller
 @CrossOrigin("http://localhost:3000")
 public class MoviesApplication {
@@ -282,9 +281,9 @@ public class MoviesApplication {
         try {
             // Generate a unique token
             String token = UUID.randomUUID().toString();
-            // Construct the password reset link with the token and email as query parameters
+            // Construct the password reset link with the token and email as query
+            // parameters
             String resetLink = "http://localhost:3000/resetPassword?token=" + token + "&email=" + email;
-
             sendPasswordResetEmail(email, resetLink);
 
             return ResponseEntity.ok("Password reset link sent to your email.");
@@ -296,7 +295,8 @@ public class MoviesApplication {
 
     @PostMapping("/resetPassword")
     @ResponseBody
-    public ResponseEntity<String> resetPassword(@RequestParam("token") String token, @RequestParam("email") String email, @RequestParam("password") String newPassword) {
+    public ResponseEntity<String> resetPassword(@RequestParam("token") String token,
+            @RequestParam("email") String email, @RequestParam("password") String newPassword) {
         // Update the password in the database
         try {
             String sql = "UPDATE users SET password = ? WHERE email = ?";
@@ -310,5 +310,5 @@ public class MoviesApplication {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error resetting password.");
         }
         return null;
-        }
+    }
 }
