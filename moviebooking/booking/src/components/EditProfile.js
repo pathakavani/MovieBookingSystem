@@ -9,15 +9,21 @@ function EditProfile() {
         paymentMethod: 'credit',
         paymentInfo: '',
         promotion:'0',
-        billingAddress: ''
+        billingAddress: '',
+        phoneNumber: ''
     });
     const [data, setData] = useState("");
     //password
     const [wrong, setWrong] = useState(false)
     useEffect(() => {
         axios.get("http://localhost:8080/getInfo")
-            .then(data => {
-                setData(data.data);
+            .then(response => {
+                const data = response.data;
+                setProfile(prevState => ({
+                    ...prevState,
+                    ...data,
+                    promotion: data.promotion === '1', // Assuming '1' is true
+                }));
             })
             .catch(error => console.error('Error fetching profile data:', error));
     }, []);
@@ -31,12 +37,17 @@ function EditProfile() {
         password: data.split(", ")[3],
         paymentMethod: data.split(", ")[4],
         paymentInfo: data.split(", ")[5],
-        billingAddress: data.split(", ")[7]
+        billingAddress: data.split(", ")[7],
+        phoneNumber: data.split(", ")[9],
         })
     }, [data])
 
     const handleInputChange = (event) => {
-        const { name, value } = event.target;
+        const { name, value, type, checked } = event.target;
+        setProfile(prevState => ({
+            ...prevState,
+            [name]: type === 'checkbox' ? checked : value
+        }));
         //password changed and previous password is the same password for confirmation purposes
         if (name === "npassword" && value !== profile.password ) {
             if (document.getElementById("password").value === data.split(", ")[3]) {
@@ -59,7 +70,8 @@ function EditProfile() {
         profile.password +", " +
         profile.paymentMethod +", " + 
         profile.paymentInfo +", " + 
-        profile.billingAddress;
+        profile.billingAddress +", "+
+        profile.phoneNumber;
         if (profileString !== data) {
             updateInfo();
         }
@@ -120,9 +132,13 @@ function EditProfile() {
                             <label htmlFor="billingAddress" className="form-label">Billing Address</label>
                             <input type="text" className="form-control" id="billingAddress" name="billingAddress" value={profile.billingAddress} onChange={handleInputChange} placeholder="Billing Address" />
                         </div>
-                        <div style={{display: 'flex'}}>
-                            <label htmlFor="promotions" className="form-label">Promotions?</label>
-                            <input type="checkbox" className="form-control" id="promotions" name="promotions" value={profile.promotion} onChange={handleInputChange} checked/>
+                        <div className="mb-3">
+                            <label htmlFor="phoneNumber" className="form-label">Phone Number</label>
+                            <input type="text" className="form-control" id="phoneNumber" name="phoneNumber" value={profile.phoneNumber} onChange={handleInputChange} placeholder="Your Phone Number" />
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            <input type="checkbox" className="form-check-input" id="promotions" name="promotion" checked={profile.promotion} onChange={handleInputChange} />
+                            <label htmlFor="promotions" className="form-check-label">Sign Up for Promotions?</label>
                         </div>
                         <button type="submit" className="btn btn-primary">Update Profile</button>
                     </form>
