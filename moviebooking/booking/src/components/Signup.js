@@ -1,19 +1,22 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import "./Signup.css"
 
 
 function SignupPage() {
+    const navigate = useNavigate(); // Initialize useNavigate hook
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
         email: '',
         password: '',
         confirmPassword: '',
+        phoneNumber: '',
         address: '',
         cardType:'',
         paymentInfo: '',
-        expirationDate:'',
-        promoStatus: 'yes' // Default value for promotions
+        expirationDate: '',
+        promotion: 'yes' // Default value for promotions
     });
     const handlefn = (event) => {
         setFormData({...formData, firstName: event.target.value})
@@ -35,6 +38,10 @@ function SignupPage() {
         setFormData({...formData, confirmPassword: event.target.value})
         // console.log(event.target.value)
     }
+    const handleph = (event) => {
+        setFormData({...formData, phoneNumber: event.target.value})
+        // console.log(event.target.value)
+    }
     const handleadd = (event) => {
         setFormData({...formData, address: event.target.value})
         // console.log(event.target.value)
@@ -52,7 +59,8 @@ function SignupPage() {
         // console.log(
     }
     const handlest = (event) => {
-        setFormData({...formData, promoStatus: event.target.value == "yes" ? 1 : 0})
+        var val = event.target.value === "yes" ? 1 : 0;
+        setFormData({...formData, promotion: val})
         // console.log(event.target.value)
     }
     useEffect(() => {
@@ -85,10 +93,10 @@ function SignupPage() {
         
     }
 
-    const handleSubmit = (event) => {
-        console.log(formData)
+    const handleSubmit = async (event) => {
         event.preventDefault(); // Prevent default form submission behavior
         validatePassword();
+        navigate('/RegConfirmation'); // Use navigate function to redirect to '/RegConfirmation'
     }
 
     return (
@@ -113,12 +121,16 @@ function SignupPage() {
                 </div>
                 <div class="mb-3">
                     <label for="password" class="form-label">Password<sup> *required</sup></label>
-                    <input type="text" class="form-control" id="password" name="password" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" onChange={handlepw}/>
+                    <input type="password" class="form-control" id="password" name="password" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" onChange={handlepw}/>
                     <small class="form-text text-muted">Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one number.</small>
                 </div>
                 <div class="mb-3">
                     <label for="password" class="form-label">Confirm Password<sup> *required</sup></label>
-                    <input type="text" class="form-control" id="confirm" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" onChange={handlecp}/>
+                    <input type="password" class="form-control" id="confirm" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" onChange={handlecp}/>
+                </div>
+                <div class="mb-3">
+                    <label for="phoneNumber" class="form-label">Phone Number <sup> *required</sup></label>
+                    <input type="text" class="form-control" id="phoneNumber" name="phoneNumber" onChange={handleph}/>
                 </div>
                 <div class="mb-3">
                     <label for="address" class="form-label">Address <sup> (optional)</sup></label>
@@ -127,7 +139,12 @@ function SignupPage() {
                 </div>
                 <div class="mb-3">
                     <label for="cardType" class="form-label">Card Type <sup> (optional)</sup></label>
-                    <input type="text" class="form-control" id="cardType" name="paymentcard" onChange={handlect}/>
+                    <select class="form-select" id="cardType" name="cardType" onChange={handlect}>
+                        <option value="Visa">Visa</option>
+                        <option value="MasterCard">MasterCard</option>
+                        <option value="AmericanExpress">American Express</option>
+                        <option value="Discover">Discover</option>
+                    </select>
                 </div>
                 <div class="mb-3">
                     <label for="paymentcard" class="form-label">Payment Card <sup> (optional)</sup></label>

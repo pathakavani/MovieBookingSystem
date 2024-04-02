@@ -85,7 +85,7 @@ function EditProfile() {
             },
             body: JSON.stringify(profile) // Convert data to JSON string
         };
-        await fetch("http://localhost:8080/postInfo",options)
+        await fetch("http://localhost:8080/updateInfo",options)
         .catch(err => console.log(err));
      }
 
@@ -98,11 +98,11 @@ function EditProfile() {
                         {wrong && <p style={{color:'red'}}><i>Wrong Password</i></p>}
                         <div className="mb-3">
                             <label htmlFor="firstName" className="form-label">First Name</label>
-                            <input type="text" className="form-control" id="firstName" name="firstName" value={profile.firstName} onChange={handleInputChange} placeholder="Your First Name" />
+                            <input type="text" className="form-control" id="firstName" name="firstName" onChange={handleInputChange} placeholder={profile.firstName} />
                         </div>
                         <div className="mb-3">
                             <label htmlFor="lastName" className="form-label">Last Name</label>
-                            <input type="text" className="form-control" id="lastName" name="lastName" value={profile.lastName} onChange={handleInputChange} placeholder="Your Last Name" />
+                            <input type="text" className="form-control" id="lastName" name="lastName" onChange={handleInputChange} placeholder={profile.lastName} />
                         </div>
                         <div className="mb-3">
                             <label htmlFor="email" className="form-label">Email</label>
@@ -117,20 +117,21 @@ function EditProfile() {
                             <input type="password" className="form-control" id="npassword" name="npassword"  onChange={handleInputChange} />
                         </div>
                         <div className="mb-3">
-                            <label htmlFor="paymentMethod" className="form-label">Payment Method</label>
-                            <select className="form-select" id="paymentMethod" name="paymentMethod" value={profile.paymentMethod} onChange={handleInputChange}>
-                                <option value="credit">Credit Card</option>
-                                <option value="debit">Debit Card</option>
-                                <option value="paypal">PayPal</option>
+                            <label htmlFor="paymentMethod" className="form-label">Card Type</label>
+                            <select className="form-select" id="paymentMethod" name="paymentMethod" onChange={handleInputChange}>
+                            <option value="Visa">Visa</option>
+                            <option value="MasterCard">MasterCard</option>
+                            <option value="AmericanExpress">American Express</option>
+                            <option value="Discover">Discover</option>
                             </select>
                         </div>
                         <div className="mb-3">
                             <label htmlFor="paymentInfo" className="form-label">Payment Information</label>
-                            <input type="text" className="form-control" id="paymentInfo" name="paymentInfo" value={profile.paymentInfo} onChange={handleInputChange} placeholder="Payment Information" />
+                            <input type="text" className="form-control" id="paymentInfo" name="paymentInfo" onChange={handleInputChange} placeholder={profile.paymentInfo}/>
                         </div>
                         <div className="mb-3">
                             <label htmlFor="billingAddress" className="form-label">Billing Address</label>
-                            <input type="text" className="form-control" id="billingAddress" name="billingAddress" value={profile.billingAddress} onChange={handleInputChange} placeholder="Billing Address" />
+                            <input type="text" className="form-control" id="billingAddress" name="billingAddress" onChange={handleInputChange} placeholder={profile.billingAddress}  />
                         </div>
                         <div className="mb-3">
                             <label htmlFor="phoneNumber" className="form-label">Phone Number</label>
