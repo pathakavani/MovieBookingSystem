@@ -25,10 +25,10 @@ function Login() {
           const isAdmin = response.data === "Login successful as admin";
           // Redirect to homepage upon successful login
           localStorage.setItem('isAdmin', isAdmin);
-          navigate('/');
+          navigate('/' , {user : true});
         } else if (response.data === "Login successful as customer") {
           // Redirect to homepage upon successful login
-          navigate('/');
+          navigate('/', {user :false});
         } else {
           console.error('Login failed:', response.data);
           alert(response.data);

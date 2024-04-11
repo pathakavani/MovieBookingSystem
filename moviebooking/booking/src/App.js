@@ -21,12 +21,13 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   let { token, email } = useParams();
   let { emailId } = useParams();
+  const storedIsAdmin = localStorage.getItem('isAdmin') === 'true';
+  const storedIsLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
   useEffect(() => {
-    const storedIsAdmin = localStorage.getItem('isAdmin') === 'true';
-    const storedIsLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    console.log("Is Admin: " ,storedIsAdmin)
     setIsAdmin(storedIsAdmin);
     setIsLoggedIn(storedIsLoggedIn);
-  }, []);
+  }, [storedIsAdmin,storedIsLoggedIn]);
 
   const handleLogout = () => {
     setIsAdmin(false);
@@ -53,7 +54,7 @@ function App() {
             <button onClick={handleLogout} className="nav-link">Logout</button>
           </nav>
           <Routes>
-            <Route path="/" element={<HomePage />} />
+            <Route path="/" element={<HomePage/>} user={""}/>
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/forgetPassword" element={<ForgetPassword />} />

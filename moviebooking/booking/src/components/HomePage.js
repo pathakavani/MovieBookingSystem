@@ -1,10 +1,13 @@
 import React, { useState, useContext, useEffect, useSyncExternalStore } from 'react';
 import { MoviesContext } from './MoviesContext';
 import MovieModal from './MovieModal';
+import { useParams } from 'react-router-dom';
+import Navbar from './Navbar';
 import './HomePage.css';
 import axios from "axios";
 
-function HomePage() {
+function HomePage({ route, navigation }) {
+  const user = route;
   const { movies } = useContext(MoviesContext);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedMovie, setSelectedMovie] = useState(null);
