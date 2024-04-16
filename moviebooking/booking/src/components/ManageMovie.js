@@ -1,11 +1,13 @@
 import React, { useState, useContext , useEffect} from 'react';
 import { MoviesContext } from './MoviesContext'; // Ensure this is the correct path
 import './ManageMovie.css';
+import MovieModal from "./MovieModal";
 import axios from 'axios'
 
 function ManageMovie() {
   const { movies, addMovie, editMovie, deleteMovie } = useContext(MoviesContext);
-  const [moves, setMoves] = useState([])
+  const [selectedMovie, setSelectedMovie] = useState(null);
+  const [showForm, setShowForm] = useState(false);
   const initialState = {
     id: null,
     title: '',
@@ -24,7 +26,6 @@ function ManageMovie() {
   
 
   const [movie, setMovie] = useState(initialState);
-  const [showForm, setShowForm] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -52,6 +53,10 @@ function ManageMovie() {
     if (confirmed) {
       deleteMovie(id);
     }
+  };
+
+  const handleMovieClick = (movie) => {
+    setSelectedMovie(movie);
   };
 
   return (
@@ -152,7 +157,7 @@ function ManageMovie() {
         <div className='movie-list-container'>
           <h3>Movie List</h3>
           {movies.map((movie) => (
-            <div key={movie.id} className='movie-item'>
+            <div key={movie.id} className='movie-item' onClick={() => handleMovieClick(movie)}>
               <p>{movie.title}</p>
               <button onClick={() => handleEdit(movie)}>Edit</button>
               <button onClick={() => handleDelete(movie.id)}>Delete</button>
@@ -160,6 +165,7 @@ function ManageMovie() {
           ))}
         </div>
       )}
+      {selectedMovie && <MovieModal movie={selectedMovie} onClose={() => setSelectedMovie(null)} />}
     </div>
   );
 }
