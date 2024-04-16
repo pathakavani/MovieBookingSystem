@@ -106,7 +106,7 @@ function EditProfile() {
                         </div>
                         <div className="mb-3">
                             <label htmlFor="paymentMethod" className="form-label">Card Type</label>
-                            <select className="form-select" id="paymentMethod" name="paymentMethod" value={profile.paymentMethod} onChange={handleInputChange}>
+                            <select className="form-select" id="paymentMethod" name="paymentMethod" placeholder={profile.paymentMethod} onChange={handleInputChange}>
                             <option value="Visa">Visa</option>
                             <option value="MasterCard">MasterCard</option>
                             <option value="AmericanExpress">American Express</option>
