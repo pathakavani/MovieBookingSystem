@@ -13,8 +13,9 @@ public class Movies {
     public int rating;
     public String synopsis;
     public String url;
+    public String trailer;
 
-    Movies(int id, String title, String genre, String release_date, String director, int duration, int rating, String synopsis, String url) {
+    Movies(int id, String title, String genre, String release_date, String director, int duration, int rating, String synopsis, String url, String trailer) {
         this.id = id;
         this.title = title;
         this.genre = genre;
@@ -24,5 +25,6 @@ public class Movies {
         this.rating = rating;
         this.synopsis = synopsis;
         this.url = url;
+        this.trailer = trailer;
     }
 }

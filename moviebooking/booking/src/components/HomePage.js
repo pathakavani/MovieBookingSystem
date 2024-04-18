@@ -16,9 +16,9 @@ function HomePage({ route, navigation }) {
   const [showMoves, setShowMoves] = useState([]);
 
   useEffect(() => {
-    console.log('idk')
     axios.get("http://localhost:8080/movies")
-            .then(data => setMoves(data.data))
+            .then(data => {setMoves(data.data)
+            console.log(data.data)})
             .catch(err => console.log(err));
             console.log(moves)
             // setShowMoves(moves);

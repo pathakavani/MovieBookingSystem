@@ -29,9 +29,6 @@ function EditProfile() {
                 billingAddress: data[7]}));
             })
             .catch(error => console.error('Error fetching profile data:', error));
-        
-            
-        
     }, []);
     useEffect(() => {
         var splitted = data.split(", ");

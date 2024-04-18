@@ -66,7 +66,8 @@ public class MoviesApplication {
                         resultSet.getInt("duration_minutes"),
                         resultSet.getInt("rating"),
                         resultSet.getString("synopsis"),
-                        resultSet.getString("poster_url"));
+                        resultSet.getString("poster_url"),
+                        resultSet.getString(("trailer_url")));
                 movies.add(movie);
             }
             // connection.close();
@@ -291,7 +292,8 @@ public class MoviesApplication {
                     resultSet.getInt("duration_minutes"),
                     resultSet.getInt("rating"),
                     resultSet.getString("synopsis"),
-                    resultSet.getString("poster_url"));
+                    resultSet.getString("poster_url"),
+                    resultSet.getString("trailer_url"));
             return mvs;
         } catch (Exception e) {
             System.out.println(e.getMessage());

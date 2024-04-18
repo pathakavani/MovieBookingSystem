@@ -9,7 +9,6 @@ const MovieModal = ({ movie, onClose }) => {
     
     return (match && match[2].length === 11) ? match[2] : null;
     };
-    
     // Assuming movie.trailer contains the full YouTube URL
     const videoID = extractVideoID(movie.trailer);
     const embedUrl = `https://www.youtube.com/embed/${videoID}`;
