@@ -5,7 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import './Login.css';
 import axios from 'axios';
 
-function Login() {
+function Login(props) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
@@ -25,9 +25,11 @@ function Login() {
           const isAdmin = response.data === "Login successful as admin";
           // Redirect to homepage upon successful login
           localStorage.setItem('isAdmin', isAdmin);
-          navigate('/' , {user : true});
+          props.setUser("true")
+          navigate('/');
         } else if (response.data === "Login successful as customer") {
           // Redirect to homepage upon successful login
+          props.setUser("false");
           navigate('/', {user :false});
         } else {
           console.error('Login failed:', response.data);

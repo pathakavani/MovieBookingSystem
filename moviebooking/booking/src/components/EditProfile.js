@@ -8,7 +8,7 @@ function EditProfile() {
         password: '',
         paymentMethod: 'credit',
         paymentInfo: '',
-        promotion:'0',
+        promotion: 0,
         billingAddress: '',
         phoneNumber: ''
     });
@@ -18,18 +18,23 @@ function EditProfile() {
     useEffect(() => {
         axios.get("http://localhost:8080/getInfo")
             .then(response => {
-                const data = response.data;
-                setProfile(prevState => ({
-                    ...prevState,
-                    ...data,
-                    promotion: data.promotion === '1', // Assuming '1' is true
-                }));
+                const data = response.data.split("\t");
+                setProfile(profile => ({firstName: data[0],
+                lastName: data[1],
+                email: data[2],
+                password: data[3],
+                paymentMethod: data[4],
+                paymentInfo: data[5],
+                promotion: data[6],
+                billingAddress: data[7]}));
             })
             .catch(error => console.error('Error fetching profile data:', error));
+        
+            
+        
     }, []);
     useEffect(() => {
         var splitted = data.split(", ");
-        console.log(splitted);
         setProfile({
             firstName: data.split(", ")[0],
             lastName: data.split(", ")[1],
@@ -44,15 +49,18 @@ function EditProfile() {
 
     const handleInputChange = (event) => {
         const { name, value, type, checked } = event.target;
-        setProfile(prevState => ({
-            ...prevState,
-            [name]: type === 'checkbox' ? checked : value
-        }));
+        if (name === "promostatus") {
+            var val = event.target.value === "yes" ? 1 : 0;
+            setProfile(prevState => ({
+                ...prevState,
+                "promotion": val
+            }));
+        }
+        
         //password changed and previous password is the same password for confirmation purposes
         if (name === "npassword" && value !== profile.password ) {
             if (document.getElementById("password").value === data.split(", ")[3]) {
                 setProfile({ ...profile, password: value });
-                console.log("profile.password: ", profile.password)
             }
             else {
                 setWrong(true)
@@ -137,10 +145,13 @@ function EditProfile() {
                             <label htmlFor="phoneNumber" className="form-label">Phone Number</label>
                             <input type="text" className="form-control" id="phoneNumber" name="phoneNumber" value={profile.phoneNumber} onChange={handleInputChange} placeholder="Your Phone Number" />
                         </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                            <input type="checkbox" className="form-check-input" id="promotions" name="promotion" checked={profile.promotion} onChange={handleInputChange} />
-                            <label htmlFor="promotions" className="form-check-label">Sign Up for Promotions?</label>
-                        </div>
+                        <div class="mb-3">
+                            <label for="promostatus" class="form-label">Sign Up for Promotions?</label>
+                            <select class="form-select" id="promostatus" name="promostatus" onChange={handleInputChange}>
+                                <option value="yes">Yes</option>
+                                <option value="no">No</option>
+                            </select>
+                        </div>     
                         <button type="submit" className="btn btn-primary">Update Profile</button>
                     </form>
                 </div>

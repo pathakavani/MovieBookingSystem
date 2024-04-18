@@ -26,19 +26,19 @@ function App() {
     window.location.href = '/'; // Redirect to home page
   };
 
-  useEffect(() => {
-    // Check if user data is stored in localStorage
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser)); // If stored, set the user state
-    }
-  }, []);
+  // useEffect(() => {
+  //   // Check if user data is stored in localStorage
+  //   const storedUser = localStorage.getItem('user');
+  //   if (storedUser) {
+  //     setUser(JSON.parse(storedUser)); // If stored, set the user state
+  //   }
+  // }, []);
 
   return (
     <MoviesProvider>
       <Router>
         <div>
-          <Navbar user={user} />
+          <Navbar user={user} setUser={setUser} />
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<Login setUser={setUser} />} />

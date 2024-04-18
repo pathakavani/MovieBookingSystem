@@ -179,9 +179,8 @@ public class MoviesApplication {
                 System.out.println(passwordEncrypted);
                 sqlUpdateUser += " password = \"" + passwordEncrypted + "\",";
             }
-            if (pi.promotion != 0) {
-                sqlUpdateUser += " enrollforPromotions = " + pi.promotion + ",";
-            }
+            sqlUpdateUser += " enrollforPromotions = " + pi.promotion + ",";
+            
             if (pi.phoneNumber != null && !pi.phoneNumber.isEmpty()) {
                 sqlUpdateUser += " phone = \"" + pi.phoneNumber + "\",";
             }
@@ -242,25 +241,29 @@ public class MoviesApplication {
     public String getInfo() {
         String output = "";
         try {
+            System.out.println("userID 11: " + userID);
             String sql = "SELECT * FROM user NATURAL JOIN payment_card WHERE UserID = " + userID;
             PreparedStatement statement = connection.prepareStatement(sql);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
+                System.out.println("Result");
                 String decodePassword = new String(Base64.getDecoder().decode(resultSet.getString("password")));
                 String decodeCardNumber = new String(Base64.getDecoder().decode(resultSet.getString("cardNumber")));
-                output += resultSet.getString("firstName") + ", " +
-                        resultSet.getString("lastName") + ", " +
-                        resultSet.getString("email") + ", " +
-                        decodePassword + ", " +
-                        resultSet.getString("cardType") + ", " +
-                        decodeCardNumber + ", " +
-                        resultSet.getDate("expirationDate") + ", " +
+                output += resultSet.getString("firstName") + "\t" +
+                        resultSet.getString("lastName") + "\t" +
+                        resultSet.getString("email") + "\t" +
+                        decodePassword + "\t" +
+                        resultSet.getString("cardType") + "\t" +
+                        decodeCardNumber + "\t" +
+                        resultSet.getInt("enrollForPromotions")+ "\t"+
+                        resultSet.getDate("expirationDate") + "\t" +
                         resultSet.getString("billingAddress");
             }
             // return pi;
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
+        System.out.println(output);
         return output;
     }
 
@@ -309,6 +312,7 @@ public class MoviesApplication {
     public ResponseEntity<String> login(@RequestParam("email") String email,
             @RequestParam("password") String password) {
         try {
+            System.out.println("in Login");
             byte[] decodedBytes = Base64.getDecoder().decode(password);
             String decodedpassword = new String(decodedBytes);
             PreparedStatement statement = connection.prepareStatement(
@@ -319,6 +323,7 @@ public class MoviesApplication {
                 int status = resultSet.getInt("status");
                 int userType = resultSet.getInt("userType");
                 userID = resultSet.getInt("UserID");
+                System.out.println("UserID : " + userID);
                 String dbPassword = resultSet.getString("password");
                 byte[] dbBytes = Base64.getDecoder().decode(dbPassword);
                 String dbDecodedpassword = new String(dbBytes);

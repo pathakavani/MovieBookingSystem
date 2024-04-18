@@ -1,10 +1,11 @@
 import { Link, useNavigate } from 'react-router-dom';
 
-export default function Navbar({ user }) {
+export default function Navbar({ user , setUser}) {
   const navigate = useNavigate();
 
   const handleLogout = () => {
     navigate('/');
+    setUser(null)
   };
 
   return (

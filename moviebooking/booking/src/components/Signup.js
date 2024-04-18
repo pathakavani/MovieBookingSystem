@@ -16,7 +16,7 @@ function SignupPage() {
         cardType:'',
         paymentInfo: '',
         expirationDate: '',
-        promotion: 'yes' // Default value for promotions
+        promotion: 1 // Default value for promotions
     });
     const handlefn = (event) => {
         setFormData({...formData, firstName: event.target.value})
