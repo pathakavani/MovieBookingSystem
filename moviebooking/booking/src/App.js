@@ -6,6 +6,8 @@ import ManageMovie from './components/ManageMovie';
 import ManagePromotions from './components/ManagePromotions';
 import ManageUsers from './components/ManageUsers';
 import { MoviesProvider } from './components/MoviesContext';
+import {Provider} from 'react-redux'
+import store from './redux/store';
 import SignupPage from './components/Signup';
 import EditProfile from './components/EditProfile';
 import Login from './components/Login';
@@ -15,13 +17,14 @@ import RegConfirmation from './components/RegConfirmation';
 import ChangePassword from './components/ChangePassword';
 import Activation from './components/Activation';
 import Navbar from './components/Navbar'; // Import Navbar component
+import { UseDispatch, useSelector } from 'react-redux';
+
 
 function App() {
-  const [user, setUser] = useState(null); // State to hold user information
-
+  const admin = useSelector((state) => state.login.admin)
+  const user = useSelector((state) => state.login.email)
   // Function to handle user logout
   const handleLogout = () => {
-    setUser(null); // Clear user information
     localStorage.removeItem('user'); // Remove user data from localStorage if stored
     window.location.href = '/'; // Redirect to home page
   };
@@ -38,10 +41,10 @@ function App() {
     <MoviesProvider>
       <Router>
         <div>
-          <Navbar user={user} setUser={setUser} />
+          <Navbar/>
           <Routes>
             <Route path="/" element={<HomePage />} />
-            <Route path="/login" element={<Login setUser={setUser} />} />
+            <Route path="/login" element={<Login/>} />
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/forgetPassword" element={<ForgetPassword />} />
             <Route path="/resetPassword" element={<ChangePassword />} />
@@ -52,7 +55,7 @@ function App() {
               path="/editprofile"
               element={user ? <EditProfile /> : <Navigate to="/login" replace />}
             />
-            {user && user.isAdmin && (
+            {user && admin && (
               <>
                 <Route path="/manage-movies" element={<ManageMovie />} />
                 <Route path="/manage-promotions" element={<ManagePromotions />} />
@@ -65,6 +68,7 @@ function App() {
       </Router>
     </MoviesProvider>
   );
+
 }
 
 export default App;

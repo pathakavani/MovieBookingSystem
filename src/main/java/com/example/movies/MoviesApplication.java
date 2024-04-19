@@ -335,6 +335,7 @@ public class MoviesApplication {
                             // User account is active, allow login
                             if (userType == 1) {
                                 // Admin
+                                System.out.println("admin");
                                 return ResponseEntity.ok("Login successful as admin");
                             } else if (userType == 2) {
                                 // Customer

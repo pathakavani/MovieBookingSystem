@@ -4,10 +4,14 @@ import { useNavigate } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
 import './Login.css';
 import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { loginActions } from '../redux/loginSlice';
 
-function Login(props) {
+function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  // const isAdmin = useSelector((state) => state.login.admin)
+  const dispatch = useDispatch()
   const navigate = useNavigate();
   const encodedPassword = btoa(password);;
   const handleSubmit = async (event) => { // Use async to handle asynchronous logic
@@ -24,13 +28,18 @@ function Login(props) {
         if (response.data === "Login successful as admin") {
           const isAdmin = response.data === "Login successful as admin";
           // Redirect to homepage upon successful login
-          localStorage.setItem('isAdmin', isAdmin);
-          props.setUser("true")
+          // localStorage.setItem('isAdmin', isAdmin); 
+          console.log("Admin")
+          dispatch(loginActions.setAdmin(true))
+          dispatch(loginActions.setEmail(email))
           navigate('/');
+          
         } else if (response.data === "Login successful as customer") {
           // Redirect to homepage upon successful login
-          props.setUser("false");
-          navigate('/', {user :false});
+          dispatch(loginActions.setAdmin(false))
+          dispatch(loginActions.setEmail(email))
+          navigate('/');
+
         } else {
           console.error('Login failed:', response.data);
           alert(response.data);

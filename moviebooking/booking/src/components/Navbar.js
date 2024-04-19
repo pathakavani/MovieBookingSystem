@@ -1,20 +1,20 @@
 import { Link, useNavigate } from 'react-router-dom';
-
-export default function Navbar({ user , setUser}) {
+import { useSelector } from 'react-redux';
+export default function Navbar() {
   const navigate = useNavigate();
-
+  const isAdmin = useSelector((state) => state.login.admin)
+  const email = useSelector((state) => state.login.email)
   const handleLogout = () => {
     navigate('/');
-    setUser(null)
   };
 
   return (
     <nav>
       <Link to="/">Home</Link>
-      {user ? (
+      {email ? (
         <>
           <Link to="/editprofile">Profile</Link>
-          {user.isAdmin && (
+          {isAdmin && (
             <>
               <Link to="/manage-movies">Manage Movies</Link>
               <Link to="/manage-promotions">Manage Promotions</Link>
