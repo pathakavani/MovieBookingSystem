@@ -44,9 +44,9 @@ public class MoviesApplication {
 
     public MoviesApplication() {
         movies = new ArrayList<>();
-        String jdbcUrl = "jdbc:mysql://localhost:33306/Movie_Booking";
+        String jdbcUrl = "jdbc:mysql://localhost:3306/Movie_Booking"; // jdbc:mysql://localhost:33306/Movie_Booking
         String username = "root";// change this
-        String password = "bathinda"; // and that
+        String password = "root123@"; // and that, pass: root123@ (for my reference - ruchitha)
 
         try {
             connection = DriverManager.getConnection(jdbcUrl, username, password);
@@ -181,7 +181,7 @@ public class MoviesApplication {
                 sqlUpdateUser += " password = \"" + passwordEncrypted + "\",";
             }
             sqlUpdateUser += " enrollforPromotions = " + pi.promotion + ",";
-            
+
             if (pi.phoneNumber != null && !pi.phoneNumber.isEmpty()) {
                 sqlUpdateUser += " phone = \"" + pi.phoneNumber + "\",";
             }
@@ -256,7 +256,7 @@ public class MoviesApplication {
                         decodePassword + "\t" +
                         resultSet.getString("cardType") + "\t" +
                         decodeCardNumber + "\t" +
-                        resultSet.getInt("enrollForPromotions")+ "\t"+
+                        resultSet.getInt("enrollForPromotions") + "\t" +
                         resultSet.getDate("expirationDate") + "\t" +
                         resultSet.getString("billingAddress");
             }
