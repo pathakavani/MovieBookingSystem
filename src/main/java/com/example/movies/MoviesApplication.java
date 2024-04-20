@@ -30,6 +30,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * This class represents the main application for managing movie bookings.
+ * It includes functionalities for handling user information, authentication,
+ * profile updates, sending confirmation emails, and retrieving movie
+ * information.
+ */
 @Controller
 @CrossOrigin("http://localhost:3000")
 public class MoviesApplication {
@@ -42,6 +48,10 @@ public class MoviesApplication {
 
     Connection connection;
 
+    /**
+     * Constructor for MoviesApplication class.
+     * Initializes the list of movies and establishes a database connection.
+     */
     public MoviesApplication() {
         movies = new ArrayList<>();
         String jdbcUrl = "jdbc:mysql://localhost:3306/Movie_Booking"; // jdbc:mysql://localhost:33306/Movie_Booking
@@ -79,6 +89,13 @@ public class MoviesApplication {
         }
     }
 
+    /**
+     * Sends a confirmation email to the user after account creation.
+     *
+     * @param name             The user's name.
+     * @param recipientEmail   The recipient's email address.
+     * @param confirmationLink The link for activating the user's account.
+     */
     public void sendConfirmationEmail(String name, String recipientEmail, String confirmationLink) {
         MimeMessage message = emailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message);
@@ -96,6 +113,12 @@ public class MoviesApplication {
         }
     }
 
+    /**
+     * Sends an update confirmation email to the user after profile update.
+     *
+     * @param name           The user's name.
+     * @param recipientEmail The recipient's email address.
+     */
     public void sendUpdateConfirmationEmail(String name, String recipientEmail) {
         MimeMessage message = emailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message);
@@ -112,6 +135,11 @@ public class MoviesApplication {
         }
     }
 
+    /**
+     * Handles the POST request to insert user information into the database.
+     *
+     * @param pi The PersonalInfo object containing user information.
+     */
     @PostMapping("/postInfo")
     @ResponseBody
     public void postInfo(@RequestBody PersonalInfo pi) {
@@ -159,6 +187,11 @@ public class MoviesApplication {
         }
     }
 
+    /**
+     * Handles the POST request to update user information in the database.
+     *
+     * @param pi The PersonalInfo object containing updated user information.
+     */
     @PostMapping("/updateInfo")
     @ResponseBody
     public void updateInfo(@RequestBody PersonalInfo pi) {
@@ -240,6 +273,11 @@ public class MoviesApplication {
         }
     }
 
+    /**
+     * Retrieves user information from the database based on the user's ID.
+     *
+     * @return User information in string format.
+     */
     @GetMapping(value = "/getInfo")
     @ResponseBody
     public String getInfo() {
@@ -271,6 +309,11 @@ public class MoviesApplication {
         return output;
     }
 
+    /**
+     * Retrieves a specific movie from the database.
+     *
+     * @return The Movie object representing the requested movie.
+     */
     @GetMapping("/GetMovie")
     @ResponseBody
     public Movies getMovie() {
@@ -307,6 +350,11 @@ public class MoviesApplication {
 
     }
 
+    /**
+     * Retrieves all movies from the database.
+     *
+     * @return List of Movie objects representing all movies.
+     */
     @GetMapping("/movies")
     @ResponseBody
     public List<Movies> getMovies() {
@@ -314,6 +362,13 @@ public class MoviesApplication {
         return movies;
     }
 
+    /**
+     * Handles the POST request for user login.
+     *
+     * @param email    The user's email address.
+     * @param password The user's password.
+     * @return ResponseEntity with login status message.
+     */
     @PostMapping("/login")
     @ResponseBody
     public ResponseEntity<String> login(@RequestParam("email") String email,
@@ -380,6 +435,13 @@ public class MoviesApplication {
         }
     }
 
+    /**
+     * Sends a password reset email to the specified email address with the reset
+     * link.
+     *
+     * @param email     The recipient's email address.
+     * @param resetLink The link for resetting the password.
+     */
     private void sendPasswordResetEmail(String email, String resetLink) {
         MimeMessage message = emailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message);
@@ -397,6 +459,12 @@ public class MoviesApplication {
         }
     }
 
+    /**
+     * Sends a password reset email to the user.
+     *
+     * @param email The user's email address.
+     * @return ResponseEntity with password reset status message.
+     */
     @PostMapping("/forgotPassword")
     @ResponseBody
     public ResponseEntity<String> forgotPassword(@RequestParam("email") String email) {
@@ -415,6 +483,14 @@ public class MoviesApplication {
         }
     }
 
+    /**
+     * Resets the user's password in the database.
+     *
+     * @param token       The reset token.
+     * @param email       The user's email address.
+     * @param newPassword The new password.
+     * @return ResponseEntity with password reset status message.
+     */
     @PostMapping("/resetPassword")
     @ResponseBody
     public ResponseEntity<String> resetPassword(@RequestParam("token") String token,
@@ -440,6 +516,12 @@ public class MoviesApplication {
         }
     }
 
+    /**
+     * Activates the user's account in the database.
+     *
+     * @param email The user's email address.
+     * @return ResponseEntity with account activation status message.
+     */
     @PostMapping("/activation")
     @ResponseBody
     public ResponseEntity<String> activation(@RequestParam("email") String email) {
