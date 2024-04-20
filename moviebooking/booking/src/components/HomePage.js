@@ -24,10 +24,15 @@ function HomePage({ route, navigation }) {
             // setShowMoves(moves);
   }, [])
   useEffect(() => {
-    setMoves(moves.filter((movie) =>
-        movie.title.toLowerCase().includes(searchTerm.toLowerCase())
+    
+    console.log(searchTerm)
+    setMoves((moves) => moves.filter((movie) =>
+    movie.title.toLowerCase().includes(searchTerm.toLowerCase()) 
+    ||  movie.director.toLowerCase().includes(searchTerm.toLowerCase()) 
+    ||  movie.category.toLowerCase().includes(searchTerm.toLowerCase()) 
+    ||  movie.producer.toLowerCase().includes(searchTerm.toLowerCase()) 
+    ||  movie.cast.toLowerCase().includes(searchTerm.toLowerCase()) 
       ))
-
       if (searchTerm == '') {
         axios.get("http://localhost:8080/movies")
             .then(data => setMoves(data.data))
@@ -79,7 +84,7 @@ function HomePage({ route, navigation }) {
         <input
           className="search-input"
           type="text"
-          placeholder="Search for movies..."
+          placeholder="Search for movies, directors, cast, producers, categories"
           value={searchTerm}
           onChange={handleSearchChange}
         />
