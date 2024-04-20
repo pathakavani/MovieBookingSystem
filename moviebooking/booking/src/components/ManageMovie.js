@@ -42,12 +42,22 @@ function ManageMovie() {
     setMovie({ ...movie, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (movie.id) {
-      editMovie(movie);
+      try {
+        await axios.put(`http://localhost:8080/updateMovie/${movie.id}`, movie);
+        editMovie(movie);
+      } catch (error) {
+        console.error('Error updating movie:', error);
+      }
     } else {
-      addMovie({ ...movie, id: Date.now() });
+      try {
+        const response = await axios.post('http://localhost:8080/addMovie', movie);
+        addMovie(response.data);
+      } catch (error) {
+        console.error('Error adding movie:', error);
+      }
     }
     setMovie(initialState);
     setShowForm(false);
@@ -58,10 +68,15 @@ function ManageMovie() {
     setShowForm(true);
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     const confirmed = window.confirm("Are you sure you want to delete this movie?");
     if (confirmed) {
-      deleteMovie(id);
+      try {
+        await axios.delete(`http://localhost:8080/deleteMovie/${id}`);
+        deleteMovie(id);
+      } catch (error) {
+        console.error('Error deleting movie:', error);
+      }
     }
   };
 

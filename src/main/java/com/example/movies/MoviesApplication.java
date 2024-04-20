@@ -57,19 +57,22 @@ public class MoviesApplication {
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 Movies movie = new Movies(
-
                         resultSet.getInt("movie_id"),
                         resultSet.getString("title"),
-                        resultSet.getString("genre"),
+                        resultSet.getString("category"),
                         resultSet.getDate("release_date").toString(),
                         resultSet.getString("director"),
                         resultSet.getInt("duration_minutes"),
-                        resultSet.getInt("rating"),
+                        resultSet.getString("mpaa_rating"),
                         resultSet.getString("synopsis"),
                         resultSet.getString("poster_url"),
-                        resultSet.getString(("trailer_url")));
+                        resultSet.getString("trailer_url"),
+                        resultSet.getString("cast"),
+                        resultSet.getString("reviews"),
+                        resultSet.getString("producer"));
                 movies.add(movie);
             }
+
             // connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -283,17 +286,19 @@ public class MoviesApplication {
             ResultSet resultSet = statement.executeQuery();
             System.out.println("error2");
             mvs = new Movies(
-
                     resultSet.getInt("movie_id"),
                     resultSet.getString("title"),
-                    resultSet.getString("genre"),
+                    resultSet.getString("category"),
                     resultSet.getDate("release_date").toString(),
                     resultSet.getString("director"),
                     resultSet.getInt("duration_minutes"),
-                    resultSet.getInt("rating"),
+                    resultSet.getString("mpaa_rating"),
                     resultSet.getString("synopsis"),
                     resultSet.getString("poster_url"),
-                    resultSet.getString("trailer_url"));
+                    resultSet.getString("trailer_url"),
+                    resultSet.getString("cast"),
+                    resultSet.getString("reviews"),
+                    resultSet.getString("producer"));
             return mvs;
         } catch (Exception e) {
             System.out.println(e.getMessage());
