@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -360,6 +361,52 @@ public class MoviesApplication {
     public List<Movies> getMovies() {
         System.out.println("movies");
         return movies;
+    }
+
+    /**
+     * Endpoint to add a new movie to the database.
+     * 
+     * @param movieRequest JSON request containing movie information.
+     * @return ResponseEntity with success or error message.
+     */
+    @PostMapping("/addMovie")
+    public ResponseEntity<String> addMovie(@RequestBody Movies movieRequest) {
+        try {
+            System.out.println("addMovie");
+            System.out.println("movieRequest: " + movieRequest);
+            // Prepare the SQL statement
+            String sql = "INSERT INTO movies (title, category, release_date, director, duration_minutes, " +
+                    "mpaa_rating, synopsis, poster_url, trailer_url, cast, reviews, producer) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            PreparedStatement statement = connection.prepareStatement(sql);
+
+            // Set the values from the movieRequest object
+            statement.setString(1, movieRequest.title);
+            statement.setString(2, movieRequest.category);
+            statement.setDate(3, Date.valueOf(movieRequest.release_date));
+            statement.setString(4, movieRequest.director);
+            statement.setInt(5, movieRequest.duration);
+            statement.setString(6, movieRequest.mpaa_rating);
+            statement.setString(7, movieRequest.synopsis);
+            statement.setString(8, movieRequest.url);
+            statement.setString(9, movieRequest.trailer);
+            statement.setString(10, movieRequest.cast);
+            statement.setString(11, movieRequest.reviews);
+            statement.setString(12, movieRequest.producer);
+
+            // Execute the update
+            int rowsAffected = statement.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println("Movie added successfully.");
+                return ResponseEntity.ok("Movie added successfully");
+            } else {
+                System.out.println("Error adding movie.");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error adding movie.");
+            }
+        } catch (SQLException e) {
+            System.err.println("Error adding movie: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error adding movie.");
+        }
     }
 
     /**

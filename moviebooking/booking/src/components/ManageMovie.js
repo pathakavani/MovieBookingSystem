@@ -117,6 +117,14 @@ function ManageMovie() {
               <input type="text" name="producer" value={movie.producer} onChange={handleChange} />
             </label>
             <label>
+              Release Date:
+              <input type="date" name="release_date" value={movie.release_date} onChange={handleChange} />
+            </label>
+            <label>
+              Duration:
+              <input type="text" name="duration" value={movie.duration} onChange={handleChange} />
+            </label>
+            <label>
               Synopsis:
               <textarea name="synopsis" value={movie.synopsis} onChange={handleChange} />
             </label>
