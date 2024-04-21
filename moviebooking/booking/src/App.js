@@ -16,10 +16,10 @@ import EmailConfirmation from './components/EmailConfirmation';
 import RegConfirmation from './components/RegConfirmation';
 import ChangePassword from './components/ChangePassword';
 import Activation from './components/Activation';
-import OrderPage from './Components/checkout';
-import ConfirmationPage from './Components/confirmationPage';
-import MovieTickets from './Components/seatBooking';
-import PaymentPage from './Components/payment';
+import OrderPage from './components/checkout';
+import ConfirmationPage from './components/confirmationPage';
+import MovieTickets from './components/seatBooking';
+import PaymentPage from './components/payment';
 import Navbar from './components/Navbar'; // Import Navbar component
 import { UseDispatch, useSelector } from 'react-redux';
 
