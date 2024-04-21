@@ -16,6 +16,10 @@ import EmailConfirmation from './components/EmailConfirmation';
 import RegConfirmation from './components/RegConfirmation';
 import ChangePassword from './components/ChangePassword';
 import Activation from './components/Activation';
+import OrderPage from './Components/checkout';
+import ConfirmationPage from './Components/confirmationPage';
+import MovieTickets from './Components/seatBooking';
+import PaymentPage from './Components/payment';
 import Navbar from './components/Navbar'; // Import Navbar component
 import { UseDispatch, useSelector } from 'react-redux';
 
@@ -51,6 +55,10 @@ function App() {
             <Route path="/regConfirmation" element={<RegConfirmation />} />
             <Route path="/EmailConfirmation" element={<EmailConfirmation />} />
             <Route path="/activation" element={<Activation />} />
+            <Route path="/checkout" element={<OrderPage />} />
+            <Route path='/confirmationPage' element={<ConfirmationPage />}/>
+            <Route path='/seatBooking' element={<MovieTickets />}/>
+            <Route path='/payment' element={<PaymentPage />}/>
             <Route
               path="/editprofile"
               element={user ? <EditProfile /> : <Navigate to="/login" replace />}
