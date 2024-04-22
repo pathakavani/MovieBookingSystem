@@ -171,7 +171,7 @@
 import React, { useState } from 'react';
 import './seatBooking.css';
 
-function MovieTickets() {
+function MovieTickets({ showDates, showTimes }) {
     const [ticketCounts, setTicketCounts] = useState({
         child: 0,
         Adult: 0,
@@ -179,6 +179,9 @@ function MovieTickets() {
     });
 
     const [selectedSeats, setSelectedSeats] = useState([]);
+    const [selectedShowtime, setSelectedShowtime] = useState(''); // State to store selected showtime
+    const [selectedDate, setSelectedDate] = useState(''); // State to store selected date
+    const [showErrorMessage, setShowErrorMessage] = useState(false); // State to toggle error message
 
     const ticketPrices = {
         child: 5,
@@ -233,8 +236,16 @@ function MovieTickets() {
     const isContinueEnabled = () => {
         const areSeatsSelected = selectedSeats.length > 0;
         const areCategoriesChosen = Object.values(ticketCounts).some(count => count > 0);
-        console.log('hi');
-        return areSeatsSelected && areCategoriesChosen;
+        const isShowtimeSelected = selectedShowtime !== '';
+        const isDateSelected = selectedDate !== '';
+
+        if (!areSeatsSelected || !areCategoriesChosen || !isShowtimeSelected || !isDateSelected) {
+            setShowErrorMessage(true);
+            return false;
+        } else {
+            setShowErrorMessage(false);
+            return true;
+        }
     };
 
     return (
@@ -246,17 +257,23 @@ function MovieTickets() {
                     </a>
                 </div>
             </nav>
+            {showErrorMessage && <div className="error-message">Please select showtime, date, seats, and tickets before continuing.</div>}
             <div className="movie-container">
                 <div>
                     <label htmlFor="showtime">Select Showtime:</label>
-                    <select id="showtime">
-                        <option value="0">Select Showtime</option>
-                        <option value="1">12:00 PM</option>
-                        <option value="2">3:00 PM</option>
-                        <option value="3">6:00 PM</option>
+                    <select id="showtime" onChange={(e) => setSelectedShowtime(e.target.value)}>
+                        <option value="">Select Showtime</option>
+                        {showTimes.map((time, index) => (
+                            <option key={index} value={time}>{time}</option>
+                        ))}
                     </select>
-                    <lable htmlFor="showDate">Select Date</lable>
-                    <input type="date" id="showdate" name="showdate"></input>
+                    <label htmlFor="showDate">Select Date:</label>
+                    <select id="showDate" onChange={(e) => setSelectedDate(e.target.value)}>
+                        <option value="">Select Date</option>
+                        {showDates.map((date, index) => (
+                            <option key={index} value={date}>{date}</option>
+                        ))}
+                    </select>
                     <h5>Select category and Ticket:</h5>
                     <div className="ticket-row">
                         <div className="ticket-group">
@@ -328,7 +345,7 @@ function MovieTickets() {
                             You have selected <span id="count">{updateTotal().totalSelectedTickets}</span><br />
                             Subtotal: $<span id="total">{updateTotal().totalPrice.toFixed(2)}</span>
                         </p>
-                        <button className='continue' disabled={isContinueEnabled()}><a href="checkout">Continue</a></button>
+                        <button className='continue' disabled={!isContinueEnabled()}><a href="checkout">Continue</a></button>
                     </div>
                 </div>
             </div>

@@ -1,7 +1,32 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './checkout.css'
+import { useSelector, useDispatch } from 'react-redux';
+import { loginActions } from '../redux/loginSlice';
 
 function OrderPage() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      navigate('/login')
+    }
+  }, [isLoggedIn, navigate]);
+
+  const handleLogout = () => {
+    // Dispatch action to logout user
+    dispatch(loginActions.setLoggedIn(false));
+    // Redirect to home page after logout
+    navigate('/');
+  };
+
+  const handleCheckout = () => {
+    // Redirect to checkout page
+    navigate('/checkout');
+  };
+
   return (
     <div>
       <nav className="navbar navbar-expand-lg ">

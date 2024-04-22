@@ -1,12 +1,10 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { MoviesContext } from './MoviesContext';
 import './ManageMovie.css';
-import MovieModal from "./MovieModal";
 import axios from 'axios';
 
 function ManageMovie() {
   const { movies, addMovie, editMovie, deleteMovie } = useContext(MoviesContext);
-  const [selectedMovie, setSelectedMovie] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const initialState = {
     id: null,
@@ -20,8 +18,8 @@ function ManageMovie() {
     poster: '',
     trailer: '',
     mpaaRating: '',
-    showDates: '',
-    showTimes: '',
+    showDates: [],
+    showTimes: [],
   };
 
   const [movie, setMovie] = useState(initialState);
@@ -40,6 +38,26 @@ function ManageMovie() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setMovie({ ...movie, [name]: value });
+  };
+
+  const handleAddShowDate = () => {
+    setMovie({ ...movie, showDates: [...movie.showDates, ''] });
+  };
+
+  const handleAddShowTime = () => {
+    setMovie({ ...movie, showTimes: [...movie.showTimes, ''] });
+  };
+
+  const handleRemoveShowDate = (index) => {
+    const updatedShowDates = [...movie.showDates];
+    updatedShowDates.splice(index, 1);
+    setMovie({ ...movie, showDates: updatedShowDates });
+  };
+
+  const handleRemoveShowTime = (index) => {
+    const updatedShowTimes = [...movie.showTimes];
+    updatedShowTimes.splice(index, 1);
+    setMovie({ ...movie, showTimes: updatedShowTimes });
   };
 
   const handleSubmit = async (e) => {
@@ -80,8 +98,16 @@ function ManageMovie() {
     }
   };
 
-  const handleMovieClick = (movie) => {
-    setSelectedMovie(movie);
+  const handleShowDateChange = (index, value) => {
+    const updatedShowDates = [...movie.showDates];
+    updatedShowDates[index] = value;
+    setMovie({ ...movie, showDates: updatedShowDates });
+  };
+
+  const handleShowTimeChange = (index, value) => {
+    const updatedShowTimes = [...movie.showTimes];
+    updatedShowTimes[index] = value;
+    setMovie({ ...movie, showTimes: updatedShowTimes });
   };
 
   return (
@@ -117,30 +143,6 @@ function ManageMovie() {
               <input type="text" name="producer" value={movie.producer} onChange={handleChange} />
             </label>
             <label>
-              Release Date:
-              <input type="date" name="release_date" value={movie.release_date} onChange={handleChange} />
-            </label>
-            <label>
-              Duration:
-              <input type="text" name="duration" value={movie.duration} onChange={handleChange} />
-            </label>
-            <label>
-              Synopsis:
-              <textarea name="synopsis" value={movie.synopsis} onChange={handleChange} />
-            </label>
-            <label>
-              Reviews:
-              <textarea name="reviews" value={movie.reviews} onChange={handleChange} />
-            </label>
-            <label>
-              Poster URL:
-              <input type="text" name="poster" value={movie.poster} onChange={handleChange} placeholder="Enter URL for the movie poster" />
-            </label>
-            <label>
-              Trailer URL:
-              <input type="text" name="trailer" value={movie.trailer} onChange={handleChange} placeholder="Enter YouTube URL for the trailer" />
-            </label>
-            <label>
               MPAA Rating:
               <select name="mpaaRating" value={movie.mpaaRating} onChange={handleChange}>
                 <option value="">Select Rating</option>
@@ -151,14 +153,26 @@ function ManageMovie() {
                 <option value="NC-17">NC-17</option>
               </select>
             </label>
-            <label>
-              Show Dates:
-              <input type="date" name="showDates" value={movie.showDates} onChange={handleChange} />
-            </label>
-            <label>
-              Show Times:
-              <input type="time" name="showTimes" value={movie.showTimes} onChange={handleChange} />
-            </label>
+            <div>
+              <label>Show Dates:</label>
+              {movie.showDates.map((date, index) => (
+                <div key={index}>
+                  <input type="date" value={date} onChange={(e) => handleShowDateChange(index, e.target.value)} />
+                  <button type="button" onClick={() => handleRemoveShowDate(index)}>Remove</button>
+                </div>
+              ))}
+              <button type="button" onClick={handleAddShowDate}>Add Show Date</button>
+            </div>
+            <div>
+              <label>Show Times:</label>
+              {movie.showTimes.map((time, index) => (
+                <div key={index}>
+                  <input type="time" value={time} onChange={(e) => handleShowTimeChange(index, e.target.value)} />
+                  <button type="button" onClick={() => handleRemoveShowTime(index)}>Remove</button>
+                </div>
+              ))}
+              <button type="button" onClick={handleAddShowTime}>Add Show Time</button>
+            </div>
             <button type="submit">Submit</button>
           </form>
         </div>
@@ -167,7 +181,7 @@ function ManageMovie() {
         <div className='movie-list-container'>
           <h3>Movie List</h3>
           {apiMovies.map((movie) => (
-            <div key={movie.id} className='movie-item' onClick={() => handleMovieClick(movie)}>
+            <div key={movie.id} className='movie-item'>
               <p>{movie.title}</p>
               <button onClick={() => handleEdit(movie)}>Edit</button>
               <button onClick={() => handleDelete(movie.id)}>Delete</button>
@@ -175,7 +189,6 @@ function ManageMovie() {
           ))}
         </div>
       )}
-      {selectedMovie && <MovieModal movie={selectedMovie} onClose={() => setSelectedMovie(null)} />}
     </div>
   );
 }
