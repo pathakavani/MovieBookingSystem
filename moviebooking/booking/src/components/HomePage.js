@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect, useSyncExternalStore } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { MoviesContext } from './MoviesContext';
 import MovieModal from './MovieModal';
 import { useParams } from 'react-router-dom';
@@ -17,35 +17,34 @@ function HomePage({ route, navigation }) {
 
   useEffect(() => {
     axios.get("http://localhost:8080/movies")
-            .then(data => {setMoves(data.data)
-            console.log(data.data)})
-            .catch(err => console.log(err));
-            console.log(moves)
-            // setShowMoves(moves);
-  }, [])
+      .then(data => { setMoves(data.data); console.log(data.data) })
+      .catch(err => console.log(err));
+    console.log(moves);
+    // setShowMoves(moves);
+  }, []);
+
   useEffect(() => {
-    
-    console.log(searchTerm)
+    console.log(searchTerm);
     setMoves((moves) => moves.filter((movie) =>
-    movie.title.toLowerCase().includes(searchTerm.toLowerCase()) 
-    ||  movie.director.toLowerCase().includes(searchTerm.toLowerCase()) 
-    ||  movie.category.toLowerCase().includes(searchTerm.toLowerCase()) 
-    ||  movie.producer.toLowerCase().includes(searchTerm.toLowerCase()) 
-    ||  movie.cast.toLowerCase().includes(searchTerm.toLowerCase()) 
-      ))
-      if (searchTerm == '') {
-        axios.get("http://localhost:8080/movies")
-            .then(data => setMoves(data.data))
-            .catch(err => console.log(err));
-      }
-  }, [searchTerm])
+      movie.title.toLowerCase().includes(searchTerm.toLowerCase())
+      || movie.director.toLowerCase().includes(searchTerm.toLowerCase())
+      || movie.category.toLowerCase().includes(searchTerm.toLowerCase())
+      || movie.producer.toLowerCase().includes(searchTerm.toLowerCase())
+      || movie.cast.toLowerCase().includes(searchTerm.toLowerCase())
+    ));
+    if (searchTerm === '') {
+      axios.get("http://localhost:8080/movies")
+        .then(data => setMoves(data.data))
+        .catch(err => console.log(err));
+    }
+  }, [searchTerm]);
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
   };
 
   const today = new Date();
-  
+
   const showingNowMovies = movies.filter((movie) => {
     const showDate = new Date(movie.showDates);
     return showDate <= today;
@@ -58,14 +57,14 @@ function HomePage({ route, navigation }) {
 
   const filteredShowingNowMovies = searchTerm
     ? showingNowMovies.filter((movie) =>
-        movie.title.toLowerCase().includes(searchTerm.toLowerCase())
-      )
+      movie.title.toLowerCase().includes(searchTerm.toLowerCase())
+    )
     : showingNowMovies;
 
   const filteredComingSoonMovies = searchTerm
     ? comingSoonMovies.filter((movie) =>
-        movie.title.toLowerCase().includes(searchTerm.toLowerCase())
-      )
+      movie.title.toLowerCase().includes(searchTerm.toLowerCase())
+    )
     : comingSoonMovies;
 
   const openModal = (movie) => {
