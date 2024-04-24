@@ -1,10 +1,13 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import {loginActions} from './../redux/loginSlice'
 export default function Navbar() {
   const navigate = useNavigate();
+  const dispatch = useDispatch()
   const isAdmin = useSelector((state) => state.login.admin)
   const email = useSelector((state) => state.login.email)
   const handleLogout = () => {
+    dispatch(loginActions.setEmail(null))
     navigate('/');
   };
 
