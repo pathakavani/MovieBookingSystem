@@ -73,6 +73,10 @@ function HomePage({ route, navigation }) {
     setModalVisible(false);
   };
 
+  const handleSearchChange = (e) => { // Define handleSearchChange function
+    setSearchTerm(e.target.value);
+  };
+
   return (
     <div>
       <h1>Movie Ticket Booking Website</h1>
