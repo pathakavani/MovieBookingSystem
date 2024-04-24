@@ -203,16 +203,20 @@ function ManageMovie() {
           </form>
         </div>
       )}
-      {!showForm && (
+ {!showForm && (
         <div className='movie-list-container'>
           <h3>Movie List</h3>
-          {apiMovies.map((movie) => (
-            <div key={movie.id} className='movie-item'>
-              <p>{movie.title}</p>
-              <button onClick={() => handleEdit(movie)}>Edit</button>
-              <button onClick={() => handleDelete(movie.id)}>Delete</button>
-            </div>
-          ))}
+          {apiMovies ? (
+            apiMovies.map((movie) => (
+              <div key={movie.id} className='movie-item'>
+                <p>{movie.title}</p>
+                <button onClick={() => handleEdit(movie)}>Edit</button>
+                <button onClick={() => handleDelete(movie.id)}>Delete</button>
+              </div>
+            ))
+          ) : (
+            <p>Loading...</p>
+          )}
         </div>
       )}
     </div>
