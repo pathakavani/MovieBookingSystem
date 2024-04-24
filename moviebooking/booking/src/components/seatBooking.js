@@ -239,7 +239,11 @@ function MovieTickets({ showDates= [], showTimes = [] }) {
     const isContinueEnabled = () => {
         const areSeatsSelected = selectedSeats.length > 0;
         const areCategoriesChosen = Object.values(ticketCounts).some(count => count > 0);
-        return areSeatsSelected && areCategoriesChosen && selectedShowtime && selectedDate;
+        const isValid = areSeatsSelected && areCategoriesChosen && selectedShowtime && selectedDate;
+
+        setShowErrorMessage(!isValid);
+
+        return isValid;
     };
     
     const handleCheckout = () => {
