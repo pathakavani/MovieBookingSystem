@@ -205,16 +205,15 @@ function MovieTickets({ showDates= [], showTimes = [] }) {
     };
 
     const handleTicketChange = (type, value) => {
-        const newCounts = { ...ticketCounts, [type]: value };
-        setTicketCounts(newCounts);
+        setTicketCounts(prevCounts => ({ ...prevCounts, [type]: value }));
     };
 
     const handleSeatClick = (row, column) => {
         const seatId = `${row}-${column}`;
-        const updatedSelectedSeats = selectedSeats.includes(seatId)
-            ? selectedSeats.filter(id => id !== seatId)
-            : [...selectedSeats, seatId];
-        setSelectedSeats(updatedSelectedSeats);
+        setSelectedSeats(prevSeats => prevSeats.includes(seatId)
+            ? prevSeats.filter(id => id !== seatId)
+            : [...prevSeats, seatId]
+        );
     };
 
     // Generate seat elements dynamically
@@ -237,20 +236,10 @@ function MovieTickets({ showDates= [], showTimes = [] }) {
         return seats;
     };
 
-    // Check if seats are selected and categories are chosen
     const isContinueEnabled = () => {
         const areSeatsSelected = selectedSeats.length > 0;
         const areCategoriesChosen = Object.values(ticketCounts).some(count => count > 0);
-        const isShowtimeSelected = selectedShowtime !== '';
-        const isDateSelected = selectedDate !== '';
-    
-        if (!areSeatsSelected || !areCategoriesChosen || !isShowtimeSelected || !isDateSelected) {
-            setShowErrorMessage(true);
-            return false;
-        } else {
-            setShowErrorMessage(false);
-            return true;
-        }
+        return areSeatsSelected && areCategoriesChosen && selectedShowtime && selectedDate;
     };
     
     const handleCheckout = () => {
