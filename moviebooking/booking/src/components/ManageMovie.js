@@ -84,9 +84,15 @@ function ManageMovie() {
   
 
   const handleEdit = (movieToEdit) => {
-    setMovie(movieToEdit);
+    const editedMovie = {
+      ...movieToEdit,
+      showDates: movieToEdit.showDates || [],
+      showTimes: movieToEdit.showTimes || [],
+    };
+    setMovie(editedMovie);
     setShowForm(true);
   };
+  
 
   const handleDelete = async (id) => {
     const confirmed = window.confirm("Are you sure you want to delete this movie?");
@@ -203,7 +209,7 @@ function ManageMovie() {
           </form>
         </div>
       )}
- {!showForm && (
+      {!showForm && (
         <div className='movie-list-container'>
           <h3>Movie List</h3>
           {apiMovies ? (
