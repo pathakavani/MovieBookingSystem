@@ -15,23 +15,22 @@ function OrderPage() {
     }
   }, [isLoggedIn, navigate]);
 
-  const handleLogout = () => {
+  // Handle logout function without dispatching when navigating back to home page
+  const handleLogout = (event) => {
+    // Prevent default behavior of the anchor tag
+    event.preventDefault();
     // Dispatch action to logout user
     dispatch(loginActions.setLoggedIn(false));
     // Redirect to home page after logout
     navigate('/');
   };
 
-  const handleCheckout = () => {
-    // Redirect to checkout page
-    navigate('/checkout');
-  };
-
   return (
     <div>
       <nav className="navbar navbar-expand-lg ">
         <div className="container-fluid">
-          <a className="navbar-brand active" style={{ color: 'white', fontFamily: 'Lato, sans-serif', fontFamily: 'Lilita One, cursive' }} href="Main.php">
+          {/* Modify the anchor tag to prevent default behavior */}
+          <a className="navbar-brand active" style={{ color: 'white', fontFamily: 'Lato, sans-serif', fontFamily: 'Lilita One, cursive' }} href="Main.php" onClick={(e) => handleLogout(e)}>
             <i><img src="https://i.ibb.co/jy62Srz/36a17f9402f64b66ba11ad785ec9ff3e.png" alt="logo" /></i> MovieHub
           </a>
         </div>
@@ -62,21 +61,15 @@ function OrderPage() {
             <div className="paymentmethod">
               <p>Amex *1907</p>
             </div>
-            {/* <div className="paymentmethod"> */}
-              {/* <p>Add Payment Method</p> */}
-              <button className='paymentmethod'><a href='payment'>Payment Method</a></button>
-            {/* </div> */}
+            <button className='paymentmethod'><a href='payment'>Payment Method</a></button>
           </div>
-         
           <form>
-                {/* <label for="promo" style="margin-top: 50px;">Promo Code</label> */}
-                <label htmlFor="promo" style={{ marginTop: '70px' }}>Promo Code</label>
-
-                <input type="text" id="promo" name="promo" placeholder="Enter your promo code here..."/>
-            </form>
+            <label htmlFor="promo" style={{ marginTop: '70px' }}>Promo Code</label>
+            <input type="text" id="promo" name="promo" placeholder="Enter your promo code here..."/>
+          </form>
           <div className="confirmcancelbuttons">
-            <button style={{ backgroundColor: 'white', width: '120px', height: '40px', borderRadius: '5px' }}><a href="seatBooking">Previous</a></button>
-            <button style={{ backgroundColor: 'white', width: '120px', height: '40px', borderRadius: '5px' }}><a href="Main.php">Cancel</a></button>
+            <button style={{ backgroundColor: 'white', width: '120px', height: '40px', borderRadius: '5px' }} onClick={(e) => handleLogout(e)}>Previous</button>
+            <button style={{ backgroundColor: 'white', width: '120px', height: '40px', borderRadius: '5px' }} onClick={(e) => handleLogout(e)}>Cancel</button>
             <button style={{ backgroundColor: 'white', width: '120px', height: '40px', borderRadius: '5px' }}><a href="ConfirmationPage">Confirm Order</a></button>
           </div>
         </div>

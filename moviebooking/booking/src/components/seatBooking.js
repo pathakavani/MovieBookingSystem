@@ -170,6 +170,10 @@
 
 import React, { useState } from 'react';
 import './seatBooking.css';
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+
 
 function MovieTickets({ showDates, showTimes }) {
     const [ticketCounts, setTicketCounts] = useState({
@@ -182,6 +186,8 @@ function MovieTickets({ showDates, showTimes }) {
     const [selectedShowtime, setSelectedShowtime] = useState(''); // State to store selected showtime
     const [selectedDate, setSelectedDate] = useState(''); // State to store selected date
     const [showErrorMessage, setShowErrorMessage] = useState(false); // State to toggle error message
+    const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
+    const navigate = useNavigate();
 
     const ticketPrices = {
         child: 5,
@@ -238,7 +244,7 @@ function MovieTickets({ showDates, showTimes }) {
         const areCategoriesChosen = Object.values(ticketCounts).some(count => count > 0);
         const isShowtimeSelected = selectedShowtime !== '';
         const isDateSelected = selectedDate !== '';
-
+    
         if (!areSeatsSelected || !areCategoriesChosen || !isShowtimeSelected || !isDateSelected) {
             setShowErrorMessage(true);
             return false;
@@ -247,11 +253,20 @@ function MovieTickets({ showDates, showTimes }) {
             return true;
         }
     };
+    
+    const handleCheckout = () => {
+        if (!isLoggedIn) {
+            navigate('/login');
+        } else {
+            navigate('/checkout');
+        }
+    };
 
     return (
         <div className='body'>
             <nav className="navbar navbar-expand-lg">
                 <div className="container-fluid">
+                    {/* Removed the Movies dropdown */}
                     <a className="navbar-brand active" style={{ color: 'white', fontFamily: 'Lato, sans-serif', fontFamily: 'Lilita One, cursive' }} href="Main.php">
                         <i><img src="https://i.ibb.co/jy62Srz/36a17f9402f64b66ba11ad785ec9ff3e.png" alt="logo" /></i> MovieHub
                     </a>
@@ -345,7 +360,7 @@ function MovieTickets({ showDates, showTimes }) {
                             You have selected <span id="count">{updateTotal().totalSelectedTickets}</span><br />
                             Subtotal: $<span id="total">{updateTotal().totalPrice.toFixed(2)}</span>
                         </p>
-                        <button className='continue' disabled={!isContinueEnabled()}><a href="checkout">Continue</a></button>
+                        <button className='continue' disabled={!isContinueEnabled()} onClick={handleCheckout}>Continue</button>
                     </div>
                 </div>
             </div>
