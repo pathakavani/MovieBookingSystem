@@ -174,7 +174,10 @@ import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
 
-function MovieTickets({ showDates, showTimes }) {
+function MovieTickets({ showDates= [], showTimes = [] }) {
+    if (!showDates || !showTimes) {
+       return null;
+    }
     const [ticketCounts, setTicketCounts] = useState({
         child: 0,
         Adult: 0,
