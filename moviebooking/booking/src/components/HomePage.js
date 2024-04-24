@@ -14,34 +14,31 @@ function HomePage({ route, navigation }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [moves, setMoves] = useState([]);
   const [showMoves, setShowMoves] = useState([]);
+  const [filteredMovies, setFilteredMovies] = useState([]);
 
   useEffect(() => {
     axios.get("http://localhost:8080/movies")
-      .then(data => { setMoves(data.data); console.log(data.data) })
+      .then(data => { 
+        setMoves(data.data); 
+        setFilteredMovies(data.data); // Set filteredMovies initially with all movies
+      })
       .catch(err => console.log(err));
-    console.log(moves);
-    // setShowMoves(moves);
   }, []);
 
   useEffect(() => {
-    console.log(searchTerm);
-    setMoves((moves) => moves.filter((movie) =>
+    // Filter movies based on searchTerm without altering the original list
+    const filtered = moves.filter((movie) =>
       movie.title.toLowerCase().includes(searchTerm.toLowerCase())
       || movie.director.toLowerCase().includes(searchTerm.toLowerCase())
       || movie.category.toLowerCase().includes(searchTerm.toLowerCase())
       || movie.producer.toLowerCase().includes(searchTerm.toLowerCase())
       || movie.cast.toLowerCase().includes(searchTerm.toLowerCase())
-    ));
+    );
+    setFilteredMovies(filtered);
     if (searchTerm === '') {
-      axios.get("http://localhost:8080/movies")
-        .then(data => setMoves(data.data))
-        .catch(err => console.log(err));
+      setFilteredMovies(moves); // If searchTerm is empty, reset filteredMovies to all movies
     }
-  }, [searchTerm]);
-
-  const handleSearchChange = (event) => {
-    setSearchTerm(event.target.value);
-  };
+  }, [searchTerm, moves]);
 
   const today = new Date();
 

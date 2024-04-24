@@ -5,6 +5,7 @@ import axios from 'axios';
 
 function ManageMovie() {
   const { movies, addMovie, editMovie, deleteMovie } = useContext(MoviesContext);
+  const [selectedMovie, setSelectedMovie] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const initialState = {
     id: null,
@@ -65,7 +66,7 @@ function ManageMovie() {
     if (movie.id) {
       try {
         await axios.put(`http://localhost:8080/updateMovie/${movie.id}`, movie);
-        editMovie(movie);
+        editMovie(movie); // Ensure that the correct movie object with the id property is passed
       } catch (error) {
         console.error('Error updating movie:', error);
       }
@@ -141,6 +142,30 @@ function ManageMovie() {
             <label>
               Producer:
               <input type="text" name="producer" value={movie.producer} onChange={handleChange} />
+            </label>
+            <label>
+              Release Date:
+              <input type="date" name="release_date" value={movie.release_date} onChange={handleChange} />
+            </label>
+            <label>
+              Duration:
+              <input type="text" name="duration" value={movie.duration} onChange={handleChange} />
+            </label>
+            <label>
+              Synopsis:
+              <textarea name="synopsis" value={movie.synopsis} onChange={handleChange} />
+            </label>
+            <label>
+              Reviews:
+              <textarea name="reviews" value={movie.reviews} onChange={handleChange} />
+            </label>
+            <label>
+              Poster URL:
+              <input type="text" name="poster" value={movie.poster} onChange={handleChange} placeholder="Enter URL for the movie poster" />
+            </label>
+            <label>
+              Trailer URL:
+              <input type="text" name="trailer" value={movie.trailer} onChange={handleChange} placeholder="Enter YouTube URL for the trailer" />
             </label>
             <label>
               MPAA Rating:
