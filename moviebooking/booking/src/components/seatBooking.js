@@ -168,9 +168,8 @@
 // export default MovieTickets;
 
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './seatBooking.css';
-import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
