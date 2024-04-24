@@ -46,7 +46,7 @@ const MovieModal = ({ movie, onClose }) => {
         <p><strong>MPAA Rating:</strong> {movie.mpaaRating}</p>
         <p><strong>Show Dates:</strong> {formatDates(movie.showDates)}</p>
         <p><strong>Show Times:</strong> {formatTimes(movie.showTimes)}</p>
-        <a href="/SeatBooking.html" className="booking-button">Book Now</a>
+        <a href="/seatBooking.js" className="booking-button">Book Now</a>
         <button className="close-button" onClick={onClose}>Close</button>
       </div>
     </div>
