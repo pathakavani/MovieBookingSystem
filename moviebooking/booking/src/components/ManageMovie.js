@@ -63,7 +63,7 @@ function ManageMovie() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (movie.id) {
+    if (movie && movie.id) {
       try {
         await axios.put(`http://localhost:8080/updateMovie/${movie.id}`, movie);
         editMovie(movie); // Ensure that the correct movie object with the id property is passed
@@ -81,6 +81,7 @@ function ManageMovie() {
     setMovie(initialState);
     setShowForm(false);
   };
+  
 
   const handleEdit = (movieToEdit) => {
     setMovie(movieToEdit);
