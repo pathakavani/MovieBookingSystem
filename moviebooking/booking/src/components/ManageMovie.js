@@ -65,15 +65,18 @@ function ManageMovie() {
     e.preventDefault();
     if (movie && movie.id) {
       try {
-        await axios.put(`http://localhost:8080/updateMovie/${movie.id}`, movie);
+        const response = await axios.put(`http://localhost:8080/updateMovie/${movie.id}`, movie);
+        console.log('Update Movie:', response);
         editMovie(movie); // Ensure that the correct movie object with the id property is passed
       } catch (error) {
         console.error('Error updating movie:', error);
       }
     } else {
       try {
+        console.log('movie:', movie);
         const response = await axios.post('http://localhost:8080/addMovie', movie);
         addMovie(response.data);
+        console.log('adding movie response:', response.data);
       } catch (error) {
         console.error('Error adding movie:', error);
       }
@@ -98,7 +101,9 @@ function ManageMovie() {
     const confirmed = window.confirm("Are you sure you want to delete this movie?");
     if (confirmed) {
       try {
-        await axios.delete(`http://localhost:8080/deleteMovie/${id}`);
+        console.log('Delete id:', id);
+        const response = await axios.delete(`http://localhost:8080/deleteMovie/${id}`);
+        console.log('Delete response:', response);
         deleteMovie(id);
       } catch (error) {
         console.error('Error deleting movie:', error);

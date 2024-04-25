@@ -15,8 +15,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -55,9 +58,9 @@ public class MoviesApplication {
      */
     public MoviesApplication() {
         movies = new ArrayList<>();
-        String jdbcUrl = "jdbc:mysql://localhost:33306/Movie_Booking"; // jdbc:mysql://localhost:33306/Movie_Booking
+        String jdbcUrl = "jdbc:mysql://localhost:3306/Movie_Booking"; // jdbc:mysql://localhost:33306/Movie_Booking
         String username = "root";// change this
-        String password = "bathinda"; // and that, pass: root123@ (for my reference - ruchitha)
+        String password = "root123@"; // and that, pass: root123@ (for my reference - ruchitha)
 
         try {
             connection = DriverManager.getConnection(jdbcUrl, username, password);
@@ -373,6 +376,8 @@ public class MoviesApplication {
         try {
             System.out.println("addMovie");
             System.out.println("movieRequest: " + movieRequest);
+            System.out.println("mpaa rating: " + movieRequest.mpaa_rating);
+            System.out.println("poster url: " + movieRequest.url);
             // Prepare the SQL statement
             String sql = "INSERT INTO movies (title, category, release_date, director, duration_minutes, " +
                     "mpaa_rating, synopsis, poster_url, trailer_url, cast, reviews, producer) " +
@@ -405,6 +410,130 @@ public class MoviesApplication {
         } catch (SQLException e) {
             System.err.println("Error adding movie: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error adding movie.");
+        }
+    }
+
+    /**
+     * Endpoint to edit specific fields of a movie in the database.
+     * 
+     * @param id           The ID of the movie to edit.
+     * @param movieRequest JSON request containing the fields to update.
+     * @return ResponseEntity with success or error message.
+     */
+    @PutMapping("/updateMovie/{id}")
+    public ResponseEntity<String> updateMovie(@PathVariable("id") int id, @RequestBody Movies movieRequest) {
+        try {
+            System.out.println("updateMovie");
+            // Prepare the SQL statement
+            StringBuilder sqlBuilder = new StringBuilder("UPDATE movies SET ");
+            List<Object> parameters = new ArrayList<>();
+
+            // Check which fields are provided in the request and add them to the SQL query
+            if (movieRequest.title != null) {
+                sqlBuilder.append("title = ?, ");
+                parameters.add(movieRequest.title);
+            }
+            if (movieRequest.category != null) {
+                sqlBuilder.append("category = ?, ");
+                parameters.add(movieRequest.category);
+            }
+            if (movieRequest.release_date != null) {
+                sqlBuilder.append("release_date = ?, ");
+                parameters.add(Date.valueOf(movieRequest.release_date));
+            }
+            if (movieRequest.director != null) {
+                sqlBuilder.append("director = ?, ");
+                parameters.add(movieRequest.director);
+            }
+            if (movieRequest.duration > 0) {
+                sqlBuilder.append("duration_minutes = ?, ");
+                parameters.add(movieRequest.duration);
+            }
+            if (movieRequest.mpaa_rating != null) {
+                sqlBuilder.append("mpaa_rating = ?, ");
+                parameters.add(movieRequest.mpaa_rating);
+            }
+            if (movieRequest.synopsis != null) {
+                sqlBuilder.append("synopsis = ?, ");
+                parameters.add(movieRequest.synopsis);
+            }
+            if (movieRequest.url != null) {
+                sqlBuilder.append("poster_url = ?, ");
+                parameters.add(movieRequest.url);
+            }
+            if (movieRequest.trailer != null) {
+                sqlBuilder.append("trailer_url = ?, ");
+                parameters.add(movieRequest.trailer);
+            }
+            if (movieRequest.cast != null) {
+                sqlBuilder.append("cast = ?, ");
+                parameters.add(movieRequest.cast);
+            }
+            if (movieRequest.reviews != null) {
+                sqlBuilder.append("reviews = ?, ");
+                parameters.add(movieRequest.reviews);
+            }
+            if (movieRequest.producer != null) {
+                sqlBuilder.append("producer = ?, ");
+                parameters.add(movieRequest.producer);
+            }
+
+            // Remove the last comma and space from the SQL query
+            sqlBuilder.delete(sqlBuilder.length() - 2, sqlBuilder.length());
+
+            // Add the WHERE clause for the movie ID
+            sqlBuilder.append(" WHERE movie_id = ?");
+            parameters.add(id);
+
+            // Prepare and execute the SQL statement
+            PreparedStatement statement = connection.prepareStatement(sqlBuilder.toString());
+            for (int i = 0; i < parameters.size(); i++) {
+                statement.setObject(i + 1, parameters.get(i));
+            }
+
+            // Execute the update
+            int rowsAffected = statement.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println("Movie updated successfully.");
+                return ResponseEntity.ok("Movie updated successfully");
+            } else {
+                System.out.println("Error updating movie: Movie not found or no fields provided for update.");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("Error updating movie: Movie not found or no fields provided for update.");
+            }
+        } catch (SQLException e) {
+            System.err.println("Error updating movie: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating movie.");
+        }
+    }
+
+    /**
+     * Endpoint to delete a movie from the database.
+     * 
+     * @param id The ID of the movie to delete.
+     * @return ResponseEntity with success or error message.
+     */
+    @DeleteMapping("/deleteMovie/{id}")
+    public ResponseEntity<String> deleteMovie(@PathVariable("id") int id) {
+        try {
+            System.out.println("deleteMovie");
+            // Prepare the SQL statement
+            String sql = "DELETE FROM movies WHERE movie_id = ?";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, id);
+
+            // Execute the update
+            int rowsAffected = statement.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println("Movie deleted successfully.");
+                return ResponseEntity.ok("Movie deleted successfully");
+            } else {
+                System.out.println("Error deleting movie: Movie not found.");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error deleting movie: Movie not found.");
+            }
+        } catch (SQLException e) {
+            System.err.println("Error deleting movie: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting movie.");
         }
     }
 
