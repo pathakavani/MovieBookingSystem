@@ -16,7 +16,7 @@ export default function Navbar() {
       <Link to="/">Home</Link>
       {email ? (
         <>
-          <Link to="/editprofile">Profile</Link>
+          {!isAdmin && <Link to="/editprofile">Profile</Link>}
           {isAdmin && (
             <>
               <Link to="/manage-movies">Manage Movies</Link>
