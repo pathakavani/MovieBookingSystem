@@ -58,35 +58,64 @@ public class MoviesApplication {
      */
     public MoviesApplication() {
         movies = new ArrayList<>();
-        String jdbcUrl = "jdbc:mysql://localhost:3306/Movie_Booking"; // jdbc:mysql://localhost:33306/Movie_Booking
+        String jdbcUrl = "jdbc:mysql://localhost:3306/Final_Movie_Booking"; // jdbc:mysql://localhost:33306/Movie_Booking
         String username = "root";// change this
         String password = "root123@"; // and that, pass: root123@ (for my reference - ruchitha)
 
         try {
             connection = DriverManager.getConnection(jdbcUrl, username, password);
             System.out.println("Database connection secured");
+
             // Movie
-            String sql = "SELECT * FROM movies";
+            String sql = "SELECT m.movie_id, m.title, m.category, m.release_date, m.director, " +
+                    "m.duration_minutes, m.mpaa_rating, m.synopsis, m.poster_url, " +
+                    "m.trailer_url, m.cast, m.reviews, m.producer, s.date, sp.time " +
+                    "FROM movies m " +
+                    "LEFT JOIN shows s ON m.movie_id = s.movieID " +
+                    "LEFT JOIN show_period sp ON s.periodID = sp.periodID";
+
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-                Movies movie = new Movies(
-                        resultSet.getInt("movie_id"),
-                        resultSet.getString("title"),
-                        resultSet.getString("category"),
-                        resultSet.getDate("release_date").toString(),
-                        resultSet.getString("director"),
-                        resultSet.getInt("duration_minutes"),
-                        resultSet.getString("mpaa_rating"),
-                        resultSet.getString("synopsis"),
-                        resultSet.getString("poster_url"),
-                        resultSet.getString("trailer_url"),
-                        resultSet.getString("cast"),
-                        resultSet.getString("reviews"),
-                        resultSet.getString("producer"));
-                movies.add(movie);
-            }
+                int movieId = resultSet.getInt("movie_id");
+                // Check if the movie already exists in the list
+                Movies existingMovie = movies.stream()
+                        .filter(movie -> movie.id == movieId)
+                        .findFirst()
+                        .orElse(null);
+                if (existingMovie != null) {
+                    // Movie already exists, add show information to the existing movie
+                    String showDateTime = resultSet.getDate("date").toString() + " " +
+                            resultSet.getTime("time").toString();
+                    existingMovie.addShow(showDateTime);
+                } else {
+                    // Create new movie object and add it to the list
+                    Movies movie = new Movies(
+                            movieId,
+                            resultSet.getString("title"),
+                            resultSet.getString("category"),
+                            resultSet.getDate("release_date").toString(),
+                            resultSet.getString("director"),
+                            resultSet.getInt("duration_minutes"),
+                            resultSet.getString("mpaa_rating"),
+                            resultSet.getString("synopsis"),
+                            resultSet.getString("poster_url"),
+                            resultSet.getString("trailer_url"),
+                            resultSet.getString("cast"),
+                            resultSet.getString("reviews"),
+                            resultSet.getString("producer"));
 
+                    // Check for null values before adding show date and time to the movie
+                    if (resultSet.getDate("date") != null && resultSet.getTime("time") != null) {
+                        String showDateTime = resultSet.getDate("date").toString() + " " +
+                                resultSet.getTime("time").toString();
+                        movie.addShow(showDateTime);
+                    }
+
+                    movies.add(movie);
+                }
+            }
+            System.out.println("movies: " + movies);
             // connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -508,6 +537,44 @@ public class MoviesApplication {
     }
 
     /**
+     * Handles the insertion of show information related to a movie.
+     *
+     * @param movieRequest The JSON request containing show-related information.
+     * @param movieId      The ID of the movie.
+     * @return ResponseEntity indicating success or failure of the operation.
+     */
+    @PostMapping("/addShow")
+    public ResponseEntity<String> addShow(@RequestBody Show show, int movieId) {
+        try {
+            // Check for conflicts
+            String checkConflictQuery = "SELECT COUNT(*) FROM shows WHERE screenID = ? AND date = ? AND periodID = ?";
+            PreparedStatement checkConflictStatement = connection.prepareStatement(checkConflictQuery);
+            checkConflictStatement.setInt(1, show.screenID);
+            checkConflictStatement.setDate(2, show.date);
+            checkConflictStatement.setInt(3, show.periodID);
+            ResultSet conflictResult = checkConflictStatement.executeQuery();
+            if (conflictResult.next() && conflictResult.getInt(1) > 0) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Show time conflicts with an existing show.");
+            }
+
+            // Insert the show information
+            String insertShowQuery = "INSERT INTO shows (movieID, screenID, periodID, date) VALUES (?, ?, ?, ?)";
+            PreparedStatement insertShowStatement = connection.prepareStatement(insertShowQuery);
+            insertShowStatement.setInt(1, movieId);
+            insertShowStatement.setInt(2, show.screenID);
+            insertShowStatement.setInt(3, show.periodID);
+            insertShowStatement.setDate(4, show.date);
+            insertShowStatement.executeUpdate();
+
+            System.out.println("Show added successfully.");
+            return ResponseEntity.ok("Show added successfully");
+        } catch (SQLException e) {
+            System.err.println("Error handling show information: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error handling show information.");
+        }
+    }
+
+    /**
      * Endpoint to delete a movie from the database.
      * 
      * @param id The ID of the movie to delete.
@@ -718,6 +785,33 @@ public class MoviesApplication {
         } catch (SQLException e) {
             System.err.println("Error updating password: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error activating the account.");
+        }
+    }
+
+    /**
+     * Endpoint to check for conflicts before adding or updating a show.
+     * 
+     * @param showRequest JSON request containing show information.
+     * @return ResponseEntity with conflict status or success message.
+     */
+    @PostMapping("/checkShowConflict")
+    public ResponseEntity<String> checkShowConflict(@RequestBody Show showRequest) {
+        try {
+            // Prepare the SQL statement to check for conflicts
+            String checkConflictQuery = "SELECT COUNT(*) FROM shows WHERE screenID = ? AND date = ? AND periodID = ?";
+            PreparedStatement checkConflictStatement = connection.prepareStatement(checkConflictQuery);
+            checkConflictStatement.setInt(1, showRequest.screenID);
+            checkConflictStatement.setDate(2, showRequest.date);
+            checkConflictStatement.setInt(3, showRequest.periodID);
+            ResultSet conflictResult = checkConflictStatement.executeQuery();
+            if (conflictResult.next() && conflictResult.getInt(1) > 0) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Show time conflicts with an existing show.");
+            } else {
+                return ResponseEntity.ok("No conflict found. Show can be added or updated.");
+            }
+        } catch (SQLException e) {
+            System.err.println("Error checking show conflict: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error checking show conflict.");
         }
     }
 }

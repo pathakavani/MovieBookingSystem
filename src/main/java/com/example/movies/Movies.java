@@ -1,6 +1,10 @@
 package com.example.movies;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Movies {
 
@@ -17,6 +21,7 @@ public class Movies {
     public String cast;
     public String reviews;
     public String producer;
+    private List<String> shows;
 
     Movies(int id, String title, String category, String release_date, String director, int duration,
             String mpaa_rating, String synopsis, String url, String trailer, String cast, String reviews,
@@ -34,5 +39,14 @@ public class Movies {
         this.cast = cast;
         this.reviews = reviews;
         this.producer = producer;
+        this.shows = new ArrayList<>();
+    }
+
+    public List<String> getShows() {
+        return shows;
+    }
+
+    public void addShow(String showDateTime) {
+        shows.add(showDateTime);
     }
 }
