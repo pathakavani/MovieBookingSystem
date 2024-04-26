@@ -1,10 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import './MovieModal.css'; 
-import { useDispatch } from 'react-redux';
-import { cActions } from '../redux/currentMovie';
+
 const MovieModal = ({ movie, onClose }) => {
-  const dispatch = useDispatch();
   const extractVideoID = (url) => {
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
     const match = url.match(regExp);
@@ -21,9 +19,7 @@ const MovieModal = ({ movie, onClose }) => {
       return trimmedDate;
     }).join(', '); // Join the formatted dates with a comma
   };
-  const editMovieID = (movie) => {
-    dispatch(cActions.setID(movie.title))
-  }
+  
 
   const formatTimes = (times) => {
     return Array.isArray(times) ? times.join(', ') : times;
@@ -55,7 +51,7 @@ const MovieModal = ({ movie, onClose }) => {
         <p><strong>Reviews:</strong> {movie.reviews}</p>
         <p><strong>MPAA Rating:</strong> {movie.mpaa_rating}</p>
         <p><strong>Show Date and Time:</strong> {formatDates(movie.shows)}</p>
-        <Link to={{ pathname: "/seatBooking" }} className="booking-button" onClick={editMovieID(movie)}>Book Now</Link>
+        <Link to={{ pathname: "/seatBooking", state: { movie } }} className="booking-button">Book Now</Link>
         <button className="close-button" onClick={onClose}>Close</button>
       </div>
     </div>
