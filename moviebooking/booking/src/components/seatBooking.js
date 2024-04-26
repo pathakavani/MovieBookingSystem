@@ -19,6 +19,9 @@ function MovieTickets() {
     const navigate = useNavigate();
     const [showDates, setShowDates] = useState([]);
     const [showTimes, setShowTimes] = useState([]);
+    const [movie, setMovie] = useState({
+        id: null
+    });
 
     const ticketPrices = {
         child: 5,
@@ -31,10 +34,11 @@ function MovieTickets() {
 
     // Fetch show dates and times from the API
     useEffect(() => {
-        fetch('http://localhost:8080/getShowDateTime')
+        const movieId = movie.id;
+        console.log('Movie id:', movieId);
+        fetch(`http://localhost:8080/getShowDateTime?movieId=${movieId}`)
             .then(response => response.json())
             .then(data => {
-                // Extract dates and times from the API response
                 const dates = Object.keys(data);
                 const times = Object.values(data).flat();
                 setShowDates(dates);

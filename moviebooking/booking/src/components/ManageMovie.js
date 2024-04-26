@@ -4,7 +4,7 @@ import './ManageMovie.css';
 import axios from 'axios';
 
 function ManageMovie() {
-  const { movies, addMovie, editMovie, deleteMovie, addShow } = useContext(MoviesContext);
+  const { movies, addMovie, editMovie, deleteMovie } = useContext(MoviesContext);
   const [selectedMovie, setSelectedMovie] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const initialState = {

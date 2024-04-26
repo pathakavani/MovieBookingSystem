@@ -888,7 +888,10 @@ public class MoviesApplication {
                 // Check if the date key exists in the map
                 if (showDateTimeMap.containsKey(date)) {
                     // If the date key exists, add the time to its corresponding list
-                    showDateTimeMap.get(date).add(time);
+                    if (!showDateTimeMap.get(date).contains(time)) {
+                        // If the time is not already in the list, add it
+                        showDateTimeMap.get(date).add(time);
+                    }
                 } else {
                     // If the date key doesn't exist, create a new list with the time and add it to
                     // the map
