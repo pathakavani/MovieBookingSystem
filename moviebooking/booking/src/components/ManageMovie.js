@@ -22,7 +22,7 @@ function ManageMovie() {
     shows: [],
     screen: '',
     showDates: '',
-    showTime: ''
+    showTime: '12:00:00'
   };
 
   const [movie, setMovie] = useState(initialState);
@@ -53,9 +53,6 @@ function ManageMovie() {
     try {
       if (movie && movie.id) {
         console.log('Update Movie id:', movie.id);
-        console.log('Update Movie screen:', movie.screen);
-        console.log('Update Movie showDates:', movie.showDates);
-        console.log('Update Movie showTime:', movie.showTime);
         const response = await axios.put(`http://localhost:8080/updateMovie/${movie.id}`, movie);
         console.log('Update Movie:', response);
         editMovie(movie);
@@ -63,23 +60,18 @@ function ManageMovie() {
         successMessage = response.data;
         // Call addShow API if movie.id is present and required fields are not null or empty
         if (movie.screen && movie.showTime && movie.showDates) {
+          const formattedShowTime = formatTimeToJavaSqlTime(movie.showTime);
           const showResponse = await axios.post('http://localhost:8080/addShow', movie);
           successMessage = showResponse.data;
           getMovies();
         }
       } else {
+        console.log('Add Movie');
         console.log('movie:', movie);
         const addResponse = await axios.post('http://localhost:8080/addMovie', movie);
         addMovie(addResponse.data);
         getMovies();
         successMessage = addResponse.data;
-  
-        // Call addShow API after adding the movie if required fields are not null or empty
-        if (movie.screen && movie.showTime && movie.showDates) {
-          const showResponse = await axios.post('http://localhost:8080/addShow', movie);
-          successMessage = showResponse.data;
-          getMovies();
-        }
       }
       alert(successMessage);
     } catch (error) {
@@ -91,7 +83,11 @@ function ManageMovie() {
     }
   };
   
-  
+  function formatTimeToJavaSqlTime(timeString) {
+    const [hours, minutes, seconds] = timeString.split(':');
+    const formattedTime = new Date(0, 0, 0, hours, minutes, seconds);
+    return formattedTime.toTimeString().slice(0, 8); // Extract HH:mm:ss part
+  }
   
   const handleEdit = (movieToEdit) => {
     setMovie(movieToEdit);
@@ -107,6 +103,7 @@ function ManageMovie() {
         console.log('Delete response:', response);
         deleteMovie(id);
         getMovies();
+        alert(response.data);
       } catch (error) {
         console.error('Error deleting movie:', error);
       }
@@ -163,7 +160,7 @@ function ManageMovie() {
             </label>
             <label>
               Poster URL:
-              <input type="text" name="poster" value={movie.url} onChange={handleChange} placeholder="Enter URL for the movie poster" />
+              <input type="text" name="url" value={movie.url} onChange={handleChange} placeholder="Enter URL for the movie poster" />
             </label>
             <label>
               Trailer URL:
@@ -171,7 +168,7 @@ function ManageMovie() {
             </label>
             <label>
               MPAA Rating:
-              <select name="mpaaRating" value={movie.mpaa_rating} onChange={handleChange}>
+              <select name="mpaa_rating" value={movie.mpaa_rating} onChange={handleChange}>
                 <option value="">Select Rating</option>
                 <option value="G">G</option>
                 <option value="PG">PG</option>
@@ -188,31 +185,36 @@ function ManageMovie() {
                 ))}
               </label>
             )}
-            <label>
-            Screen:
-            <select type="text" name="screen" onChange={handleChange}>
-            <option value="">Select Screen</option>
-              <option value="1">Screen 1</option>
-              <option value="2">Screen 2</option>
-              <option value="3">Screen 3</option>
-              <option value="4">Screen 4</option>
-              <option value="5">Screen 5</option>
-            </select>
-          </label>
-            <label>
-              Show Dates:
-              <input type="date" name="showDates" onChange={handleChange} />
-            </label>
-            <label>
-              Show Times:
-              <select type="time" name="showTime" onChange={handleChange}>
-              <option value="">Select Show Time</option>
-              <option value="10:00:00">10:00:00</option>
-              <option value="13:00:00">13:00:00</option>
-              <option value="16:00:00">16:00:00</option>
-              <option value="20:00:00">20:00:00</option>
-            </select>
-            </label>
+           {/* Conditionally render screen, show dates, and show times for edit form */}
+            {movie.id && (
+              <>
+                <label>
+                  Screen:
+                  <select type="text" name="screen" onChange={handleChange}>
+                    <option value="">Select Screen</option>
+                    <option value="1">Screen 1</option>
+                    <option value="2">Screen 2</option>
+                    <option value="3">Screen 3</option>
+                    <option value="4">Screen 4</option>
+                    <option value="5">Screen 5</option>
+                  </select>
+                </label>
+                <label>
+                  Show Dates:
+                  <input type="date" name="showDates" onChange={handleChange} />
+                </label>
+                <label>
+                  Show Times:
+                  <select type="time" name="showTime" onChange={handleChange}>
+                    <option value="">Select Show Time</option>
+                    <option value="10:00:00">10:00:00</option>
+                    <option value="13:00:00">13:00:00</option>
+                    <option value="16:00:00">16:00:00</option>
+                    <option value="20:00:00">20:00:00</option>
+                  </select>
+                </label>
+              </>
+            )}
             <button type="submit">Submit</button>
           </form>
         </div>
