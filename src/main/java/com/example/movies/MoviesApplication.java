@@ -69,10 +69,11 @@ public class MoviesApplication {
             // Movie
             String sql = "SELECT m.movie_id, m.title, m.category, m.release_date, m.director, " +
                     "m.duration_minutes, m.mpaa_rating, m.synopsis, m.poster_url, " +
-                    "m.trailer_url, m.cast, m.reviews, m.producer, s.date, sp.time " +
+                    "m.trailer_url, m.cast, m.reviews, m.producer, s.date, sp.time, sc.screenID " +
                     "FROM movies m " +
                     "LEFT JOIN shows s ON m.movie_id = s.movieID " +
-                    "LEFT JOIN show_period sp ON s.periodID = sp.periodID";
+                    "LEFT JOIN show_period sp ON s.periodID = sp.periodID " +
+                    "LEFT JOIN screen sc ON s.screenID = sc.screenID";
 
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -85,9 +86,13 @@ public class MoviesApplication {
                         .orElse(null);
                 if (existingMovie != null) {
                     // Movie already exists, add show information to the existing movie
-                    String showDateTime = resultSet.getDate("date").toString() + " " +
-                            resultSet.getTime("time").toString();
-                    existingMovie.addShow(showDateTime);
+                    String dateStr = resultSet.getDate("date") != null ? resultSet.getDate("date").toString() : "";
+                    String timeStr = resultSet.getTime("time") != null ? resultSet.getTime("time").toString() : "";
+                    int screenID = resultSet.getInt("screenID");
+                    if (!dateStr.isEmpty() && !timeStr.isEmpty() && !resultSet.wasNull()) {
+                        String showDateTime = dateStr + " " + timeStr + " (Screen ID: " + screenID + ")";
+                        existingMovie.addShow(showDateTime);
+                    }
                 } else {
                     // Create new movie object and add it to the list
                     Movies movie = new Movies(
@@ -105,13 +110,13 @@ public class MoviesApplication {
                             resultSet.getString("reviews"),
                             resultSet.getString("producer"));
 
-                    // Check for null values before adding show date and time to the movie
-                    if (resultSet.getDate("date") != null && resultSet.getTime("time") != null) {
-                        String showDateTime = resultSet.getDate("date").toString() + " " +
-                                resultSet.getTime("time").toString();
+                    String dateStr = resultSet.getDate("date") != null ? resultSet.getDate("date").toString() : "";
+                    String timeStr = resultSet.getTime("time") != null ? resultSet.getTime("time").toString() : "";
+                    int screenID = resultSet.getInt("screenID");
+                    if (!dateStr.isEmpty() && !timeStr.isEmpty() && !resultSet.wasNull()) {
+                        String showDateTime = dateStr + " " + timeStr + " (Screen ID: " + screenID + ")";
                         movie.addShow(showDateTime);
                     }
-
                     movies.add(movie);
                 }
             }

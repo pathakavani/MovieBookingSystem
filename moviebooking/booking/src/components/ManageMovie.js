@@ -18,7 +18,8 @@ function ManageMovie() {
     reviews: '',
     url: '',
     trailer: '',
-    mpaa_rating: ''
+    mpaa_rating: '',
+    shows: []
   };
 
   const [movie, setMovie] = useState(initialState);
@@ -195,6 +196,15 @@ function ManageMovie() {
                 <option value="NC-17">NC-17</option>
               </select>
             </label>
+            {movie.shows && movie.shows.length > 0 && (
+              <label>
+                Current Shows:
+                {movie.shows.map((show, index) => (
+                  <p key={index}>{show}</p>
+                ))}
+              </label>
+            )}
+
             <div>
               <label>Show Dates:</label>
               {show.showDates.map((date, index) => (

@@ -13,8 +13,13 @@ const MovieModal = ({ movie, onClose }) => {
   const embedUrl = `https://www.youtube.com/embed/${videoID}`;
 
   const formatDates = (dates) => {
-    return Array.isArray(dates) ? dates.join(', ') : dates;
+    if (!Array.isArray(dates)) return dates; // Return the date string if it's not an array
+    return dates.map(date => {
+      const trimmedDate = date.split('(')[0].trim(); // Remove the "(Screen ID: X)" part and trim any extra spaces
+      return trimmedDate;
+    }).join(', '); // Join the formatted dates with a comma
   };
+  
 
   const formatTimes = (times) => {
     return Array.isArray(times) ? times.join(', ') : times;
