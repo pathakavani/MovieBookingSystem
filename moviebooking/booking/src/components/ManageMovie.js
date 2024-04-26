@@ -49,8 +49,9 @@ function ManageMovie() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (movie && movie.id) {
-      try {
+    let successMessage = '';
+    try {
+      if (movie && movie.id) {
         console.log('Update Movie id:', movie.id);
         console.log('Update Movie screen:', movie.screen);
         console.log('Update Movie showDates:', movie.showDates);
@@ -59,39 +60,37 @@ function ManageMovie() {
         console.log('Update Movie:', response);
         editMovie(movie);
         getMovies();
-  
+        successMessage = response.data;
         // Call addShow API if movie.id is present and required fields are not null or empty
         if (movie.screen && movie.showTime && movie.showDates) {
-          const response = await axios.post('http://localhost:8080/addShow', movie);
-       //   addShow(response.data);
+          const showResponse = await axios.post('http://localhost:8080/addShow', movie);
+          successMessage = showResponse.data;
           getMovies();
         }
-        alert(response.data);
-      } catch (error) {
-        console.error('Error updating movie:', error);
-      }
-    } else {
-      try {
+      } else {
         console.log('movie:', movie);
-        const response = await axios.post('http://localhost:8080/addMovie', movie);
-        addMovie(response.data);
+        const addResponse = await axios.post('http://localhost:8080/addMovie', movie);
+        addMovie(addResponse.data);
         getMovies();
-        console.log('adding movie response:', response.data);
+        successMessage = addResponse.data;
   
         // Call addShow API after adding the movie if required fields are not null or empty
         if (movie.screen && movie.showTime && movie.showDates) {
-          const response = await axios.post('http://localhost:8080/addShow', movie);
-        //  addShow(response.data);
+          const showResponse = await axios.post('http://localhost:8080/addShow', movie);
+          successMessage = showResponse.data;
           getMovies();
         }
-        alert(response.data);
-      } catch (error) {
-        console.error('Error adding movie:', error);
       }
+      alert(successMessage);
+    } catch (error) {
+      console.error('Error:', error);
+      alert(error.response ? error.response.data : 'Error occurred while processing the request.');
+    } finally {
+      setMovie(initialState);
+      setShowForm(false);
     }
-    setMovie(initialState);
-    setShowForm(false);
   };
+  
   
   
   const handleEdit = (movieToEdit) => {
