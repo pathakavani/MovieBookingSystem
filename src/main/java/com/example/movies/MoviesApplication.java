@@ -108,6 +108,9 @@ public class MoviesApplication {
                     if (!dateStr.isEmpty() && !timeStr.isEmpty() && !resultSet.wasNull()) {
                         String showDateTime = dateStr + " " + timeStr + " (Screen ID: " + screenID + ")";
                         existingMovie.addShow(showDateTime);
+                        existingMovie.addShowDates(Date.valueOf(dateStr));
+                        existingMovie.addShowTime(Time.valueOf(timeStr));
+                        existingMovie.addScreen(screenID);
                     }
                 } else {
                     // Create new movie object and add it to the list
@@ -134,6 +137,7 @@ public class MoviesApplication {
                         movie.addShow(showDateTime);
                         movie.addShowDates(Date.valueOf(dateStr));
                         movie.addShowTime(Time.valueOf(timeStr));
+                        movie.addScreen(screenID);
                     }
                     movies.add(movie);
                 }
@@ -568,14 +572,30 @@ public class MoviesApplication {
      * @return ResponseEntity indicating success or failure of the operation.
      */
     @PostMapping("/addShow")
-    public ResponseEntity<String> addShow(@RequestBody Show show, int movieId) {
+    public ResponseEntity<String> addShow(@RequestBody Movies show) {
         try {
+            // Get periodID based on showTime
+            String getPeriodIdQuery = "SELECT periodID FROM show_period WHERE time = ?";
+            System.out.println("getPeriodIdQuery: " + getPeriodIdQuery);
+            PreparedStatement getPeriodIdStatement = connection.prepareStatement(getPeriodIdQuery);
+            getPeriodIdStatement.setTime(1, show.showTime);
+            ResultSet periodIdResult = getPeriodIdStatement.executeQuery();
+
+            int periodId;
+            if (periodIdResult.next()) {
+                periodId = periodIdResult.getInt("periodID");
+                System.out.println("periodId: " + periodId);
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid show time.");
+            }
+
             // Check for conflicts
             String checkConflictQuery = "SELECT COUNT(*) FROM shows WHERE screenID = ? AND date = ? AND periodID = ?";
+            System.out.println("checkConflictQuery: " + checkConflictQuery);
             PreparedStatement checkConflictStatement = connection.prepareStatement(checkConflictQuery);
-            checkConflictStatement.setInt(1, show.screenID);
-            checkConflictStatement.setDate(2, show.date);
-            checkConflictStatement.setInt(3, show.periodID);
+            checkConflictStatement.setInt(1, show.screen);
+            checkConflictStatement.setDate(2, show.showDates);
+            checkConflictStatement.setInt(3, periodId);
             ResultSet conflictResult = checkConflictStatement.executeQuery();
             if (conflictResult.next() && conflictResult.getInt(1) > 0) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Show time conflicts with an existing show.");
@@ -584,10 +604,10 @@ public class MoviesApplication {
             // Insert the show information
             String insertShowQuery = "INSERT INTO shows (movieID, screenID, periodID, date) VALUES (?, ?, ?, ?)";
             PreparedStatement insertShowStatement = connection.prepareStatement(insertShowQuery);
-            insertShowStatement.setInt(1, movieId);
-            insertShowStatement.setInt(2, show.screenID);
-            insertShowStatement.setInt(3, show.periodID);
-            insertShowStatement.setDate(4, show.date);
+            insertShowStatement.setInt(1, show.id);
+            insertShowStatement.setInt(2, show.screen);
+            insertShowStatement.setInt(3, periodId);
+            insertShowStatement.setDate(4, show.showDates);
             insertShowStatement.executeUpdate();
 
             System.out.println("Show added successfully.");

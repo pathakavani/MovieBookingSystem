@@ -21,7 +21,7 @@ public class Movies {
     public String cast;
     public String reviews;
     public String producer;
-    public String screen;
+    public int screen;
     public Date showDates;
     public Time showTime;
     public List<String> shows;
@@ -69,11 +69,11 @@ public class Movies {
         this.showDates = showDates;
     }
 
-    public String getScreen() {
+    public int getScreen() {
         return screen;
     }
 
-    public void addScreen(String screen) {
+    public void addScreen(int screen) {
         this.screen = screen;
     }
 

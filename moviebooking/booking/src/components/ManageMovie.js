@@ -4,7 +4,7 @@ import './ManageMovie.css';
 import axios from 'axios';
 
 function ManageMovie() {
-  const { movies, addMovie, editMovie, deleteMovie } = useContext(MoviesContext);
+  const { movies, addMovie, editMovie, deleteMovie, addShow } = useContext(MoviesContext);
   const [selectedMovie, setSelectedMovie] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const initialState = {
@@ -22,7 +22,7 @@ function ManageMovie() {
     shows: [],
     screen: '',
     showDates: '',
-    showTimes: ''
+    showTime: ''
   };
 
   const [movie, setMovie] = useState(initialState);
@@ -43,6 +43,7 @@ function ManageMovie() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    console.log('Update Movie:', name , value);
     setMovie({ ...movie, [name]: value });
   };
 
@@ -50,10 +51,21 @@ function ManageMovie() {
     e.preventDefault();
     if (movie && movie.id) {
       try {
+        console.log('Update Movie id:', movie.id);
+        console.log('Update Movie screen:', movie.screen);
+        console.log('Update Movie showDates:', movie.showDates);
+        console.log('Update Movie showTime:', movie.showTime);
         const response = await axios.put(`http://localhost:8080/updateMovie/${movie.id}`, movie);
         console.log('Update Movie:', response);
         editMovie(movie);
         getMovies();
+  
+        // Call addShow API if movie.id is present and required fields are not null or empty
+        if (movie.screen && movie.showTime && movie.showDates) {
+          const response = await axios.post('http://localhost:8080/addShow', movie);
+       //   addShow(response.data);
+          getMovies();
+        }
         alert(response.data);
       } catch (error) {
         console.error('Error updating movie:', error);
@@ -64,8 +76,15 @@ function ManageMovie() {
         const response = await axios.post('http://localhost:8080/addMovie', movie);
         addMovie(response.data);
         getMovies();
-        alert(response.data);
         console.log('adding movie response:', response.data);
+  
+        // Call addShow API after adding the movie if required fields are not null or empty
+        if (movie.screen && movie.showTime && movie.showDates) {
+          const response = await axios.post('http://localhost:8080/addShow', movie);
+        //  addShow(response.data);
+          getMovies();
+        }
+        alert(response.data);
       } catch (error) {
         console.error('Error adding movie:', error);
       }
@@ -73,6 +92,7 @@ function ManageMovie() {
     setMovie(initialState);
     setShowForm(false);
   };
+  
   
   const handleEdit = (movieToEdit) => {
     setMovie(movieToEdit);
@@ -173,11 +193,11 @@ function ManageMovie() {
             Screen:
             <select type="text" name="screen" onChange={handleChange}>
             <option value="">Select Screen</option>
-              <option value="screen1">Screen 1</option>
-              <option value="screen2">Screen 2</option>
-              <option value="screen3">Screen 3</option>
-              <option value="screen4">Screen 4</option>
-              <option value="screen5">Screen 5</option>
+              <option value="1">Screen 1</option>
+              <option value="2">Screen 2</option>
+              <option value="3">Screen 3</option>
+              <option value="4">Screen 4</option>
+              <option value="5">Screen 5</option>
             </select>
           </label>
             <label>
@@ -186,12 +206,12 @@ function ManageMovie() {
             </label>
             <label>
               Show Times:
-              <select type="time" name="showTimes" onChange={handleChange}>
+              <select type="time" name="showTime" onChange={handleChange}>
               <option value="">Select Show Time</option>
-              <option value="showTime1">10:00:00</option>
-              <option value="showTime2">13:00:00</option>
-              <option value="showTime3">16:00:00</option>
-              <option value="showTime4">20:00:00</option>
+              <option value="10:00:00">10:00:00</option>
+              <option value="13:00:00">13:00:00</option>
+              <option value="16:00:00">16:00:00</option>
+              <option value="20:00:00">20:00:00</option>
             </select>
             </label>
             <button type="submit">Submit</button>
