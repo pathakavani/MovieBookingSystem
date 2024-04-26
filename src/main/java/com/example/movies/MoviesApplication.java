@@ -7,6 +7,7 @@ import java.util.UUID;
 import java.util.Base64;
 import java.util.HashMap;
 
+import java.sql.Statement;
 // import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -26,10 +27,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
 import com.mysql.cj.x.protobuf.MysqlxCrud.Update;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -65,7 +64,7 @@ public class MoviesApplication {
         movies = new ArrayList<>();
         String jdbcUrl = "jdbc:mysql://localhost:3306/Final_Movie_Booking"; // jdbc:mysql://localhost:33306/Movie_Booking
         String username = "root";// change this
-        String password = "root123@"; // and that, pass: root123@ (for my reference - ruchitha)
+        String password = "inava123"; // and that, pass: root123@ (for my reference - ruchitha)
 
         try {
             connection = DriverManager.getConnection(jdbcUrl, username, password);
@@ -907,4 +906,101 @@ public class MoviesApplication {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
+
+    public void sendPromotionEmails(Connection connection, String promoCode) {
+        try {
+            // Query the database to retrieve users enrolled for promotion
+            String query = "SELECT email FROM user WHERE enrollforPromotions = ?";
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1, 1); // Enrolled users
+            ResultSet resultSet = statement.executeQuery();
+    
+            // Loop through the results and send email to each user
+            while (resultSet.next()) {
+                String recipient = resultSet.getString("email");
+                String promotionDetails = buildPromotionDetails(connection, promoCode); // Pass promoCode
+                sendPromoEmail(recipient, "New Promotion!", promotionDetails);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("Failed to send promotion emails: " + e.getMessage());
+        }
+    }
+    
+
+    private String buildPromotionDetails(Connection connection, String promoCode) throws SQLException {
+        StringBuilder promotionDetails = new StringBuilder("Promotion Details:\n");
+        String promotionQuery = "SELECT * FROM promotion WHERE promoCode = ?";
+        PreparedStatement promotionStatement = connection.prepareStatement(promotionQuery);
+        promotionStatement.setString(1, promoCode);
+        ResultSet promotionResultSet = promotionStatement.executeQuery();
+    
+        if (promotionResultSet.next()) {
+            promotionDetails.append("Title: ").append(promotionResultSet.getString("title")).append("\n");
+            promotionDetails.append("Discount Code: ").append(promotionResultSet.getString("promoCode")).append("\n");
+            promotionDetails.append("Start Date: ").append(promotionResultSet.getString("startDate")).append("\n");
+            promotionDetails.append("End Date: ").append(promotionResultSet.getString("endDate")).append("\n");
+            promotionDetails.append("Discount: ").append(promotionResultSet.getString("discount")).append("%\n\n");
+        }
+    
+        return promotionDetails.toString();
+    }
+
+    private void sendPromoEmail(String recipient, String subject, String content) {
+        MimeMessage message = emailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message);
+
+        try {
+            helper.setTo(recipient);
+            helper.setSubject(subject);
+            helper.setText(content);
+            emailSender.send(message);
+            System.out.println("Email sent successfully to: " + recipient);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+            System.err.println("Failed to send email to: " + recipient + ". Error: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/addPromotion")
+    public ResponseEntity<String> addPromotion(@RequestBody Promotion promotionRequest) {
+    try {
+        // Prepare the SQL statement to insert the promotion into the database
+        String sql = "INSERT INTO promotion (promoCode, startDate, endDate, discount, title) " +
+                     "VALUES (?, ?, ?, ?, ?)";
+        PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+
+        // Set the values from the promotionRequest object
+        statement.setString(1, promotionRequest.promoCode);
+        statement.setString(2, promotionRequest.startDate);
+        statement.setString(3, promotionRequest.endDate);
+        statement.setString(4, promotionRequest.discount);
+        statement.setString(5, promotionRequest.title);
+
+        // Execute the update
+        int rowsAffected = statement.executeUpdate();
+        if (rowsAffected > 0) {
+            System.out.println("Promotion added successfully.");
+
+        // Get the generated promoCode of the newly added promotion
+        ResultSet generatedKeys = statement.getGeneratedKeys();
+        String promoCode = null;
+        if (generatedKeys.next()) {
+            promoCode = generatedKeys.getString(1);
+        }
+        System.out.println("latest promo code: " + promoCode);
+
+           // Call sendPromotionEmails with the promoCode of the newly added promotion
+           sendPromotionEmails(connection, promoCode);
+            
+            return ResponseEntity.ok("Promotion added successfully");
+        } else {
+            System.out.println("Error adding promotion.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error adding promotion.");
+        }
+    } catch (SQLException e) {
+        System.err.println("Error adding promotion: " + e.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error adding promotion.");
+    }
+}
 }
