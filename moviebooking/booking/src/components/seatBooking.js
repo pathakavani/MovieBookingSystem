@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
 
-function MovieTickets({ showDates= [], showTimes = [] }) {
+function MovieTickets() {
     const [ticketCounts, setTicketCounts] = useState({
         child: 0,
         Adult: 0,
@@ -17,6 +17,8 @@ function MovieTickets({ showDates= [], showTimes = [] }) {
     const [showErrorMessage, setShowErrorMessage] = useState(false); // State to toggle error message
     const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
     const navigate = useNavigate();
+    const [showDates, setShowDates] = useState([]);
+    const [showTimes, setShowTimes] = useState([]);
 
     const ticketPrices = {
         child: 5,
@@ -26,6 +28,20 @@ function MovieTickets({ showDates= [], showTimes = [] }) {
 
     const numRows = 10; // Number of rows
     const numColumns = 8; // Number of columns
+
+    // Fetch show dates and times from the API
+    useEffect(() => {
+        fetch('http://localhost:8080/getShowDateTime')
+            .then(response => response.json())
+            .then(data => {
+                // Extract dates and times from the API response
+                const dates = Object.keys(data);
+                const times = Object.values(data).flat();
+                setShowDates(dates);
+                setShowTimes(times);
+            })
+            .catch(error => console.error('Error fetching show dates and times:', error));
+    }, []);
 
     const updateTotal = () => {
         const totalSelectedTickets = Object.values(ticketCounts).reduce((acc, curr) => acc + curr, 0);
@@ -91,21 +107,21 @@ function MovieTickets({ showDates= [], showTimes = [] }) {
             {showErrorMessage && <div className="error-message">Please select showtime, date, seats, and tickets before continuing.</div>}
             <div className="movie-container">
                 <div>
-                    <label htmlFor="showtime">Select Showtime:</label>
-                    <select id="showtime" onChange={(e) => setSelectedShowtime(e.target.value)}>
-                        <option value="">Select Showtime</option>
-                        {showTimes.map((time, index) => (
-                            <option key={index} value={time}>{time}</option>
-                        ))}
-                    </select>
                     <label htmlFor="showDate">Select Date:</label>
-                    <select id="showDate" onChange={(e) => setSelectedDate(e.target.value)}>
+                        <select id="showDate" onChange={(e) => setSelectedDate(e.target.value)}>
                         <option value="">Select Date</option>
                         {showDates.map((date, index) => (
                             <option key={index} value={date}>{date}</option>
                         ))}
-                    </select>
-                    <h5>Select category and Ticket:</h5>
+                        </select>
+                    <label htmlFor="showtime">Select Showtime:</label>
+                        <select id="showtime" onChange={(e) => setSelectedShowtime(e.target.value)}>
+                            <option value="">Select Showtime</option>
+                            {showTimes.map((time, index) => (
+                                <option key={index} value={time}>{time}</option>
+                            ))}
+                        </select>
+                        <label htmlFor="category">Select Category and Tickets:</label>
                     <div className="ticket-row">
                         <div className="ticket-group">
                             <label htmlFor="child">Child(0-17):</label>

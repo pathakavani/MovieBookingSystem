@@ -2,8 +2,11 @@ package com.example.movies;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.Base64;
+import java.util.HashMap;
+
 // import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -856,6 +859,50 @@ public class MoviesApplication {
         } catch (SQLException e) {
             System.err.println("Error checking show conflict: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error checking show conflict.");
+        }
+    }
+
+    /**
+     * Retrieves the date and time information for a given movie ID in key-value
+     * format.
+     *
+     * @param movieId The ID of the movie for which show dates and times are
+     *                requested.
+     * @return ResponseEntity containing a map where dates are keys and lists of
+     *         times are values,
+     *         or an error response if the operation fails.
+     */
+    @GetMapping("/getShowDateTime")
+    public ResponseEntity<Map<String, List<String>>> getShowDateTime(@RequestParam("movieId") int movieId) {
+        try {
+            String sql = "SELECT date, time FROM shows JOIN show_period ON shows.periodID = show_period.periodID WHERE movieID = ?";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, movieId);
+            ResultSet resultSet = statement.executeQuery();
+
+            Map<String, List<String>> showDateTimeMap = new HashMap<>();
+            while (resultSet.next()) {
+                String date = resultSet.getString("date");
+                String time = resultSet.getString("time");
+
+                // Check if the date key exists in the map
+                if (showDateTimeMap.containsKey(date)) {
+                    // If the date key exists, add the time to its corresponding list
+                    showDateTimeMap.get(date).add(time);
+                } else {
+                    // If the date key doesn't exist, create a new list with the time and add it to
+                    // the map
+                    List<String> timeList = new ArrayList<>();
+                    timeList.add(time);
+                    showDateTimeMap.put(date, timeList);
+                }
+            }
+
+            // Return the organized data in the response
+            return ResponseEntity.ok(showDateTimeMap);
+        } catch (SQLException e) {
+            System.err.println("Error fetching show date and time: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 }
