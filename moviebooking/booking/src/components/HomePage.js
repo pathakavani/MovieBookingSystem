@@ -46,13 +46,13 @@ function HomePage({ route, navigation }) {
 
   const today = new Date();
   
-  const showingNowMovies = movies.filter((movie) => {
-    const showDate = new Date(movie.showDates);
+  const showingNowMovies = moves.filter((movie) => {
+    const showDate = Date.parse(movie.release_date);
     return showDate <= today;
   });
 
-  const comingSoonMovies = movies.filter((movie) => {
-    const showDate = new Date(movie.showDates);
+  const comingSoonMovies = moves.filter((movie) => {
+    const showDate = Date.parse(movie.release_date);
     return showDate > today;
   });
 
@@ -92,27 +92,23 @@ function HomePage({ route, navigation }) {
       <section>
         <h2 className="section-heading">Showing Now</h2>
         <div className="movie-grid">
-          {showingNowMovies ? showingNowMovies.map((movie, index) => (
+          {showingNowMovies.map((movie, index) => (
             <div key={index} className="movie-card" onClick={() => openModal(movie)}>
               <img src={movie.url} alt={`${movie.title} Poster`} className="movie-poster" />
               <div className="movie-title">{movie.title}</div>
             </div>
-          )): <div>
-          <h1>No Movies</h1>
-          </div>}
+          ))}
         </div>
       </section>
       <section>
         <h2 className="section-heading">Coming Soon</h2>
         <div className="movie-grid">
-          {comingSoonMovies ? comingSoonMovies.map((movie, index) => (
+          {comingSoonMovies.map((movie, index) => (
             <div key={index} className="movie-card" onClick={() => openModal(movie)}>
               <img src={movie.poster} alt={`${movie.title} Poster`} className="movie-poster" />
               <div className="movie-title">{movie.title}</div>
             </div>
-          )): <div>
-            <h1>No Movies</h1>
-            </div>}
+          ))}
         </div>
       </section>
       {modalVisible && selectedMovie && (
