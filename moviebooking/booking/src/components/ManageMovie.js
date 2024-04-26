@@ -52,8 +52,9 @@ function ManageMovie() {
       try {
         const response = await axios.put(`http://localhost:8080/updateMovie/${movie.id}`, movie);
         console.log('Update Movie:', response);
+        editMovie(movie);
+        getMovies();
         alert(response.data);
-        editMovie(movie); // Ensure that the correct movie object with the id property is passed
       } catch (error) {
         console.error('Error updating movie:', error);
       }
@@ -62,6 +63,7 @@ function ManageMovie() {
         console.log('movie:', movie);
         const response = await axios.post('http://localhost:8080/addMovie', movie);
         addMovie(response.data);
+        getMovies();
         alert(response.data);
         console.log('adding movie response:', response.data);
       } catch (error) {
