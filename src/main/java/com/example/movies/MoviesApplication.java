@@ -29,8 +29,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -57,7 +55,8 @@ public class MoviesApplication {
 
     Connection connection;
 
-    // Assuming you have a ThreadPoolTaskExecutor bean configured in your application context
+    // Assuming you have a ThreadPoolTaskExecutor bean configured in your
+    // application context
     @Autowired
     private ThreadPoolTaskExecutor taskExecutor;
 
@@ -67,9 +66,9 @@ public class MoviesApplication {
      */
     public MoviesApplication() {
         movies = new ArrayList<>();
-        String jdbcUrl = "jdbc:mysql://localhost:33306/Final_Movie_Booking"; // jdbc:mysql://localhost:33306/Movie_Booking
+        String jdbcUrl = "jdbc:mysql://localhost:3306/Final_Movie_Booking"; // jdbc:mysql://localhost:33306/Movie_Booking
         String username = "root";// change this
-        String password = "bathinda"; // and that, pass: root123@ (for my reference - ruchitha)
+        String password = "root123@"; // and that, pass: root123@ (for my reference - ruchitha)
 
         try {
             connection = DriverManager.getConnection(jdbcUrl, username, password);
@@ -876,57 +875,42 @@ public class MoviesApplication {
      *         or an error response if the operation fails.
      */
     @GetMapping("/getShowDateTime")
-    public ResponseEntity< ArrayList<Times>> getShowDateTime(@RequestParam("movieId") String movieId) {
+    public ResponseEntity<Map<String, List<String>>> getShowDateTime(@RequestParam("movieId") int movieId) {
         try {
-            String sql = "SELECT date, time FROM movies, shows JOIN show_period ON shows.periodID = show_period.periodID WHERE title = ?";
+            String sql = "SELECT date, time FROM shows JOIN show_period ON shows.periodID = show_period.periodID WHERE movieID = ?";
             PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setString(1, movieId);
+            statement.setInt(1, movieId);
             ResultSet resultSet = statement.executeQuery();
-            ArrayList <Times> ts = new ArrayList<>();
-            //Map<String, List<String>> showDateTimeMap = new HashMap<>();
-            String current = "";
+
+            Map<String, List<String>> showDateTimeMap = new HashMap<>();
             while (resultSet.next()) {
                 String date = resultSet.getString("date");
                 String time = resultSet.getString("time");
-                if (indexOfDate(ts, date) > 0) {
-                    ts.get(indexOfDate(ts, date)).addTime(time);
-                    System.out.println(ts.get(indexOfDate(ts, date)));
+
+                // Check if the date key exists in the map
+                if (showDateTimeMap.containsKey(date)) {
+                    // If the date key exists, add the time to its corresponding list
+                    if (!showDateTimeMap.get(date).contains(time)) {
+                        // If the time is not already in the list, add it
+                        showDateTimeMap.get(date).add(time);
+                    }
+                } else {
+                    // If the date key doesn't exist, create a new list with the time and add it to
+                    // the map
+                    List<String> timeList = new ArrayList<>();
+                    timeList.add(time);
+                    showDateTimeMap.put(date, timeList);
                 }
-                else {
-                    ts.add(new Times(date));
-                    ts.get(indexOfDate(ts, date)).addTime(time);
-                }
-                // Times t = new Times(date);
-                // if (t.date.equals(date)) {
-                //     // Check if the date key exists in the map
-                //     if (!t.times.contains(time)) {
-                //         // If the time is not already in the list, add it
-                //         t.addTime(time);
-                //     }
-                // } else {
-                //     // If the date key doesn't exist, create a new list with the time and add it to
-                //     // the map
-                //     ts.add(t);
-                // }
             }
-            System.out.println(ts.get(0).times);
+
             // Return the organized data in the response
-            return ResponseEntity.ok(ts);
+            return ResponseEntity.ok(showDateTimeMap);
         } catch (SQLException e) {
             System.err.println("Error fetching show date and time: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-            //
         }
     }
 
-    int indexOfDate(ArrayList <Times> ts, String date) {
-        for (int i = 0; i < ts.size(); i++ ) {
-            if (ts.get(i).date.equals(date)) {
-                return i;
-            }
-        }
-        return -1;
-    }
     @Async
     private void sendEmailAsync(String recipient, String subject, String content) {
         taskExecutor.execute(() -> sendPromoEmail(recipient, subject, content));
@@ -944,7 +928,7 @@ public class MoviesApplication {
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setInt(1, 1); // Enrolled users
             ResultSet resultSet = statement.executeQuery();
-    
+
             // Loop through the results and send email to each user
             while (resultSet.next()) {
                 String recipient = resultSet.getString("email");
@@ -956,7 +940,6 @@ public class MoviesApplication {
             System.err.println("Failed to send promotion emails: " + e.getMessage());
         }
     }
-    
 
     private String buildPromotionDetails(Connection connection, String promoCode) throws SQLException {
         StringBuilder promotionDetails = new StringBuilder("Promotion Details:\n");
@@ -966,10 +949,13 @@ public class MoviesApplication {
             try (ResultSet promotionResultSet = promotionStatement.executeQuery()) {
                 if (promotionResultSet.next()) {
                     promotionDetails.append("Title: ").append(promotionResultSet.getString("title")).append("\n");
-                    promotionDetails.append("Discount Code: ").append(promotionResultSet.getString("promoCode")).append("\n");
-                    promotionDetails.append("Start Date: ").append(promotionResultSet.getString("startDate")).append("\n");
+                    promotionDetails.append("Discount Code: ").append(promotionResultSet.getString("promoCode"))
+                            .append("\n");
+                    promotionDetails.append("Start Date: ").append(promotionResultSet.getString("startDate"))
+                            .append("\n");
                     promotionDetails.append("End Date: ").append(promotionResultSet.getString("endDate")).append("\n");
-                    promotionDetails.append("Discount: ").append(promotionResultSet.getString("discount")).append("%\n\n");
+                    promotionDetails.append("Discount: ").append(promotionResultSet.getString("discount"))
+                            .append("%\n\n");
                 }
             }
         }
@@ -982,7 +968,7 @@ public class MoviesApplication {
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
             helper.setTo(recipient);
             helper.setSubject(subject);
-    
+
             // Split the content by newline character and add <br> tags
             String[] contentParts = content.split("\\n");
             StringBuilder htmlContent = new StringBuilder();
@@ -996,9 +982,9 @@ public class MoviesApplication {
             htmlContent.append("</p>");
             htmlContent.append("<p>Best regards,<br>MovieHub</p>");
             htmlContent.append("</body></html>");
-    
+
             helper.setText(htmlContent.toString(), true);
-    
+
             emailSender.send(message);
             System.out.println("Email sent successfully to: " + recipient);
         } catch (MessagingException e) {
@@ -1009,37 +995,37 @@ public class MoviesApplication {
 
     @PostMapping("/addPromotion")
     public ResponseEntity<String> addPromotion(@RequestBody Promotion promotionRequest) {
-    try {
-        // Prepare the SQL statement to insert the promotion into the database
-        String sql = "INSERT INTO promotion (promoCode, startDate, endDate, discount, title) " +
-                     "VALUES (?, ?, ?, ?, ?)";
-        PreparedStatement statement = connection.prepareStatement(sql);
+        try {
+            // Prepare the SQL statement to insert the promotion into the database
+            String sql = "INSERT INTO promotion (promoCode, startDate, endDate, discount, title) " +
+                    "VALUES (?, ?, ?, ?, ?)";
+            PreparedStatement statement = connection.prepareStatement(sql);
 
-        // Set the values from the promotionRequest object
-        statement.setString(1, promotionRequest.promoCode);
-        statement.setString(2, promotionRequest.startDate);
-        statement.setString(3, promotionRequest.endDate);
-        statement.setString(4, promotionRequest.discount);
-        statement.setString(5, promotionRequest.title);
+            // Set the values from the promotionRequest object
+            statement.setString(1, promotionRequest.promoCode);
+            statement.setString(2, promotionRequest.startDate);
+            statement.setString(3, promotionRequest.endDate);
+            statement.setString(4, promotionRequest.discount);
+            statement.setString(5, promotionRequest.title);
 
-        // Execute the update
-        int rowsAffected = statement.executeUpdate();
-        if (rowsAffected > 0) {
-            System.out.println("Promotion added successfully.");
+            // Execute the update
+            int rowsAffected = statement.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println("Promotion added successfully.");
 
-            //System.out.println("latest promo code: " + promotionRequest.promoCode);
-            
-            // Call sendPromotionEmails with the promoCode of the newly added promotion
-            sendPromotionEmailsAsync(connection, promotionRequest.promoCode);
-            
-            return ResponseEntity.ok("Promotion added successfully");
-        } else {
-            System.out.println("Error adding promotion.");
+                // System.out.println("latest promo code: " + promotionRequest.promoCode);
+
+                // Call sendPromotionEmails with the promoCode of the newly added promotion
+                sendPromotionEmailsAsync(connection, promotionRequest.promoCode);
+
+                return ResponseEntity.ok("Promotion added successfully");
+            } else {
+                System.out.println("Error adding promotion.");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error adding promotion.");
+            }
+        } catch (SQLException e) {
+            System.err.println("Error adding promotion: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error adding promotion.");
         }
-    } catch (SQLException e) {
-        System.err.println("Error adding promotion: " + e.getMessage());
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error adding promotion.");
     }
-}
 }

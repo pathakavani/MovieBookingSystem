@@ -46,30 +46,27 @@ function HomePage({ route, navigation }) {
 
   const today = new Date();
   
-  const showingNowMovies = moves.filter((movie) => {
-    const showDate = Date.parse(movie.release_date);
+  const showingNowMovies = movies.filter((movie) => {
+    const showDate = new Date(movie.showDates);
     return showDate <= today;
   });
 
-  const comingSoonMovies = moves.filter((movie) => {
-    const showDate = Date.parse(movie.release_date);
-    
+  const comingSoonMovies = movies.filter((movie) => {
+    const showDate = new Date(movie.showDates);
     return showDate > today;
   });
 
-  // const filteredShowingNowMovies = searchTerm
-  //   ? showingNowMovies.filter((movie) =>
-  //       movie.title.toLowerCase().includes(searchTerm.toLowerCase())
-  //        && Date.parse(movie.release_date) <= Date.now
-  //     )
-  //   : showingNowMovies;
+  const filteredShowingNowMovies = searchTerm
+    ? showingNowMovies.filter((movie) =>
+        movie.title.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    : showingNowMovies;
 
-  // const filteredComingSoonMovies = searchTerm
-  //   ? comingSoonMovies.filter((movie) =>
-  //       movie.title.toLowerCase().includes(searchTerm.toLowerCase())
-  //       && Date.parse(movie.release_date) <= Date.now
-  //     )
-  //   : comingSoonMovies;
+  const filteredComingSoonMovies = searchTerm
+    ? comingSoonMovies.filter((movie) =>
+        movie.title.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    : comingSoonMovies;
 
   const openModal = (movie) => {
     setSelectedMovie(movie);
