@@ -16,6 +16,7 @@
   .modal-content {
     background-color: #598392; /* Intermediate color for modal background */
     padding: 20px;
+    position: relative;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
     width: 80%;
@@ -57,9 +58,11 @@
   .booking-button {
     background-color: #AEC3B0; /* Lighter color for booking button */
     color: #01161E; /* Dark text for readability */
+    position: absolute;
     padding: 10px 20px;
     margin-top: 20px;
     border: none;
+    bottom: -35px;
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.3s ease;

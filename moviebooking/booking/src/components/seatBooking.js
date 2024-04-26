@@ -241,10 +241,12 @@ function MovieTickets({ showDates= [], showTimes = [] }) {
         const areCategoriesChosen = Object.values(ticketCounts).some(count => count > 0);
         const isValid = areSeatsSelected && areCategoriesChosen && selectedShowtime && selectedDate;
 
-        setShowErrorMessage(!isValid);
-
         return isValid;
     };
+
+    useEffect(() => {
+        setShowErrorMessage(!isContinueEnabled());
+    }, [selectedSeats, ticketCounts, selectedShowtime, selectedDate]);
     
     const handleCheckout = () => {
         if (!isLoggedIn) {

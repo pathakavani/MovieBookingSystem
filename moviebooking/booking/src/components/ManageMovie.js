@@ -16,14 +16,17 @@ function ManageMovie() {
     producer: '',
     synopsis: '',
     reviews: '',
-    poster: '',
+    url: '',
     trailer: '',
-    mpaaRating: '',
-    showDates: [],
-    showTimes: [],
+    mpaa_rating: ''
   };
 
   const [movie, setMovie] = useState(initialState);
+  const [show, setShow] = useState({
+    showDates: [],
+    showTimes: [],
+    screens: []
+  });
   const [apiMovies, setApiMovies] = useState([]);
 
   const getMovies = () =>  {
@@ -45,23 +48,35 @@ function ManageMovie() {
   };
 
   const handleAddShowDate = () => {
-    setMovie({ ...movie, showDates: [...movie.showDates, ''] });
+    setShow({ ...show, showDates: [...show.showDates, ''] });
   };
 
   const handleAddShowTime = () => {
-    setMovie({ ...movie, showTimes: [...movie.showTimes, ''] });
+    setShow({ ...show, showTimes: [...show.showTimes, ''] });
   };
 
   const handleRemoveShowDate = (index) => {
-    const updatedShowDates = [...movie.showDates];
+    const updatedShowDates = [...show.showDates];
     updatedShowDates.splice(index, 1);
-    setMovie({ ...movie, showDates: updatedShowDates });
+    setShow({ ...show, showDates: updatedShowDates });
   };
 
   const handleRemoveShowTime = (index) => {
-    const updatedShowTimes = [...movie.showTimes];
+    const updatedShowTimes = [...show.showTimes];
     updatedShowTimes.splice(index, 1);
-    setMovie({ ...movie, showTimes: updatedShowTimes });
+    setShow({ ...show, showTimes: updatedShowTimes });
+  };
+
+  const handleShowDateChange = (index, value) => {
+    const updatedShowDates = [...show.showDates];
+    updatedShowDates[index] = value;
+    setShow({ ...show, showDates: updatedShowDates });
+  };
+
+  const handleShowTimeChange = (index, value) => {
+    const updatedShowTimes = [...show.showTimes];
+    updatedShowTimes[index] = value;
+    setShow({ ...show, showTimes: updatedShowTimes });
   };
 
   const handleSubmit = async (e) => {
@@ -70,6 +85,7 @@ function ManageMovie() {
       try {
         const response = await axios.put(`http://localhost:8080/updateMovie/${movie.id}`, movie);
         console.log('Update Movie:', response);
+        alert(response.data);
         editMovie(movie); // Ensure that the correct movie object with the id property is passed
       } catch (error) {
         console.error('Error updating movie:', error);
@@ -79,6 +95,7 @@ function ManageMovie() {
         console.log('movie:', movie);
         const response = await axios.post('http://localhost:8080/addMovie', movie);
         addMovie(response.data);
+        alert(response.data);
         console.log('adding movie response:', response.data);
       } catch (error) {
         console.error('Error adding movie:', error);
@@ -108,22 +125,11 @@ function ManageMovie() {
         const response = await axios.delete(`http://localhost:8080/deleteMovie/${id}`);
         console.log('Delete response:', response);
         deleteMovie(id);
+        getMovies();
       } catch (error) {
         console.error('Error deleting movie:', error);
       }
     }
-  };
-
-  const handleShowDateChange = (index, value) => {
-    const updatedShowDates = [...movie.showDates];
-    updatedShowDates[index] = value;
-    setMovie({ ...movie, showDates: updatedShowDates });
-  };
-
-  const handleShowTimeChange = (index, value) => {
-    const updatedShowTimes = [...movie.showTimes];
-    updatedShowTimes[index] = value;
-    setMovie({ ...movie, showTimes: updatedShowTimes });
   };
 
   return (
@@ -176,7 +182,7 @@ function ManageMovie() {
             </label>
             <label>
               Poster URL:
-              <input type="text" name="poster" value={movie.poster} onChange={handleChange} placeholder="Enter URL for the movie poster" />
+              <input type="text" name="poster" value={movie.url} onChange={handleChange} placeholder="Enter URL for the movie poster" />
             </label>
             <label>
               Trailer URL:
@@ -184,7 +190,7 @@ function ManageMovie() {
             </label>
             <label>
               MPAA Rating:
-              <select name="mpaaRating" value={movie.mpaaRating} onChange={handleChange}>
+              <select name="mpaaRating" value={movie.mpaa_rating} onChange={handleChange}>
                 <option value="">Select Rating</option>
                 <option value="G">G</option>
                 <option value="PG">PG</option>
@@ -195,7 +201,7 @@ function ManageMovie() {
             </label>
             <div>
               <label>Show Dates:</label>
-              {movie.showDates.map((date, index) => (
+              {show.showDates.map((date, index) => (
                 <div key={index}>
                   <input type="date" value={date} onChange={(e) => handleShowDateChange(index, e.target.value)} />
                   <button type="button" onClick={() => handleRemoveShowDate(index)}>Remove</button>
@@ -205,7 +211,7 @@ function ManageMovie() {
             </div>
             <div>
               <label>Show Times:</label>
-              {movie.showTimes.map((time, index) => (
+              {show.showTimes.map((time, index) => (
                 <div key={index}>
                   <input type="time" value={time} onChange={(e) => handleShowTimeChange(index, e.target.value)} />
                   <button type="button" onClick={() => handleRemoveShowTime(index)}>Remove</button>
