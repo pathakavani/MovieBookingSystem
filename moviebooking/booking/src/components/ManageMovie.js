@@ -19,15 +19,13 @@ function ManageMovie() {
     url: '',
     trailer: '',
     mpaa_rating: '',
-    shows: []
+    shows: [],
+    screen: '',
+    showDates: '',
+    showTimes: ''
   };
 
   const [movie, setMovie] = useState(initialState);
-  const [show, setShow] = useState({
-    showDates: [],
-    showTimes: [],
-    screens: []
-  });
   const [apiMovies, setApiMovies] = useState([]);
 
   useEffect(() => {
@@ -43,38 +41,6 @@ function ManageMovie() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setMovie({ ...movie, [name]: value });
-  };
-
-  const handleAddShowDate = () => {
-    setShow({ ...show, showDates: [...show.showDates, ''] });
-  };
-
-  const handleAddShowTime = () => {
-    setShow({ ...show, showTimes: [...show.showTimes, ''] });
-  };
-
-  const handleRemoveShowDate = (index) => {
-    const updatedShowDates = [...show.showDates];
-    updatedShowDates.splice(index, 1);
-    setShow({ ...show, showDates: updatedShowDates });
-  };
-
-  const handleRemoveShowTime = (index) => {
-    const updatedShowTimes = [...show.showTimes];
-    updatedShowTimes.splice(index, 1);
-    setShow({ ...show, showTimes: updatedShowTimes });
-  };
-
-  const handleShowDateChange = (index, value) => {
-    const updatedShowDates = [...show.showDates];
-    updatedShowDates[index] = value;
-    setShow({ ...show, showDates: updatedShowDates });
-  };
-
-  const handleShowTimeChange = (index, value) => {
-    const updatedShowTimes = [...show.showTimes];
-    updatedShowTimes[index] = value;
-    setShow({ ...show, showTimes: updatedShowTimes });
   };
 
   const handleSubmit = async (e) => {
@@ -103,17 +69,10 @@ function ManageMovie() {
     setShowForm(false);
   };
   
-
   const handleEdit = (movieToEdit) => {
-    const editedMovie = {
-      ...movieToEdit,
-      showDates: movieToEdit.showDates || [],
-      showTimes: movieToEdit.showTimes || [],
-    };
-    setMovie(editedMovie);
+    setMovie(movieToEdit);
     setShowForm(true);
   };
-  
 
   const handleDelete = async (id) => {
     const confirmed = window.confirm("Are you sure you want to delete this movie?");
@@ -204,27 +163,31 @@ function ManageMovie() {
                 ))}
               </label>
             )}
-
-            <div>
-              <label>Show Dates:</label>
-              {show.showDates.map((date, index) => (
-                <div key={index}>
-                  <input type="date" value={date} onChange={(e) => handleShowDateChange(index, e.target.value)} />
-                  <button type="button" onClick={() => handleRemoveShowDate(index)}>Remove</button>
-                </div>
-              ))}
-              <button type="button" onClick={handleAddShowDate}>Add Show Date</button>
-            </div>
-            <div>
-              <label>Show Times:</label>
-              {show.showTimes.map((time, index) => (
-                <div key={index}>
-                  <input type="time" value={time} onChange={(e) => handleShowTimeChange(index, e.target.value)} />
-                  <button type="button" onClick={() => handleRemoveShowTime(index)}>Remove</button>
-                </div>
-              ))}
-              <button type="button" onClick={handleAddShowTime}>Add Show Time</button>
-            </div>
+            <label>
+            Screen:
+            <select type="text" name="screen" onChange={handleChange}>
+            <option value="">Select Screen</option>
+              <option value="screen1">Screen 1</option>
+              <option value="screen2">Screen 2</option>
+              <option value="screen3">Screen 3</option>
+              <option value="screen4">Screen 4</option>
+              <option value="screen5">Screen 5</option>
+            </select>
+          </label>
+            <label>
+              Show Dates:
+              <input type="date" name="showDates" onChange={handleChange} />
+            </label>
+            <label>
+              Show Times:
+              <select type="time" name="showTimes" onChange={handleChange}>
+              <option value="">Select Show Time</option>
+              <option value="showTime1">10:00:00</option>
+              <option value="showTime2">13:00:00</option>
+              <option value="showTime3">16:00:00</option>
+              <option value="showTime4">20:00:00</option>
+            </select>
+            </label>
             <button type="submit">Submit</button>
           </form>
         </div>

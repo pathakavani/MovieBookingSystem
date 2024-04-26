@@ -31,6 +31,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.Date;
+import java.sql.Time;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -58,7 +59,7 @@ public class MoviesApplication {
      */
     public MoviesApplication() {
         movies = new ArrayList<>();
-        String jdbcUrl = "jdbc:mysql://localhost:3306/Movie_Booking"; // jdbc:mysql://localhost:33306/Movie_Booking
+        String jdbcUrl = "jdbc:mysql://localhost:3306/Final_Movie_Booking"; // jdbc:mysql://localhost:33306/Movie_Booking
         String username = "root";// change this
         String password = "root123@"; // and that, pass: root123@ (for my reference - ruchitha)
 
@@ -66,6 +67,21 @@ public class MoviesApplication {
             connection = DriverManager.getConnection(jdbcUrl, username, password);
             System.out.println("Database connection secured");
 
+            // Movie
+            getAllMovies();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Get's all the currently stored movies.
+     *
+     */
+    public void getAllMovies() {
+        movies = new ArrayList<>();
+        try {
             // Movie
             String sql = "SELECT m.movie_id, m.title, m.category, m.release_date, m.director, " +
                     "m.duration_minutes, m.mpaa_rating, m.synopsis, m.poster_url, " +
@@ -116,6 +132,8 @@ public class MoviesApplication {
                     if (!dateStr.isEmpty() && !timeStr.isEmpty() && !resultSet.wasNull()) {
                         String showDateTime = dateStr + " " + timeStr + " (Screen ID: " + screenID + ")";
                         movie.addShow(showDateTime);
+                        movie.addShowDates(Date.valueOf(dateStr));
+                        movie.addShowTime(Time.valueOf(timeStr));
                     }
                     movies.add(movie);
                 }
@@ -396,6 +414,7 @@ public class MoviesApplication {
     @GetMapping("/movies")
     @ResponseBody
     public List<Movies> getMovies() {
+        getAllMovies();
         return movies;
     }
 
