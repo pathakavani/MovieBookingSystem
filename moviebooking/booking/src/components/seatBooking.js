@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './seatBooking.css';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
 
@@ -19,9 +19,8 @@ function MovieTickets() {
     const navigate = useNavigate();
     const [showDates, setShowDates] = useState([]);
     const [showTimes, setShowTimes] = useState([]);
-    const [movie, setMovie] = useState({
-        id: null
-    });
+    const movieId = 17;
+    //const { state: { movie } } = useLocation();
 
     const ticketPrices = {
         child: 5,
@@ -32,20 +31,38 @@ function MovieTickets() {
     const numRows = 10; // Number of rows
     const numColumns = 8; // Number of columns
 
-    // Fetch show dates and times from the API
+    // Fetch show dates and times from the API based on the retrieved movie object
     useEffect(() => {
-        const movieId = movie.id;
-        console.log('Movie id:', movieId);
+        // if (movie && movie.id) {
         fetch(`http://localhost:8080/getShowDateTime?movieId=${movieId}`)
             .then(response => response.json())
             .then(data => {
                 const dates = Object.keys(data);
-                const times = Object.values(data).flat();
                 setShowDates(dates);
-                setShowTimes(times);
+                // Set initial show times for the first date
+                if (dates.length > 0) {
+                    const initialTimes = data[dates[0]];
+                    setShowTimes(initialTimes);
+                    setSelectedDate(dates[0]); // Set the default selected date
+                }
             })
             .catch(error => console.error('Error fetching show dates and times:', error));
+        // }
     }, []);
+
+    // Update show times when the selected date changes
+    useEffect(() => {
+        if (selectedDate) {
+            fetch(`http://localhost:8080/getShowDateTime?movieId=${movieId}`)
+                .then(response => response.json())
+                .then(data => {
+                    const selectedTimes = data[selectedDate];
+                    setShowTimes(selectedTimes);
+                })
+                .catch(error => console.error('Error fetching show times for the selected date:', error));
+        }
+    }, [selectedDate]);
+
 
     const updateTotal = () => {
         const totalSelectedTickets = Object.values(ticketCounts).reduce((acc, curr) => acc + curr, 0);

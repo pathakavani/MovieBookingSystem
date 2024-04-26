@@ -51,7 +51,7 @@ const MovieModal = ({ movie, onClose }) => {
         <p><strong>Reviews:</strong> {movie.reviews}</p>
         <p><strong>MPAA Rating:</strong> {movie.mpaa_rating}</p>
         <p><strong>Show Date and Time:</strong> {formatDates(movie.shows)}</p>
-        <Link to="/seatBooking" className="booking-button">Book Now</Link>
+        <Link to={{ pathname: "/seatBooking", state: { movie } }} className="booking-button">Book Now</Link>
         <button className="close-button" onClick={onClose}>Close</button>
       </div>
     </div>
