@@ -8,6 +8,7 @@ export default function Navbar() {
   const email = useSelector((state) => state.login.email)
   const handleLogout = () => {
     dispatch(loginActions.setEmail(null))
+    
     navigate('/');
   };
 

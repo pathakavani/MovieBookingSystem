@@ -26,7 +26,7 @@ function ManageMovie() {
   const [movie, setMovie] = useState(initialState);
   const [apiMovies, setApiMovies] = useState([]);
 
-  useEffect(() => {
+  const getMovies = () =>  {
     axios.get('http://localhost:8080/movies')
       .then(response => {
         setApiMovies(response.data);
@@ -34,6 +34,9 @@ function ManageMovie() {
       .catch(error => {
         console.error('Error fetching movies:', error);
       });
+  }
+  useEffect(() => {
+     getMovies();
   }, []);
 
   const handleChange = (e) => {
