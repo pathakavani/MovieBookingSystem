@@ -7,7 +7,6 @@ import java.util.UUID;
 import java.util.Base64;
 import java.util.HashMap;
 
-import java.sql.Statement;
 // import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -27,13 +26,15 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import com.mysql.cj.x.protobuf.MysqlxCrud.Update;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+
+
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.Date;
-import java.sql.Time;
 import java.time.LocalDate;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -55,6 +56,10 @@ public class MoviesApplication {
     private JavaMailSender emailSender;
 
     Connection connection;
+
+    // Assuming you have a ThreadPoolTaskExecutor bean configured in your application context
+    @Autowired
+    private ThreadPoolTaskExecutor taskExecutor;
 
     /**
      * Constructor for MoviesApplication class.
@@ -907,6 +912,16 @@ public class MoviesApplication {
         }
     }
 
+    @Async
+    private void sendEmailAsync(String recipient, String subject, String content) {
+        taskExecutor.execute(() -> sendPromoEmail(recipient, subject, content));
+    }
+
+    @Async
+    public void sendPromotionEmailsAsync(Connection connection, String promoCode) {
+        sendPromotionEmails(connection, promoCode);
+    }
+
     public void sendPromotionEmails(Connection connection, String promoCode) {
         try {
             // Query the database to retrieve users enrolled for promotion
@@ -919,7 +934,7 @@ public class MoviesApplication {
             while (resultSet.next()) {
                 String recipient = resultSet.getString("email");
                 String promotionDetails = buildPromotionDetails(connection, promoCode); // Pass promoCode
-                sendPromoEmail(recipient, "New Promotion!", promotionDetails);
+                sendEmailAsync(recipient, "New Promotion!", promotionDetails);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -931,29 +946,44 @@ public class MoviesApplication {
     private String buildPromotionDetails(Connection connection, String promoCode) throws SQLException {
         StringBuilder promotionDetails = new StringBuilder("Promotion Details:\n");
         String promotionQuery = "SELECT * FROM promotion WHERE promoCode = ?";
-        PreparedStatement promotionStatement = connection.prepareStatement(promotionQuery);
-        promotionStatement.setString(1, promoCode);
-        ResultSet promotionResultSet = promotionStatement.executeQuery();
-    
-        if (promotionResultSet.next()) {
-            promotionDetails.append("Title: ").append(promotionResultSet.getString("title")).append("\n");
-            promotionDetails.append("Discount Code: ").append(promotionResultSet.getString("promoCode")).append("\n");
-            promotionDetails.append("Start Date: ").append(promotionResultSet.getString("startDate")).append("\n");
-            promotionDetails.append("End Date: ").append(promotionResultSet.getString("endDate")).append("\n");
-            promotionDetails.append("Discount: ").append(promotionResultSet.getString("discount")).append("%\n\n");
+        try (PreparedStatement promotionStatement = connection.prepareStatement(promotionQuery)) {
+            promotionStatement.setString(1, promoCode);
+            try (ResultSet promotionResultSet = promotionStatement.executeQuery()) {
+                if (promotionResultSet.next()) {
+                    promotionDetails.append("Title: ").append(promotionResultSet.getString("title")).append("\n");
+                    promotionDetails.append("Discount Code: ").append(promotionResultSet.getString("promoCode")).append("\n");
+                    promotionDetails.append("Start Date: ").append(promotionResultSet.getString("startDate")).append("\n");
+                    promotionDetails.append("End Date: ").append(promotionResultSet.getString("endDate")).append("\n");
+                    promotionDetails.append("Discount: ").append(promotionResultSet.getString("discount")).append("%\n\n");
+                }
+            }
         }
-    
         return promotionDetails.toString();
     }
 
     private void sendPromoEmail(String recipient, String subject, String content) {
         MimeMessage message = emailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message);
-
         try {
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
             helper.setTo(recipient);
             helper.setSubject(subject);
-            helper.setText(content);
+    
+            // Split the content by newline character and add <br> tags
+            String[] contentParts = content.split("\\n");
+            StringBuilder htmlContent = new StringBuilder();
+            htmlContent.append("<html><body>");
+            htmlContent.append("<h1 style='color: #008080;'>Promotional Email from MovieHub</h1>");
+            htmlContent.append("<p>Dear Customer,</p>");
+            htmlContent.append("<p>");
+            for (String part : contentParts) {
+                htmlContent.append(part).append("<br>");
+            }
+            htmlContent.append("</p>");
+            htmlContent.append("<p>Best regards,<br>MovieHub</p>");
+            htmlContent.append("</body></html>");
+    
+            helper.setText(htmlContent.toString(), true);
+    
             emailSender.send(message);
             System.out.println("Email sent successfully to: " + recipient);
         } catch (MessagingException e) {
@@ -968,7 +998,7 @@ public class MoviesApplication {
         // Prepare the SQL statement to insert the promotion into the database
         String sql = "INSERT INTO promotion (promoCode, startDate, endDate, discount, title) " +
                      "VALUES (?, ?, ?, ?, ?)";
-        PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        PreparedStatement statement = connection.prepareStatement(sql);
 
         // Set the values from the promotionRequest object
         statement.setString(1, promotionRequest.promoCode);
@@ -982,16 +1012,10 @@ public class MoviesApplication {
         if (rowsAffected > 0) {
             System.out.println("Promotion added successfully.");
 
-        // Get the generated promoCode of the newly added promotion
-        ResultSet generatedKeys = statement.getGeneratedKeys();
-        String promoCode = null;
-        if (generatedKeys.next()) {
-            promoCode = generatedKeys.getString(1);
-        }
-        System.out.println("latest promo code: " + promoCode);
-
-           // Call sendPromotionEmails with the promoCode of the newly added promotion
-           sendPromotionEmails(connection, promoCode);
+            //System.out.println("latest promo code: " + promotionRequest.promoCode);
+            
+            // Call sendPromotionEmails with the promoCode of the newly added promotion
+            sendPromotionEmailsAsync(connection, promotionRequest.promoCode);
             
             return ResponseEntity.ok("Promotion added successfully");
         } else {
