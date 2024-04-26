@@ -46,27 +46,30 @@ function HomePage({ route, navigation }) {
 
   const today = new Date();
   
-  const showingNowMovies = movies.filter((movie) => {
-    const showDate = new Date(movie.showDates);
+  const showingNowMovies = moves.filter((movie) => {
+    const showDate = Date.parse(movie.release_date);
     return showDate <= today;
   });
 
-  const comingSoonMovies = movies.filter((movie) => {
-    const showDate = new Date(movie.showDates);
+  const comingSoonMovies = moves.filter((movie) => {
+    const showDate = Date.parse(movie.release_date);
+    
     return showDate > today;
   });
 
-  const filteredShowingNowMovies = searchTerm
-    ? showingNowMovies.filter((movie) =>
-        movie.title.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    : showingNowMovies;
+  // const filteredShowingNowMovies = searchTerm
+  //   ? showingNowMovies.filter((movie) =>
+  //       movie.title.toLowerCase().includes(searchTerm.toLowerCase())
+  //        && Date.parse(movie.release_date) <= Date.now
+  //     )
+  //   : showingNowMovies;
 
-  const filteredComingSoonMovies = searchTerm
-    ? comingSoonMovies.filter((movie) =>
-        movie.title.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    : comingSoonMovies;
+  // const filteredComingSoonMovies = searchTerm
+  //   ? comingSoonMovies.filter((movie) =>
+  //       movie.title.toLowerCase().includes(searchTerm.toLowerCase())
+  //       && Date.parse(movie.release_date) <= Date.now
+  //     )
+  //   : comingSoonMovies;
 
   const openModal = (movie) => {
     setSelectedMovie(movie);
@@ -92,7 +95,7 @@ function HomePage({ route, navigation }) {
       <section>
         <h2 className="section-heading">Showing Now</h2>
         <div className="movie-grid">
-          {moves.map((movie, index) => (
+          {showingNowMovies.map((movie, index) => (
             <div key={index} className="movie-card" onClick={() => openModal(movie)}>
               <img src={movie.url} alt={`${movie.title} Poster`} className="movie-poster" />
               <div className="movie-title">{movie.title}</div>
@@ -103,7 +106,7 @@ function HomePage({ route, navigation }) {
       <section>
         <h2 className="section-heading">Coming Soon</h2>
         <div className="movie-grid">
-          {filteredComingSoonMovies.map((movie, index) => (
+          {comingSoonMovies.map((movie, index) => (
             <div key={index} className="movie-card" onClick={() => openModal(movie)}>
               <img src={movie.poster} alt={`${movie.title} Poster`} className="movie-poster" />
               <div className="movie-title">{movie.title}</div>

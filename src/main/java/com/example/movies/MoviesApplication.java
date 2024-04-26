@@ -67,9 +67,9 @@ public class MoviesApplication {
      */
     public MoviesApplication() {
         movies = new ArrayList<>();
-        String jdbcUrl = "jdbc:mysql://localhost:3306/Final_Movie_Booking"; // jdbc:mysql://localhost:33306/Movie_Booking
+        String jdbcUrl = "jdbc:mysql://localhost:33306/Final_Movie_Booking"; // jdbc:mysql://localhost:33306/Movie_Booking
         String username = "root";// change this
-        String password = "inava123"; // and that, pass: root123@ (for my reference - ruchitha)
+        String password = "bathinda"; // and that, pass: root123@ (for my reference - ruchitha)
 
         try {
             connection = DriverManager.getConnection(jdbcUrl, username, password);
@@ -876,42 +876,57 @@ public class MoviesApplication {
      *         or an error response if the operation fails.
      */
     @GetMapping("/getShowDateTime")
-    public ResponseEntity<Map<String, List<String>>> getShowDateTime(@RequestParam("movieId") int movieId) {
+    public ResponseEntity< ArrayList<Times>> getShowDateTime(@RequestParam("movieId") String movieId) {
         try {
-            String sql = "SELECT date, time FROM shows JOIN show_period ON shows.periodID = show_period.periodID WHERE movieID = ?";
+            String sql = "SELECT date, time FROM movies, shows JOIN show_period ON shows.periodID = show_period.periodID WHERE title = ?";
             PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setInt(1, movieId);
+            statement.setString(1, movieId);
             ResultSet resultSet = statement.executeQuery();
-
-            Map<String, List<String>> showDateTimeMap = new HashMap<>();
+            ArrayList <Times> ts = new ArrayList<>();
+            //Map<String, List<String>> showDateTimeMap = new HashMap<>();
+            String current = "";
             while (resultSet.next()) {
                 String date = resultSet.getString("date");
                 String time = resultSet.getString("time");
-
-                // Check if the date key exists in the map
-                if (showDateTimeMap.containsKey(date)) {
-                    // If the date key exists, add the time to its corresponding list
-                    if (!showDateTimeMap.get(date).contains(time)) {
-                        // If the time is not already in the list, add it
-                        showDateTimeMap.get(date).add(time);
-                    }
-                } else {
-                    // If the date key doesn't exist, create a new list with the time and add it to
-                    // the map
-                    List<String> timeList = new ArrayList<>();
-                    timeList.add(time);
-                    showDateTimeMap.put(date, timeList);
+                if (indexOfDate(ts, date) > 0) {
+                    ts.get(indexOfDate(ts, date)).addTime(time);
+                    System.out.println(ts.get(indexOfDate(ts, date)));
                 }
+                else {
+                    ts.add(new Times(date));
+                    ts.get(indexOfDate(ts, date)).addTime(time);
+                }
+                // Times t = new Times(date);
+                // if (t.date.equals(date)) {
+                //     // Check if the date key exists in the map
+                //     if (!t.times.contains(time)) {
+                //         // If the time is not already in the list, add it
+                //         t.addTime(time);
+                //     }
+                // } else {
+                //     // If the date key doesn't exist, create a new list with the time and add it to
+                //     // the map
+                //     ts.add(t);
+                // }
             }
-
+            System.out.println(ts.get(0).times);
             // Return the organized data in the response
-            return ResponseEntity.ok(showDateTimeMap);
+            return ResponseEntity.ok(ts);
         } catch (SQLException e) {
             System.err.println("Error fetching show date and time: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            //
         }
     }
 
+    int indexOfDate(ArrayList <Times> ts, String date) {
+        for (int i = 0; i < ts.size(); i++ ) {
+            if (ts.get(i).date.equals(date)) {
+                return i;
+            }
+        }
+        return -1;
+    }
     @Async
     private void sendEmailAsync(String recipient, String subject, String content) {
         taskExecutor.execute(() -> sendPromoEmail(recipient, subject, content));

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './seatBooking.css';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-
+// import { useLocation } from 'react-router-dom';
 
 function MovieTickets() {
     const [ticketCounts, setTicketCounts] = useState({
@@ -10,7 +10,9 @@ function MovieTickets() {
         Adult: 0,
         senior: 0
     });
-
+    // const location = useLocation();
+    // const searchParams = new URLSearchParams(location.search);
+    // const parameterValue = searchParams.get('movie');
     const [selectedSeats, setSelectedSeats] = useState([]);
     const [selectedShowtime, setSelectedShowtime] = useState(''); // State to store selected showtime
     const [selectedDate, setSelectedDate] = useState(''); // State to store selected date
@@ -19,7 +21,8 @@ function MovieTickets() {
     const navigate = useNavigate();
     const [showDates, setShowDates] = useState([]);
     const [showTimes, setShowTimes] = useState([]);
-    const movieId = 17;
+    const movieId = useSelector((state) => state.cmovie.id);
+    // console.log(movieId)
     //const { state: { movie } } = useLocation();
 
     const ticketPrices = {
@@ -35,17 +38,36 @@ function MovieTickets() {
     useEffect(() => {
         // if (movie && movie.id) {
         fetch(`http://localhost:8080/getShowDateTime?movieId=${movieId}`)
-            .then(response => response.json())
-            .then(data => {
-                const dates = Object.keys(data);
-                setShowDates(dates);
-                // Set initial show times for the first date
-                if (dates.length > 0) {
-                    const initialTimes = data[dates[0]];
-                    setShowTimes(initialTimes);
-                    setSelectedDate(dates[0]); // Set the default selected date
-                }
+            .then(response => {
+                response.json().then(data => {
+                    data.map((item) => {
+                        setShowDates(showDates => [...showDates, item.date]);
+                        setShowTimes(showTimes => [...showTimes, item.times])
+                    })
+                //     console.log(data[0].date)
+
+                // const dates = Object.keys(data);
+                
+                // // Set initial show times for the first date
+                // if (dates.length > 0) {
+                //     const initialTimes = data[dates[0]];
+                //     setShowTimes(showTimes => [...showTimes, initialTimes]);
+                //     setSelectedDate(dates[0]); // Set the default selected date
+                // }
+                })
+                
             })
+            // .then(data => {
+            //     console.log(data)
+            //     const dates = Object.keys(data);
+            //     setShowDates(dates);
+            //     // Set initial show times for the first date
+            //     if (dates.length > 0) {
+            //         const initialTimes = data[dates[0]];
+            //         setShowTimes(initialTimes);
+            //         setSelectedDate(dates[0]); // Set the default selected date
+            //     }
+            // })
             .catch(error => console.error('Error fetching show dates and times:', error));
         // }
     }, []);
