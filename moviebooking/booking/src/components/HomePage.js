@@ -95,23 +95,27 @@ function HomePage({ route, navigation }) {
       <section>
         <h2 className="section-heading">Showing Now</h2>
         <div className="movie-grid">
-          {showingNowMovies.map((movie, index) => (
+          {showingNowMovies ? showingNowMovies.map((movie, index) => (
             <div key={index} className="movie-card" onClick={() => openModal(movie)}>
               <img src={movie.url} alt={`${movie.title} Poster`} className="movie-poster" />
               <div className="movie-title">{movie.title}</div>
             </div>
-          ))}
+          )): <div>
+          <h1>No Movies</h1>
+          </div>}
         </div>
       </section>
       <section>
         <h2 className="section-heading">Coming Soon</h2>
         <div className="movie-grid">
-          {comingSoonMovies.map((movie, index) => (
+          {comingSoonMovies ? comingSoonMovies.map((movie, index) => (
             <div key={index} className="movie-card" onClick={() => openModal(movie)}>
               <img src={movie.poster} alt={`${movie.title} Poster`} className="movie-poster" />
               <div className="movie-title">{movie.title}</div>
             </div>
-          ))}
+          )): <div>
+            <h1>No Movies</h1>
+            </div>}
         </div>
       </section>
       {modalVisible && selectedMovie && (
