@@ -593,12 +593,11 @@ public class MoviesApplication {
             }
 
             // Check for conflicts
-            String checkConflictQuery = "SELECT COUNT(*) FROM shows WHERE screenID = ? AND date = ? AND periodID = ? AND movieID = ?";
+            String checkConflictQuery = "SELECT COUNT(*) FROM shows WHERE screenID = ? AND date = ? AND periodID = ?";
             PreparedStatement checkConflictStatement = connection.prepareStatement(checkConflictQuery);
             checkConflictStatement.setInt(1, show.screen);
             checkConflictStatement.setDate(2, incrementedDate);
             checkConflictStatement.setInt(3, periodId);
-            checkConflictStatement.setInt(4, show.id);
             ResultSet conflictResult = checkConflictStatement.executeQuery();
             if (conflictResult.next() && conflictResult.getInt(1) > 0) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Show time conflicts with an existing show.");
