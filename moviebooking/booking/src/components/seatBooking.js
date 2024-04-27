@@ -15,12 +15,12 @@ function MovieTickets() {
     const [selectedShowtime, setSelectedShowtime] = useState(''); // State to store selected showtime
     const [selectedDate, setSelectedDate] = useState(''); // State to store selected date
     const [showErrorMessage, setShowErrorMessage] = useState(false); // State to toggle error message
-    const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
-    console.log("isLoggedIn:", isLoggedIn);  
+    const isLoggedIn = useSelector((state) => state.login.email);
+    //console.log("isLoggedIn:", isLoggedIn);  
     const navigate = useNavigate();
     const [showDates, setShowDates] = useState([]);
     const [showTimes, setShowTimes] = useState([]);
-    const movieId = 2;
+    const movieId = 3;
 
     const ticketPrices = {
         child: 5,
@@ -39,10 +39,12 @@ function MovieTickets() {
             .then(data => {
                 const dates = Object.keys(data);
                 setShowDates(dates);
+
                 // Set initial show times for the first date
                 if (dates.length > 0) {
                     const initialTimes = data[dates[0]];
                     setShowTimes(initialTimes);
+
                     setSelectedDate(dates[0]); // Set the default selected date
                 }
             })

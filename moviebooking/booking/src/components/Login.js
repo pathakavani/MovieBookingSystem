@@ -32,14 +32,12 @@ function Login() {
           console.log("Admin")
           dispatch(loginActions.setAdmin(true));
           dispatch(loginActions.setEmail(email));
-          dispatch(loginActions.setLoggedIn(true));
           navigate('/');
           
         } else if (response.data === "Login successful as customer") {
           // Redirect to homepage upon successful login
           dispatch(loginActions.setAdmin(false));
           dispatch(loginActions.setEmail(email));
-          dispatch(loginActions.setLoggedIn(true));
           navigate('/');
 
         } else {

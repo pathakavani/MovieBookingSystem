@@ -66,9 +66,9 @@ public class MoviesApplication {
      */
     public MoviesApplication() {
         movies = new ArrayList<>();
-        String jdbcUrl = "jdbc:mysql://localhost:3306/Final_Movie_Booking"; // jdbc:mysql://localhost:33306/Movie_Booking
+        String jdbcUrl = "jdbc:mysql://localhost:33306/Final_Movie_Booking"; // jdbc:mysql://localhost:33306/Movie_Booking
         String username = "root";// change this
-        String password = "root123@"; // and that, pass: root123@ (for my reference - ruchitha)
+        String password = "bathinda"; // and that, pass: root123@ (for my reference - ruchitha)
 
         try {
             connection = DriverManager.getConnection(jdbcUrl, username, password);
@@ -877,7 +877,7 @@ public class MoviesApplication {
     @GetMapping("/getShowDateTime")
     public ResponseEntity<Map<String, List<String>>> getShowDateTime(@RequestParam("movieId") int movieId) {
         try {
-            String sql = "SELECT date, time FROM shows JOIN show_period ON shows.periodID = show_period.periodID WHERE movieID = ?";
+            String sql = "SELECT date, time FROM movies, shows JOIN show_period ON shows.periodID = show_period.periodID WHERE movieID = ?";
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setInt(1, movieId);
             ResultSet resultSet = statement.executeQuery();
@@ -894,6 +894,8 @@ public class MoviesApplication {
                         // If the time is not already in the list, add it
                         showDateTimeMap.get(date).add(time);
                     }
+                    System.out.println(showDateTimeMap.get(date).get(0));
+
                 } else {
                     // If the date key doesn't exist, create a new list with the time and add it to
                     // the map
@@ -902,7 +904,6 @@ public class MoviesApplication {
                     showDateTimeMap.put(date, timeList);
                 }
             }
-
             // Return the organized data in the response
             return ResponseEntity.ok(showDateTimeMap);
         } catch (SQLException e) {
