@@ -16,11 +16,11 @@ function MovieTickets() {
     const [selectedDate, setSelectedDate] = useState(''); // State to store selected date
     const [showErrorMessage, setShowErrorMessage] = useState(false); // State to toggle error message
     const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
+    console.log("isLoggedIn:", isLoggedIn);  
     const navigate = useNavigate();
     const [showDates, setShowDates] = useState([]);
     const [showTimes, setShowTimes] = useState([]);
-    const movieId = 17;
-    //const { state: { movie } } = useLocation();
+    const movieId = 2;
 
     const ticketPrices = {
         child: 5,
@@ -103,6 +103,21 @@ function MovieTickets() {
         return seats;
     };
 
+    const handleCheckout = () => {
+        const areCategoriesChosen = Object.values(ticketCounts).some(count => count > 0);
+        if (!areCategoriesChosen || !selectedShowtime || !selectedDate || selectedSeats.length === 0) {
+            setShowErrorMessage(true);
+        } else {
+            if (!isLoggedIn) {
+                navigate('/login');
+            } else {
+                // Check if the user is already logged in and navigate accordingly
+                navigate('/checkout');
+            }
+        }
+    };
+    
+
     const isContinueEnabled = () => {
         const areSeatsSelected = selectedSeats.length > 0;
         const areCategoriesChosen = Object.values(ticketCounts).some(count => count > 0);
@@ -115,17 +130,12 @@ function MovieTickets() {
         setShowErrorMessage(!isContinueEnabled());
     }, [selectedSeats, ticketCounts, selectedShowtime, selectedDate]);
     
-    const handleCheckout = () => {
-        if (!isLoggedIn) {
-            navigate('/login');
-        } else {
-            navigate('/checkout');
-        }
-    };
 
     return (
         <div className='body'>
-            {showErrorMessage && <div className="error-message">Please select showtime, date, seats, and tickets before continuing.</div>}
+            {showErrorMessage && (
+                <div className="error-message">Please select showtime, date, seats, and tickets before continuing.</div>
+            )}
             <div className="movie-container">
                 <div>
                     <label htmlFor="showDate">Select Date:</label>

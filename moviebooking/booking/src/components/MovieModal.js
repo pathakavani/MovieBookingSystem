@@ -43,6 +43,7 @@ const MovieModal = ({ movie, onClose }) => {
             <p>Trailer not available.</p>
           )}
         </div>
+        <img src={movie.poster} alt={`${movie.title} Poster`} className="movie-poster" />
         <p><strong>Category:</strong> {movie.category}</p>
         <p><strong>Cast:</strong> {movie.cast}</p>
         <p><strong>Director:</strong> {movie.director}</p>

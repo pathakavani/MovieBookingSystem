@@ -19,6 +19,10 @@ export const MoviesProvider = ({ children }) => {
     setMovies(movies.filter(movie => movie.id !== movieId));
   };
 
+  const setMoviesData = (newMoviesData) => {
+    setMovies(newMoviesData);
+  };
+
   return (
     <MoviesContext.Provider value={{ movies, addMovie, editMovie, deleteMovie }}>
       {children}
