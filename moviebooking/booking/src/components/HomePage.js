@@ -24,18 +24,23 @@ function HomePage({ route, navigation }) {
   }, []);
 
   useEffect(() => {
-    console.log(searchTerm)
-    const filteredMoves = moves.filter((movie) =>
-    movie.title.toLowerCase().includes(searchTerm.toLowerCase()) 
-    ||  movie.director.toLowerCase().includes(searchTerm.toLowerCase()) 
-    ||  movie.category.toLowerCase().includes(searchTerm.toLowerCase()) 
-    ||  movie.producer.toLowerCase().includes(searchTerm.toLowerCase()) 
-    ||  movie.cast.toLowerCase().includes(searchTerm.toLowerCase()) 
-    );
-
-    setShowMoves(filteredMoves);
-    setNoMoviesFound(filteredMoves.length === 0);
+    if (searchTerm.trim() === '') {
+      setShowMoves(moves);
+      setNoMoviesFound(false);
+    } else {
+      const filteredMoves = moves.filter((movie) =>
+        movie.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        movie.director.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        movie.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        movie.producer.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        movie.cast.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+  
+      setShowMoves(filteredMoves);
+      setNoMoviesFound(filteredMoves.length === 0);
+    }
   }, [searchTerm, moves]);
+  
 
   const today = new Date();
   
