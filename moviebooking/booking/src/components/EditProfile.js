@@ -9,8 +9,9 @@ function EditProfile() {
         paymentMethod: 'credit',
         paymentInfo: '',
         promotion: 0,
-        billingAddress: '',
-        phoneNumber: ''
+        address: '',
+        phoneNumber: '',
+        expirationDate:""
     });
     const [data, setData] = useState("");
     //password
@@ -19,6 +20,7 @@ function EditProfile() {
         axios.get("http://localhost:8080/getInfo")
             .then(response => {
                 const data = response.data.split("\t");
+                console.log(data)
                 setProfile(profile => ({firstName: data[0],
                 lastName: data[1],
                 email: data[2],
@@ -26,23 +28,24 @@ function EditProfile() {
                 paymentMethod: data[4],
                 paymentInfo: data[5],
                 promotion: data[6],
-                billingAddress: data[7]}));
+                expirationDate:data[7],
+                address: data[8]}));
             })
             .catch(error => console.error('Error fetching profile data:', error));
     }, []);
-    useEffect(() => {
-        var splitted = data.split(", ");
-        setProfile({
-            firstName: data.split(", ")[0],
-            lastName: data.split(", ")[1],
-        email: data.split(", ")[2],
-        password: data.split(", ")[3],
-        paymentMethod: data.split(", ")[4],
-        paymentInfo: data.split(", ")[5],
-        billingAddress: data.split(", ")[7],
-        phoneNumber: data.split(", ")[9],
-        })
-    }, [data])
+    // useEffect(() => {
+    //     var splitted = data.split(", ");
+    //     setProfile({
+    //         firstName: data.split(", ")[0],
+    //         lastName: data.split(", ")[1],
+    //     email: data.split(", ")[2],
+    //     password: data.split(", ")[3],
+    //     paymentMethod: data.split(", ")[4],
+    //     paymentInfo: data.split(", ")[5],
+    //     billingAddress: data.split(", ")[7],
+    //     phoneNumber: data.split(", ")[9],
+    //     })
+    // }, [data])
 
     const handleInputChange = (event) => {
         const { name, value, type, checked } = event.target;
@@ -52,10 +55,7 @@ function EditProfile() {
                 ...prevState,
                 "promotion": val
             }));
-        }
-        
-        //password changed and previous password is the same password for confirmation purposes
-        if (name === "npassword" && value !== profile.password ) {
+        } else if (name === "npassword" && value !== profile.password ) {
             if (document.getElementById("password").value === data.split(", ")[3]) {
                 setProfile({ ...profile, password: value });
             }
@@ -63,7 +63,10 @@ function EditProfile() {
                 setWrong(true)
             }
         }
-        
+        else {
+            setProfile({...profile, [name]:value})
+        }
+        //console.log(profile.expirateDate);
     }
 
     const handleSubmit = (event) => {
@@ -75,7 +78,7 @@ function EditProfile() {
         profile.password +", " +
         profile.paymentMethod +", " + 
         profile.paymentInfo +", " + 
-        profile.billingAddress +", "+
+        profile.address +", "+
         profile.phoneNumber;
         if (profileString !== data) {
             updateInfo();
@@ -90,6 +93,7 @@ function EditProfile() {
             },
             body: JSON.stringify(profile) // Convert data to JSON string
         };
+        console.log(profile)
         await fetch("http://localhost:8080/updateInfo",options)
         .catch(err => console.log(err));
      }
@@ -135,12 +139,16 @@ function EditProfile() {
                             <input type="text" className="form-control" id="paymentInfo" name="paymentInfo" onChange={handleInputChange} placeholder={profile.paymentInfo}/>
                         </div>
                         <div className="mb-3">
-                            <label htmlFor="billingAddress" className="form-label">Billing Address</label>
-                            <input type="text" className="form-control" id="billingAddress" name="billingAddress" onChange={handleInputChange} placeholder={profile.billingAddress}  />
+                            <label htmlFor="address" className="form-label">Billing Address</label>
+                            <input type="text" className="form-control" id="address" name="address" onChange={handleInputChange} placeholder={profile.address}  />
+                        </div>
+                        <div class="mb-3">
+                            <label for="expirationDate" class="form-label">Expiration Date </label>
+                            <input type="date" class="form-control" id="expirationDate" name="expirationDate" minlength="16" maxlength="16" onChange={handleInputChange} value={profile.expirationDate}/>
                         </div>
                         <div className="mb-3">
                             <label htmlFor="phoneNumber" className="form-label">Phone Number</label>
-                            <input type="text" className="form-control" id="phoneNumber" name="phoneNumber" value={profile.phoneNumber} onChange={handleInputChange} placeholder="Your Phone Number" />
+                            <input type="text" className="form-control" id="phoneNumber" name="phoneNumber" value={profile.phoneNumber} onChange={handleInputChange} placeholder={profile.phoneNumber} />
                         </div>
                         <div class="mb-3">
                             <label for="promostatus" class="form-label">Sign Up for Promotions?</label>

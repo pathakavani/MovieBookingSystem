@@ -66,15 +66,9 @@ public class MoviesApplication {
      */
     public MoviesApplication() {
         movies = new ArrayList<>();
-<<<<<<< HEAD
-        String jdbcUrl = "jdbc:mysql://localhost:3306/movie_booking"; // jdbc:mysql://localhost:33306/Movie_Booking
-        String username = "PrincessHavens";// change this
-        String password = "Kiara200293326!"; // and that, pass: root123@ (for my reference - ruchitha)
-=======
         String jdbcUrl = "jdbc:mysql://localhost:33306/Final_Movie_Booking"; // jdbc:mysql://localhost:33306/Movie_Booking
         String username = "root";// change this
         String password = "bathinda"; // and that, pass: root123@ (for my reference - ruchitha)
->>>>>>> 8587caa65dd87f980197bbb5752715557fa20ba5
 
         try {
             connection = DriverManager.getConnection(jdbcUrl, username, password);
@@ -311,33 +305,35 @@ public class MoviesApplication {
             String billingInfo = "SELECT * FROM payment_card WHERE userID = " + userID;
             statement = connection.prepareStatement(billingInfo);
             rst = statement.executeQuery();
-            System.out.println(pi.paymentInfo);
+            System.out.println("payment started.." + pi.paymentInfo);
             if (pi.paymentInfo != null && !pi.paymentInfo.isEmpty()) {
                 String paymentInfoEncrypted = Base64.getEncoder().encodeToString(pi.paymentInfo.getBytes());
                 // Update query for the 'payment_card' table
                 String sqlUpdatePaymentCard = "UPDATE payment_card SET";
+                System.out.println(rst.next());
                 if (!rst.next()) {
                     System.out.println("no payment info, inserting");
-                    sqlUpdatePaymentCard  = "INSERT into payment_card (UserID, cardType, cardNumber, expirationDate, billingAddress) VALUES (" + userID + ", ";
+                    sqlUpdatePaymentCard  = "INSERT into payment_card (userID, cardType, cardNumber, expirationDate, billingAddress) VALUES (" + userID + ", ";
                 }
-                if (pi.cardType != null && !pi.cardType.isEmpty()) {
-                    sqlUpdatePaymentCard += (!rst.next() ? " cardType = \"" + pi.cardType + "\"," : "\"" + pi.cardType + "\", ");
+                if (pi.paymentMethod != null && !pi.paymentMethod.isEmpty()) {
+                    sqlUpdatePaymentCard += (rst.next() ? " cardType = \"" + pi.paymentMethod + "\"," : "\"" + pi.paymentMethod + "\", ");
                 }
                 if (paymentInfoEncrypted != null && !paymentInfoEncrypted.isEmpty()) {
-                    sqlUpdatePaymentCard += (!rst.next() ?" cardNumber = \"" + paymentInfoEncrypted + "\"," : "\"" + paymentInfoEncrypted + "\", ");
+                    sqlUpdatePaymentCard += (rst.next() ?" cardNumber = \"" + paymentInfoEncrypted + "\"," : "\"" + paymentInfoEncrypted + "\", ");
                 }
                 if (pi.expirationDate != null && !pi.expirationDate.isEmpty()) {
-                    sqlUpdatePaymentCard += (!rst.next() ? " expirationDate = \"" + pi.expirationDate + "\"," : "\"" +pi.expirationDate + "\", ");
+                    sqlUpdatePaymentCard += (rst.next() ? " expirationDate = \"" + pi.expirationDate + "\"," : "\"" +pi.expirationDate + "\", ");
                 }
                 if (pi.address != null && !pi.address.isEmpty()) {
-                    sqlUpdatePaymentCard += (!rst.next() ? " billingAddress = \"" + pi.address + "\"," : "\"" + pi.address + "\"");
+                    sqlUpdatePaymentCard += (rst.next() ? " billingAddress = \"" + pi.address + "\"," : "\"" + pi.address + "\"");
                 }
                 // Remove the last comma if there are columns to update
                 if (sqlUpdatePaymentCard.endsWith(",")) {
                     sqlUpdatePaymentCard = sqlUpdatePaymentCard.substring(0, sqlUpdatePaymentCard.length() - 1);
                 }
                 // Add the condition for updating based on userID
-                sqlUpdatePaymentCard += (!rst.next() ? " WHERE UserID = \"" + userID + "\";" : "");
+                sqlUpdatePaymentCard += (rst.next() ? " WHERE userID = " + userID: ")");
+                System.out.println(sqlUpdatePaymentCard);
                 statement = connection.prepareStatement(sqlUpdatePaymentCard);
                 rowsAffected = statement.executeUpdate();
             }
@@ -365,29 +361,32 @@ public class MoviesApplication {
             String sql = "SELECT * FROM user natural join payment_card WHERE UserID = " + userID;
             PreparedStatement statement = connection.prepareStatement(sql);
             ResultSet resultSet = statement.executeQuery();
-            if (!resultSet.next()) {
+            //System.out.println(!resultSet.next());
+            check = resultSet.next();
+            if (!check) {
+                System.out.println("Fetching data");
                 sql = "SELECT * FROM user WHERE UserID = " + userID;
                 statement = connection.prepareStatement(sql);
                 resultSet = statement.executeQuery();
                 check = true;
             }
             
-            if (resultSet.next()) {
-                System.out.println("Result");
+            if (check) {
+                System.out.println(sql);
                 String decodePassword = new String(Base64.getDecoder().decode(resultSet.getString("password")));
                 String decodeCardNumber = "";
-                if (!check) {
+                if (check) {
                     decodeCardNumber = new String(Base64.getDecoder().decode(resultSet.getString("cardNumber")));
                 }
                 output += resultSet.getString("firstName") + "\t" +
                         resultSet.getString("lastName") + "\t" +
                         resultSet.getString("email") + "\t" +
                         decodePassword + "\t" +
-                        (!check? resultSet.getString("cardType") : "")+ "\t" +
+                        (check? resultSet.getString("cardType") : "")+ "\t" +
                         decodeCardNumber + "\t" +
                         resultSet.getInt("enrollForPromotions") + "\t" +
-                        (!check? resultSet.getDate("expirationDate") : null) + "\t" +
-                        (!check ? resultSet.getString("billingAddress") : "");
+                        (check? resultSet.getDate("expirationDate") : null) + "\t" +
+                        (check ? resultSet.getString("billingAddress") : "");
             }
             // return pi;
         } catch (Exception e) {
@@ -397,6 +396,7 @@ public class MoviesApplication {
         return output;
     }
 
+    
     /**
      * Retrieves a specific movie from the database.
      *
@@ -702,7 +702,7 @@ public class MoviesApplication {
                 int status = resultSet.getInt("status");
                 int userType = resultSet.getInt("userType");
                 userID = resultSet.getInt("UserID");
-                System.out.println("UserID : " + userID);
+                System.out.println("UserID : " + resultSet.getInt("UserID"));
                 String dbPassword = resultSet.getString("password");
                 byte[] dbBytes = Base64.getDecoder().decode(dbPassword);
                 String dbDecodedpassword = new String(dbBytes);
