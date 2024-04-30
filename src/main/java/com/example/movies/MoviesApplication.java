@@ -66,9 +66,15 @@ public class MoviesApplication {
      */
     public MoviesApplication() {
         movies = new ArrayList<>();
+<<<<<<< HEAD
+        String jdbcUrl = "jdbc:mysql://localhost:3306/movie_booking"; // jdbc:mysql://localhost:33306/Movie_Booking
+        String username = "PrincessHavens";// change this
+        String password = "Kiara200293326!"; // and that, pass: root123@ (for my reference - ruchitha)
+=======
         String jdbcUrl = "jdbc:mysql://localhost:33306/Final_Movie_Booking"; // jdbc:mysql://localhost:33306/Movie_Booking
         String username = "root";// change this
         String password = "bathinda"; // and that, pass: root123@ (for my reference - ruchitha)
+>>>>>>> 8587caa65dd87f980197bbb5752715557fa20ba5
 
         try {
             connection = DriverManager.getConnection(jdbcUrl, username, password);
