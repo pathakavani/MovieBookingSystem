@@ -63,13 +63,13 @@ h1 {
 
 @media (max-width: 768px) {
   .search-input {
-      width: 70%; /* Increase the width of the search bar on smaller screens */
+    width: 70%; /* Increase the width of the search bar on smaller screens */
   }
 }
 
 @media (max-width: 480px) {
   .search-input {
-      width: 90%; /* Further increase the width of the search bar on very small screens */
+    width: 90%; /* Further increase the width of the search bar on very small screens */
   }
 }
 
@@ -138,4 +138,11 @@ h2.section-heading::after {
   left: 0;
   right: 0;
   bottom: 0;
+}
+
+/* Styles for No Movies Found Message */
+.no-movies-message {
+  text-align: center;
+  color: black;
+  margin-top: 20px;
 }

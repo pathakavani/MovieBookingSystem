@@ -3,14 +3,15 @@
     margin-bottom: 30px;
     height: 40px;
 }
+
 .navbar-brand {
     font-family: 'fantasy';
 }
+
 body {
     font-family: Arial, sans-serif;
     background-color: #124559;
 }
-
 
 * {
     font-family: "Montserrat", sans-serif !important;
@@ -46,7 +47,7 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    width: 100%
+    width: 100%;
 }
 
 .seat {
@@ -97,11 +98,6 @@ body {
 .seat.selected .seat-inner {
     background-color: #01161E; /* Change color when selected */
 }
-/* .ticket-row {
-     display: flex;
-     justify-content: flex-start;
-     margin-bottom: 20px;
-} */
 
 .ticket-group {
     width: 23%;
@@ -117,7 +113,7 @@ body {
      align-items: center;
 }
 
- .ticket-input input[type="number"] {
+.ticket-input input[type="number"] {
     width: 40px;
     text-align: center;
 }
@@ -136,6 +132,7 @@ body {
 .ticket-input button:hover {
     background-color: #124559;
 }
+
 .showcase {
     display: flex;
     justify-content: center;
@@ -145,6 +142,7 @@ body {
     border-radius: 5px;
     color: #777;
 }
+
 i img {
     width: 25px; /* Adjust the width and height as needed */
     height: 25px;
@@ -182,7 +180,7 @@ p.text {
 }
 
 .dropdown-toggle {
-    color: white 
+    color: white;
 }
 
 p.text span {
@@ -200,4 +198,14 @@ p.text span {
      padding: 10px 20px;
      font-size: 16px;
      cursor: pointer;
+}
+
+/* Error message styles */
+.error-message {
+    color: black;
+    background-color: #FFD700; /* Yellow background color */
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    text-align: center;
 }

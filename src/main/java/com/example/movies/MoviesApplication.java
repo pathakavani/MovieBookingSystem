@@ -2,8 +2,11 @@ package com.example.movies;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.Base64;
+import java.util.HashMap;
+
 // import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -23,14 +26,14 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import com.mysql.cj.x.protobuf.MysqlxCrud.Update;
-
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -52,27 +55,56 @@ public class MoviesApplication {
 
     Connection connection;
 
+    // Assuming you have a ThreadPoolTaskExecutor bean configured in your
+    // application context
+    @Autowired
+    private ThreadPoolTaskExecutor taskExecutor;
+
     /**
      * Constructor for MoviesApplication class.
      * Initializes the list of movies and establishes a database connection.
      */
     public MoviesApplication() {
         movies = new ArrayList<>();
+<<<<<<< HEAD
         String jdbcUrl = "jdbc:mysql://localhost:3306/movie_booking"; // jdbc:mysql://localhost:33306/Movie_Booking
         String username = "PrincessHavens";// change this
         String password = "Kiara200293326!"; // and that, pass: root123@ (for my reference - ruchitha)
+=======
+        String jdbcUrl = "jdbc:mysql://localhost:33306/Final_Movie_Booking"; // jdbc:mysql://localhost:33306/Movie_Booking
+        String username = "root";// change this
+        String password = "bathinda"; // and that, pass: root123@ (for my reference - ruchitha)
+>>>>>>> 8587caa65dd87f980197bbb5752715557fa20ba5
 
         try {
             connection = DriverManager.getConnection(jdbcUrl, username, password);
             System.out.println("Database connection secured");
 
             // Movie
+            getAllMovies();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Get's all the currently stored movies.
+     *
+     */
+    public void getAllMovies() {
+        System.out.println("getAllMovies");
+
+        movies = new ArrayList<>();
+        try {
+            // Movie
             String sql = "SELECT m.movie_id, m.title, m.category, m.release_date, m.director, " +
                     "m.duration_minutes, m.mpaa_rating, m.synopsis, m.poster_url, " +
-                    "m.trailer_url, m.cast, m.reviews, m.producer, s.date, sp.time " +
+                    "m.trailer_url, m.cast, m.reviews, m.producer, s.date, sp.time, sc.screenID " +
                     "FROM movies m " +
                     "LEFT JOIN shows s ON m.movie_id = s.movieID " +
-                    "LEFT JOIN show_period sp ON s.periodID = sp.periodID";
+                    "LEFT JOIN show_period sp ON s.periodID = sp.periodID " +
+                    "LEFT JOIN screen sc ON s.screenID = sc.screenID";
 
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -85,9 +117,13 @@ public class MoviesApplication {
                         .orElse(null);
                 if (existingMovie != null) {
                     // Movie already exists, add show information to the existing movie
-                    String showDateTime = resultSet.getDate("date").toString() + " " +
-                            resultSet.getTime("time").toString();
-                    existingMovie.addShow(showDateTime);
+                    String dateStr = resultSet.getDate("date") != null ? resultSet.getDate("date").toString() : "";
+                    String timeStr = resultSet.getTime("time") != null ? resultSet.getTime("time").toString() : "";
+                    int screenID = resultSet.getInt("screenID");
+                    if (!dateStr.isEmpty() && !timeStr.isEmpty() && !resultSet.wasNull()) {
+                        String showDateTime = dateStr + " " + timeStr + " (Screen ID: " + screenID + ")";
+                        existingMovie.addShow(showDateTime);
+                    }
                 } else {
                     // Create new movie object and add it to the list
                     Movies movie = new Movies(
@@ -105,17 +141,16 @@ public class MoviesApplication {
                             resultSet.getString("reviews"),
                             resultSet.getString("producer"));
 
-                    // Check for null values before adding show date and time to the movie
-                    if (resultSet.getDate("date") != null && resultSet.getTime("time") != null) {
-                        String showDateTime = resultSet.getDate("date").toString() + " " +
-                                resultSet.getTime("time").toString();
+                    String dateStr = resultSet.getDate("date") != null ? resultSet.getDate("date").toString() : "";
+                    String timeStr = resultSet.getTime("time") != null ? resultSet.getTime("time").toString() : "";
+                    int screenID = resultSet.getInt("screenID");
+                    if (!dateStr.isEmpty() && !timeStr.isEmpty() && !resultSet.wasNull()) {
+                        String showDateTime = dateStr + " " + timeStr + " (Screen ID: " + screenID + ")";
                         movie.addShow(showDateTime);
                     }
-
                     movies.add(movie);
                 }
             }
-            System.out.println("movies: " + movies);
             // connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -391,6 +426,7 @@ public class MoviesApplication {
     @GetMapping("/movies")
     @ResponseBody
     public List<Movies> getMovies() {
+        getAllMovies();
         return movies;
     }
 
@@ -402,6 +438,7 @@ public class MoviesApplication {
      */
     @PostMapping("/addMovie")
     public ResponseEntity<String> addMovie(@RequestBody Movies movieRequest) {
+        System.out.println("addMovie, movieRequest: " + movieRequest);
         try {
             System.out.println("addMovie");
             System.out.println("movieRequest: " + movieRequest);
@@ -544,14 +581,32 @@ public class MoviesApplication {
      * @return ResponseEntity indicating success or failure of the operation.
      */
     @PostMapping("/addShow")
-    public ResponseEntity<String> addShow(@RequestBody Show show, int movieId) {
+    public ResponseEntity<String> addShow(@RequestBody Movies show) {
         try {
+            LocalDate localDate = show.showDates.toLocalDate();
+            localDate = localDate.plusDays(1);
+            Date incrementedDate = Date.valueOf(localDate);
+
+            // Get periodID based on showTime
+            String getPeriodIdQuery = "SELECT periodID FROM show_period WHERE time = ?";
+            PreparedStatement getPeriodIdStatement = connection.prepareStatement(getPeriodIdQuery);
+            getPeriodIdStatement.setTime(1, show.showTime);
+            ResultSet periodIdResult = getPeriodIdStatement.executeQuery();
+
+            int periodId;
+            if (periodIdResult.next()) {
+                periodId = periodIdResult.getInt("periodID");
+                System.out.println("periodId: " + periodId);
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid show time.");
+            }
+
             // Check for conflicts
             String checkConflictQuery = "SELECT COUNT(*) FROM shows WHERE screenID = ? AND date = ? AND periodID = ?";
             PreparedStatement checkConflictStatement = connection.prepareStatement(checkConflictQuery);
-            checkConflictStatement.setInt(1, show.screenID);
-            checkConflictStatement.setDate(2, show.date);
-            checkConflictStatement.setInt(3, show.periodID);
+            checkConflictStatement.setInt(1, show.screen);
+            checkConflictStatement.setDate(2, incrementedDate);
+            checkConflictStatement.setInt(3, periodId);
             ResultSet conflictResult = checkConflictStatement.executeQuery();
             if (conflictResult.next() && conflictResult.getInt(1) > 0) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Show time conflicts with an existing show.");
@@ -560,10 +615,10 @@ public class MoviesApplication {
             // Insert the show information
             String insertShowQuery = "INSERT INTO shows (movieID, screenID, periodID, date) VALUES (?, ?, ?, ?)";
             PreparedStatement insertShowStatement = connection.prepareStatement(insertShowQuery);
-            insertShowStatement.setInt(1, movieId);
-            insertShowStatement.setInt(2, show.screenID);
-            insertShowStatement.setInt(3, show.periodID);
-            insertShowStatement.setDate(4, show.date);
+            insertShowStatement.setInt(1, show.id);
+            insertShowStatement.setInt(2, show.screen);
+            insertShowStatement.setInt(3, periodId);
+            insertShowStatement.setDate(4, incrementedDate);
             insertShowStatement.executeUpdate();
 
             System.out.println("Show added successfully.");
@@ -812,6 +867,172 @@ public class MoviesApplication {
         } catch (SQLException e) {
             System.err.println("Error checking show conflict: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error checking show conflict.");
+        }
+    }
+
+    /**
+     * Retrieves the date and time information for a given movie ID in key-value
+     * format.
+     *
+     * @param movieId The ID of the movie for which show dates and times are
+     *                requested.
+     * @return ResponseEntity containing a map where dates are keys and lists of
+     *         times are values,
+     *         or an error response if the operation fails.
+     */
+    @GetMapping("/getShowDateTime")
+    public ResponseEntity<Map<String, List<String>>> getShowDateTime(@RequestParam("movieId") int movieId) {
+        try {
+            String sql = "SELECT date, time FROM movies, shows JOIN show_period ON shows.periodID = show_period.periodID WHERE movieID = ?";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, movieId);
+            ResultSet resultSet = statement.executeQuery();
+
+            Map<String, List<String>> showDateTimeMap = new HashMap<>();
+            while (resultSet.next()) {
+                String date = resultSet.getString("date");
+                String time = resultSet.getString("time");
+
+                // Check if the date key exists in the map
+                if (showDateTimeMap.containsKey(date)) {
+                    // If the date key exists, add the time to its corresponding list
+                    if (!showDateTimeMap.get(date).contains(time)) {
+                        // If the time is not already in the list, add it
+                        showDateTimeMap.get(date).add(time);
+                    }
+                    System.out.println(showDateTimeMap.get(date).get(0));
+
+                } else {
+                    // If the date key doesn't exist, create a new list with the time and add it to
+                    // the map
+                    List<String> timeList = new ArrayList<>();
+                    timeList.add(time);
+                    showDateTimeMap.put(date, timeList);
+                }
+            }
+            // Return the organized data in the response
+            return ResponseEntity.ok(showDateTimeMap);
+        } catch (SQLException e) {
+            System.err.println("Error fetching show date and time: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    @Async
+    private void sendEmailAsync(String recipient, String subject, String content) {
+        taskExecutor.execute(() -> sendPromoEmail(recipient, subject, content));
+    }
+
+    @Async
+    public void sendPromotionEmailsAsync(Connection connection, String promoCode) {
+        sendPromotionEmails(connection, promoCode);
+    }
+
+    public void sendPromotionEmails(Connection connection, String promoCode) {
+        try {
+            // Query the database to retrieve users enrolled for promotion
+            String query = "SELECT email FROM user WHERE enrollforPromotions = ?";
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1, 1); // Enrolled users
+            ResultSet resultSet = statement.executeQuery();
+
+            // Loop through the results and send email to each user
+            while (resultSet.next()) {
+                String recipient = resultSet.getString("email");
+                String promotionDetails = buildPromotionDetails(connection, promoCode); // Pass promoCode
+                sendEmailAsync(recipient, "New Promotion!", promotionDetails);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("Failed to send promotion emails: " + e.getMessage());
+        }
+    }
+
+    private String buildPromotionDetails(Connection connection, String promoCode) throws SQLException {
+        StringBuilder promotionDetails = new StringBuilder("Promotion Details:\n");
+        String promotionQuery = "SELECT * FROM promotion WHERE promoCode = ?";
+        try (PreparedStatement promotionStatement = connection.prepareStatement(promotionQuery)) {
+            promotionStatement.setString(1, promoCode);
+            try (ResultSet promotionResultSet = promotionStatement.executeQuery()) {
+                if (promotionResultSet.next()) {
+                    promotionDetails.append("Title: ").append(promotionResultSet.getString("title")).append("\n");
+                    promotionDetails.append("Discount Code: ").append(promotionResultSet.getString("promoCode"))
+                            .append("\n");
+                    promotionDetails.append("Start Date: ").append(promotionResultSet.getString("startDate"))
+                            .append("\n");
+                    promotionDetails.append("End Date: ").append(promotionResultSet.getString("endDate")).append("\n");
+                    promotionDetails.append("Discount: ").append(promotionResultSet.getString("discount"))
+                            .append("%\n\n");
+                }
+            }
+        }
+        return promotionDetails.toString();
+    }
+
+    private void sendPromoEmail(String recipient, String subject, String content) {
+        MimeMessage message = emailSender.createMimeMessage();
+        try {
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+            helper.setTo(recipient);
+            helper.setSubject(subject);
+
+            // Split the content by newline character and add <br> tags
+            String[] contentParts = content.split("\\n");
+            StringBuilder htmlContent = new StringBuilder();
+            htmlContent.append("<html><body>");
+            htmlContent.append("<h1 style='color: #008080;'>Promotional Email from MovieHub</h1>");
+            htmlContent.append("<p>Dear Customer,</p>");
+            htmlContent.append("<p>");
+            for (String part : contentParts) {
+                htmlContent.append(part).append("<br>");
+            }
+            htmlContent.append("</p>");
+            htmlContent.append("<p>Best regards,<br>MovieHub</p>");
+            htmlContent.append("</body></html>");
+
+            helper.setText(htmlContent.toString(), true);
+
+            emailSender.send(message);
+            System.out.println("Email sent successfully to: " + recipient);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+            System.err.println("Failed to send email to: " + recipient + ". Error: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/addPromotion")
+    public ResponseEntity<String> addPromotion(@RequestBody Promotion promotionRequest) {
+        try {
+            // Prepare the SQL statement to insert the promotion into the database
+            String sql = "INSERT INTO promotion (promoCode, startDate, endDate, discount, title) " +
+                    "VALUES (?, ?, ?, ?, ?)";
+            PreparedStatement statement = connection.prepareStatement(sql);
+
+            // Set the values from the promotionRequest object
+            statement.setString(1, promotionRequest.promoCode);
+            statement.setString(2, promotionRequest.startDate);
+            statement.setString(3, promotionRequest.endDate);
+            statement.setString(4, promotionRequest.discount);
+            statement.setString(5, promotionRequest.title);
+
+            // Execute the update
+            int rowsAffected = statement.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println("Promotion added successfully.");
+
+                // System.out.println("latest promo code: " + promotionRequest.promoCode);
+
+                // Call sendPromotionEmails with the promoCode of the newly added promotion
+                sendPromotionEmailsAsync(connection, promotionRequest.promoCode);
+
+                return ResponseEntity.ok("Promotion added successfully");
+            } else {
+                System.out.println("Error adding promotion.");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error adding promotion.");
+            }
+        } catch (SQLException e) {
+            System.err.println("Error adding promotion: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error adding promotion.");
         }
     }
 }

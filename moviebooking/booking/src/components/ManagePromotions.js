@@ -1,13 +1,15 @@
 // ManagePromotions.js
 import React, { useState } from 'react';
 import './ManagePromotions.css';
+import axios from 'axios';
 
 function ManagePromotions() {
   const [promotion, setPromotion] = useState({
     title: '',
-    description: '',
-    discountCode: '',
-    validUntil: '',
+    promoCode: '',
+    startDate: '',
+    endDate: '',
+    discount: '',
   });
 
   const handleChange = (e) => {
@@ -15,12 +17,18 @@ function ManagePromotions() {
     setPromotion({ ...promotion, [name]: value });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Handle the form submission here. Send the data to a server.
-    console.log(promotion);
-    alert("Promotion submitted! (Not really, but it will when we hook up the backend.)");
-  };
+  const handleSubmit = async(e) => {    
+      e.preventDefault();
+      try {
+        // Send the promotion data to the backend
+        const response = await axios.post('http://localhost:8080/addPromotion', promotion);
+        console.log(response.data); // Log the response from the backend
+        alert("Promotion submitted successfully!");
+      } catch (error) {
+        console.error('Error submitting promotion:', error);
+        alert("Failed to submit promotion. Please try again later.");
+      }
+    };
 
   return (
     <div className='manage-promotions-container'>
@@ -31,16 +39,20 @@ function ManagePromotions() {
           <input type="text" name="title" value={promotion.title} onChange={handleChange} />
         </label>
         <label>
-          Description:
-          <textarea name="description" value={promotion.description} onChange={handleChange} />
+          Discount Code:
+          <input type="text" name="promoCode" value={promotion.promoCode} onChange={handleChange} />
         </label>
         <label>
-          Discount Code:
-          <input type="text" name="discountCode" value={promotion.discountCode} onChange={handleChange} />
+          Discount amount:
+          <input type="text" name="discount" value={promotion.discount} onChange={handleChange} />
+        </label>
+        <label>
+          Start date:
+          <input type="date" name="startDate" value={promotion.startDate} onChange={handleChange} />
         </label>
         <label>
           Valid Until:
-          <input type="date" name="validUntil" value={promotion.validUntil} onChange={handleChange} />
+          <input type="date" name="endDate" value={promotion.endDate} onChange={handleChange} />
         </label>
         <button type="submit">Submit Promotion</button>
       </form>

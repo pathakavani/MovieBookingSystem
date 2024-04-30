@@ -7,10 +7,10 @@ import { loginActions } from '../redux/loginSlice';
 function OrderPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
+  const isLoggedIn = useSelector((state) => state.login.email);
 
   useEffect(() => {
-    if (!isLoggedIn) {
+    if (isLoggedIn == "") {
       navigate('/login')
     }
   }, [isLoggedIn, navigate]);
@@ -20,7 +20,7 @@ function OrderPage() {
     // Prevent default behavior of the anchor tag
     event.preventDefault();
     // Dispatch action to logout user
-    dispatch(loginActions.setLoggedIn(false));
+    dispatch(loginActions.setEmail(""));
     // Redirect to home page after logout
     navigate('/');
   };

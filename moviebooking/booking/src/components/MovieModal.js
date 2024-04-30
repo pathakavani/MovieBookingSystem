@@ -13,8 +13,13 @@ const MovieModal = ({ movie, onClose }) => {
   const embedUrl = `https://www.youtube.com/embed/${videoID}`;
 
   const formatDates = (dates) => {
-    return Array.isArray(dates) ? dates.join(', ') : dates;
+    if (!Array.isArray(dates)) return dates; // Return the date string if it's not an array
+    return dates.map(date => {
+      const trimmedDate = date.split('(')[0].trim(); // Remove the "(Screen ID: X)" part and trim any extra spaces
+      return trimmedDate;
+    }).join(', '); // Join the formatted dates with a comma
   };
+  
 
   const formatTimes = (times) => {
     return Array.isArray(times) ? times.join(', ') : times;
@@ -38,6 +43,7 @@ const MovieModal = ({ movie, onClose }) => {
             <p>Trailer not available.</p>
           )}
         </div>
+        <img src={movie.poster} alt={`${movie.title} Poster`} className="movie-poster" />
         <p><strong>Category:</strong> {movie.category}</p>
         <p><strong>Cast:</strong> {movie.cast}</p>
         <p><strong>Director:</strong> {movie.director}</p>
@@ -46,7 +52,7 @@ const MovieModal = ({ movie, onClose }) => {
         <p><strong>Reviews:</strong> {movie.reviews}</p>
         <p><strong>MPAA Rating:</strong> {movie.mpaa_rating}</p>
         <p><strong>Show Date and Time:</strong> {formatDates(movie.shows)}</p>
-        <Link to="/seatBooking" className="booking-button">Book Now</Link>
+        <Link to={{ pathname: "/seatBooking", state: { movie } }} className="booking-button">Book Now</Link>
         <button className="close-button" onClick={onClose}>Close</button>
       </div>
     </div>
