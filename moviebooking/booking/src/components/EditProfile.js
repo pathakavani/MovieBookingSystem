@@ -33,20 +33,6 @@ function EditProfile() {
             })
             .catch(error => console.error('Error fetching profile data:', error));
     }, []);
-    // useEffect(() => {
-    //     var splitted = data.split(", ");
-    //     setProfile({
-    //         firstName: data.split(", ")[0],
-    //         lastName: data.split(", ")[1],
-    //     email: data.split(", ")[2],
-    //     password: data.split(", ")[3],
-    //     paymentMethod: data.split(", ")[4],
-    //     paymentInfo: data.split(", ")[5],
-    //     billingAddress: data.split(", ")[7],
-    //     phoneNumber: data.split(", ")[9],
-    //     })
-    // }, [data])
-
     const handleInputChange = (event) => {
         const { name, value, type, checked } = event.target;
         if (name === "promostatus") {

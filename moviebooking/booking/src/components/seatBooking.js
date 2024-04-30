@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import './seatBooking.css';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-
+import { useSelector, useDispatch } from 'react-redux';
+import { cartActions } from '../redux/cart';
+import axios from 'axios';
 
 function MovieTickets() {
+    const dispatch = useDispatch();
     const [ticketCounts, setTicketCounts] = useState({
         child: 0,
         Adult: 0,
@@ -20,8 +22,8 @@ function MovieTickets() {
     const navigate = useNavigate();
     const [showDates, setShowDates] = useState([]);
     const [showTimes, setShowTimes] = useState([]);
-    const movieId = 3;
-
+    const title = useSelector((state) => state.cmovie.id)
+    const [movieId, setMovieID] = useState(0);
     const ticketPrices = {
         child: 5,
         Adult: 15,
@@ -33,12 +35,30 @@ function MovieTickets() {
 
     // Fetch show dates and times from the API based on the retrieved movie object
     useEffect(() => {
-        // if (movie && movie.id) {
-        fetch(`http://localhost:8080/getShowDateTime?movieId=${movieId}`)
+        console.log(title);
+        async function fetchdata() {
+            const response = await axios.post('http://localhost:8080/getMovieID', null, {
+                params: {
+                title: title
+                }
+            });
+            if (response.status == 200)
+            {
+                setMovieID(response.data)
+            }
+            console.log(movieId)
+            
+        }
+        fetchdata()
+    }, []);
+    useEffect(() => {
+        async function getData () {
+            await fetch(`http://localhost:8080/getShowDateTime?movieId=${movieId}`)
             .then(response => response.json())
             .then(data => {
+                console.log("data:",data);
                 const dates = Object.keys(data);
-                setShowDates(dates);
+                setShowDates(dates)
 
                 // Set initial show times for the first date
                 if (dates.length > 0) {
@@ -49,8 +69,9 @@ function MovieTickets() {
                 }
             })
             .catch(error => console.error('Error fetching show dates and times:', error));
-        // }
-    }, []);
+        }
+        getData();
+    }, [movieId])
 
     // Update show times when the selected date changes
     useEffect(() => {
@@ -59,7 +80,7 @@ function MovieTickets() {
                 .then(response => response.json())
                 .then(data => {
                     const selectedTimes = data[selectedDate];
-                    setShowTimes(selectedTimes);
+                    setShowTimes(selectedTimes)
                 })
                 .catch(error => console.error('Error fetching show times for the selected date:', error));
         }
@@ -106,12 +127,28 @@ function MovieTickets() {
     };
 
     const handleCheckout = () => {
+        console.log({
+            movie: title,
+            children: ticketCounts.child,
+            adults: ticketCounts.Adult,
+            senior: ticketCounts.senior,
+            date: selectedDate,
+            time: selectedShowtime
+        })
+        dispatch(cartActions.setTickets({
+            movie: title,
+            children: ticketCounts.child,
+            adults: ticketCounts.Adult,
+            senior: ticketCounts.senior,
+            date: selectedDate,
+            time: selectedShowtime
+        }))
         const areCategoriesChosen = Object.values(ticketCounts).some(count => count > 0);
         if (!areCategoriesChosen || !selectedShowtime || !selectedDate || selectedSeats.length === 0) {
             setShowErrorMessage(true);
         } else {
             if (!isLoggedIn) {
-                navigate('/login');
+                navigate('/login')
             } else {
                 // Check if the user is already logged in and navigate accordingly
                 navigate('/checkout');
@@ -203,7 +240,8 @@ function MovieTickets() {
                         </div>
                     </div>
                 </div>
-                <div style={{ backgroundColor: '#124559' }}>
+                <br/>
+                <div style={{ backgroundColor: '#124559', borderRadius:20 }}>
                     <ul className="showcase">
                         <li>
                             <div className="seat"></div>

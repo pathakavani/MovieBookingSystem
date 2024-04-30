@@ -21,6 +21,7 @@ import ConfirmationPage from './components/confirmationPage';
 import MovieTickets from './components/seatBooking';
 import PaymentPage from './components/payment';
 import Navbar from './components/Navbar'; // Import Navbar component
+import MovieModal from './components/MovieModal';
 import { UseDispatch, useSelector } from 'react-redux';
 
 
@@ -59,6 +60,7 @@ function App() {
             <Route path='/confirmationPage' element={<ConfirmationPage />}/>
             <Route path='/seatBooking' element={<MovieTickets />}/>
             <Route path='/payment' element={<PaymentPage />}/>
+            <Route path='/dontUse' element={<MovieModal/>}/>
             <Route
               path="/editprofile"
               element={user ? <EditProfile /> : <Navigate to="/login" replace />}

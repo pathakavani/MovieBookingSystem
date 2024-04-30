@@ -82,6 +82,17 @@ public class MoviesApplication {
         }
     }
 
+    @PostMapping("/getMovieID")
+    @ResponseBody
+    public int getMovieID(@RequestParam("title") String title) {
+        for (Movies movie : movies) {
+            if (title.equals(movie.title)) {
+                return movie.id;
+            }
+        }
+        return -1;
+    }
+
     /**
      * Get's all the currently stored movies.
      *

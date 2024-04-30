@@ -1,19 +1,59 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './checkout.css'
 import { useSelector, useDispatch } from 'react-redux';
 import { loginActions } from '../redux/loginSlice';
+import { cartActions } from '../redux/cart';
 
 function OrderPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const isLoggedIn = useSelector((state) => state.login.email);
+  const {
+    movie,
+        date,
+        time,
+        adults,
+        children,
+        senior
+  } = useSelector((state) => state.cart);
+  const [costs, setCosts] = useState({
+    tadults:0,tchildren:0,tsenior:0, sub:0, tax:0, total:0
+  })
+  useEffect(() => {
+    setCosts({...costs,
+      tadults:(adults*14.99),
+      tchildren:(children*9.99),
+      tsenior:(senior*8.99),
+      sub: (adults*14.99 + children*9.99 + senior*8.99),
+      tax: ((adults*14.99 + children*9.99 + senior*8.99)*0.08),
+      total: ((adults*14.99 + children*9.99 + senior*8.99)+((adults*14.99 + children*9.99 + senior*8.99)*0.08))
+    });
+    console.log("costs:", costs)
+  },[])
 
   useEffect(() => {
     if (isLoggedIn == "") {
       navigate('/login')
     }
   }, [isLoggedIn, navigate]);
+
+  const decrease = (e) => {
+    const {name} = e.target;
+    var value = 0;
+    switch(name) {
+      case "adult" :{
+        value = adults
+      }
+      case "children" :{
+        value = children
+      }
+      case "senior" :{
+        value = senior
+      }
+    }
+    //dispatch(cartActions.adjust({name: name, amount: (value - 1)}))
+  }
 
   // Handle logout function without dispatching when navigating back to home page
   const handleLogout = (event) => {
@@ -29,26 +69,29 @@ function OrderPage() {
     <div>
       <nav className="navbar navbar-expand-lg ">
         <div className="container-fluid">
-          {/* Modify the anchor tag to prevent default behavior */}
+          {/* Modify the anchor tag to prevent default behavior
           <a className="navbar-brand active" style={{ color: 'white', fontFamily: 'Lato, sans-serif', fontFamily: 'Lilita One, cursive' }} href="Main.php" onClick={(e) => handleLogout(e)}>
             <i><img src="https://i.ibb.co/jy62Srz/36a17f9402f64b66ba11ad785ec9ff3e.png" alt="logo" /></i> MovieHub
-          </a>
+          </a> */}
         </div>
       </nav>
       <div className="orderbox">
         <div className="orderdetails">
           <p style={{ display: 'inline-block' }}><b>Order Details:</b></p>
-          <br />
+          <h1><b>{movie}</b></h1>
+          <br/>
           <p>Tickets:</p>
-          <p>Example Movie (Adult) x 2 - $29.99 <img src="https://icons.veryicon.com/png/o/miscellaneous/jt2/box-minus-1.png" alt="minus button" width="25px" /></p>
+          <p>Movie (Adult) x {adults} - ${costs.tadults} <img onClick={decrease} name="adult" src="https://icons.veryicon.com/png/o/miscellaneous/jt2/box-minus-1.png" alt="minus button" width="25px" /></p>
           <br />
-          <p>Example Movie (Child) x 1 - $9.99 <img src="https://icons.veryicon.com/png/o/miscellaneous/jt2/box-minus-1.png" alt="minus button" width="25px" /></p>
+          <p>Movie (Child) x {children} - ${costs.tchildren} <img onClick={decrease} name="children" src="https://icons.veryicon.com/png/o/miscellaneous/jt2/box-minus-1.png" alt="minus button" width="25px" /></p>
           <br />
-          <p>Subtotal - 39.98</p>
+          <p>Movie (Seniors) x {children} - ${costs.tsenior} <img onClick={decrease} name="senior" src="https://icons.veryicon.com/png/o/miscellaneous/jt2/box-minus-1.png" alt="minus button" width="25px" /></p>
           <br />
-          <p>Tax - $3.20</p>
+          <p>Subtotal - ${costs.sub}</p>
           <br />
-          <p>Total - $43.18</p>
+          <p>Tax - ${costs.tax.toFixed(2)}</p>
+          <br />
+          <p>Total - ${costs.total.toFixed(2)}</p>
         </div>
         <div className="rightbox">
           <div className="paymentmethodsgrid">
