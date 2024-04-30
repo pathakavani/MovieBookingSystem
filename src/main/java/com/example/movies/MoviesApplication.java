@@ -301,28 +301,37 @@ public class MoviesApplication {
             while (rst.next()) {
                 userID = rst.getInt("UserID");
             }
-            if (pi.expirationDate != null && !pi.expirationDate.isEmpty()) {
+            //Checks if billing info exists
+            String billingInfo = "SELECT * FROM payment_card WHERE userID = " + userID;
+            statement = connection.prepareStatement(billingInfo);
+            rst = statement.executeQuery();
+            System.out.println(pi.paymentInfo);
+            if (pi.paymentInfo != null && !pi.paymentInfo.isEmpty()) {
                 String paymentInfoEncrypted = Base64.getEncoder().encodeToString(pi.paymentInfo.getBytes());
                 // Update query for the 'payment_card' table
                 String sqlUpdatePaymentCard = "UPDATE payment_card SET";
+                if (!rst.next()) {
+                    System.out.println("no payment info, inserting");
+                    sqlUpdatePaymentCard  = "INSERT into payment_card (UserID, cardType, cardNumber, expirationDate, billingAddress) VALUES (" + userID + ", ";
+                }
                 if (pi.cardType != null && !pi.cardType.isEmpty()) {
-                    sqlUpdatePaymentCard += " cardType = \"" + pi.cardType + "\",";
+                    sqlUpdatePaymentCard += (!rst.next() ? " cardType = \"" + pi.cardType + "\"," : "\"" + pi.cardType + "\", ");
                 }
                 if (paymentInfoEncrypted != null && !paymentInfoEncrypted.isEmpty()) {
-                    sqlUpdatePaymentCard += " cardNumber = \"" + paymentInfoEncrypted + "\",";
+                    sqlUpdatePaymentCard += (!rst.next() ?" cardNumber = \"" + paymentInfoEncrypted + "\"," : "\"" + paymentInfoEncrypted + "\", ");
                 }
                 if (pi.expirationDate != null && !pi.expirationDate.isEmpty()) {
-                    sqlUpdatePaymentCard += " expirationDate = \"" + pi.expirationDate + "\",";
+                    sqlUpdatePaymentCard += (!rst.next() ? " expirationDate = \"" + pi.expirationDate + "\"," : "\"" +pi.expirationDate + "\", ");
                 }
                 if (pi.address != null && !pi.address.isEmpty()) {
-                    sqlUpdatePaymentCard += " billingAddress = \"" + pi.address + "\",";
+                    sqlUpdatePaymentCard += (!rst.next() ? " billingAddress = \"" + pi.address + "\"," : "\"" + pi.address + "\"");
                 }
                 // Remove the last comma if there are columns to update
                 if (sqlUpdatePaymentCard.endsWith(",")) {
                     sqlUpdatePaymentCard = sqlUpdatePaymentCard.substring(0, sqlUpdatePaymentCard.length() - 1);
                 }
                 // Add the condition for updating based on userID
-                sqlUpdatePaymentCard += " WHERE UserID = \"" + userID + "\";";
+                sqlUpdatePaymentCard += (!rst.next() ? " WHERE UserID = \"" + userID + "\";" : "");
                 statement = connection.prepareStatement(sqlUpdatePaymentCard);
                 rowsAffected = statement.executeUpdate();
             }
@@ -345,23 +354,34 @@ public class MoviesApplication {
     public String getInfo() {
         String output = "";
         try {
-            System.out.println("userID 11: " + userID);
-            String sql = "SELECT * FROM user NATURAL JOIN payment_card WHERE UserID = " + userID;
+            boolean check = false;
+            System.out.println("userID: " + userID);
+            String sql = "SELECT * FROM user natural join payment_card WHERE UserID = " + userID;
             PreparedStatement statement = connection.prepareStatement(sql);
             ResultSet resultSet = statement.executeQuery();
+            if (!resultSet.next()) {
+                sql = "SELECT * FROM user WHERE UserID = " + userID;
+                statement = connection.prepareStatement(sql);
+                resultSet = statement.executeQuery();
+                check = true;
+            }
+            
             if (resultSet.next()) {
                 System.out.println("Result");
                 String decodePassword = new String(Base64.getDecoder().decode(resultSet.getString("password")));
-                String decodeCardNumber = new String(Base64.getDecoder().decode(resultSet.getString("cardNumber")));
+                String decodeCardNumber = "";
+                if (!check) {
+                    decodeCardNumber = new String(Base64.getDecoder().decode(resultSet.getString("cardNumber")));
+                }
                 output += resultSet.getString("firstName") + "\t" +
                         resultSet.getString("lastName") + "\t" +
                         resultSet.getString("email") + "\t" +
                         decodePassword + "\t" +
-                        resultSet.getString("cardType") + "\t" +
+                        (!check? resultSet.getString("cardType") : "")+ "\t" +
                         decodeCardNumber + "\t" +
                         resultSet.getInt("enrollForPromotions") + "\t" +
-                        resultSet.getDate("expirationDate") + "\t" +
-                        resultSet.getString("billingAddress");
+                        (!check? resultSet.getDate("expirationDate") : null) + "\t" +
+                        (!check ? resultSet.getString("billingAddress") : "");
             }
             // return pi;
         } catch (Exception e) {
@@ -894,7 +914,6 @@ public class MoviesApplication {
                         // If the time is not already in the list, add it
                         showDateTimeMap.get(date).add(time);
                     }
-                    System.out.println(showDateTimeMap.get(date).get(0));
 
                 } else {
                     // If the date key doesn't exist, create a new list with the time and add it to
