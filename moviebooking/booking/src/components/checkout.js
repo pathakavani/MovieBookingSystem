@@ -111,8 +111,8 @@ function OrderPage() {
             <input type="text" id="promo" name="promo" placeholder="Enter your promo code here..."/>
           </form>
           <div className="confirmcancelbuttons">
-            <button style={{ backgroundColor: 'white', width: '120px', height: '40px', borderRadius: '5px' }} onClick={(e) => handleLogout(e)}>Previous</button>
-            <button style={{ backgroundColor: 'white', width: '120px', height: '40px', borderRadius: '5px' }} onClick={(e) => handleLogout(e)}>Cancel</button>
+            <button style={{ backgroundColor: 'white', width: '120px', height: '40px', borderRadius: '5px', color: 'black' }} onClick={(e) => handleLogout(e)}>Previous</button>
+            <button style={{ backgroundColor: 'white', width: '120px', height: '40px', borderRadius: '5px', color: 'black' }} onClick={(e) => handleLogout(e)}>Cancel</button>
             <button style={{ backgroundColor: 'white', width: '120px', height: '40px', borderRadius: '5px' }}><a href="ConfirmationPage">Confirm Order</a></button>
           </div>
         </div>

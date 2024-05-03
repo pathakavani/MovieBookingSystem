@@ -23,6 +23,7 @@ import PaymentPage from './components/payment';
 import Navbar from './components/Navbar'; // Import Navbar component
 import MovieModal from './components/MovieModal';
 import { UseDispatch, useSelector } from 'react-redux';
+import OrderHistory from './components/OrderHistory';
 
 
 function App() {
@@ -33,14 +34,6 @@ function App() {
     localStorage.removeItem('user'); // Remove user data from localStorage if stored
     window.location.href = '/'; // Redirect to home page
   };
-
-  // useEffect(() => {
-  //   // Check if user data is stored in localStorage
-  //   const storedUser = localStorage.getItem('user');
-  //   if (storedUser) {
-  //     setUser(JSON.parse(storedUser)); // If stored, set the user state
-  //   }
-  // }, []);
 
   return (
     <MoviesProvider>
@@ -61,6 +54,7 @@ function App() {
             <Route path='/seatBooking' element={<MovieTickets />}/>
             <Route path='/payment' element={<PaymentPage />}/>
             <Route path='/dontUse' element={<MovieModal/>}/>
+            <Route path='/order-history' element={<OrderHistory />} />
             <Route
               path="/editprofile"
               element={user ? <EditProfile /> : <Navigate to="/login" replace />}

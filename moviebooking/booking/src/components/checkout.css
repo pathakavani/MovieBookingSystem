@@ -70,6 +70,7 @@
         .paymentmethod p {
             font-size: 14pt;
             margin-top: 40px;
+            color: black;
         }
 
         input[type=text] {
@@ -92,12 +93,10 @@
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
             margin-left: 50px;
+            color: black;
         }
 
         a {
             text-decoration: none;
             color: black;
         }
-
-
-   
