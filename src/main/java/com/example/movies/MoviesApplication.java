@@ -302,7 +302,7 @@ public class MoviesApplication {
                 sqlUpdateUser = sqlUpdateUser.substring(0, sqlUpdateUser.length() - 1);
             }
             // Add the condition for updating based on userID
-            sqlUpdateUser += " WHERE firstName = \"" + pi.firstName + "\";";
+            sqlUpdateUser += " WHERE email = \"" + pi.email + "\";";
             System.out.println(sqlUpdateUser);
             PreparedStatement statement = connection.prepareStatement(sqlUpdateUser);
             rowsAffected = statement.executeUpdate();
@@ -321,22 +321,23 @@ public class MoviesApplication {
                 String paymentInfoEncrypted = Base64.getEncoder().encodeToString(pi.paymentInfo.getBytes());
                 // Update query for the 'payment_card' table
                 String sqlUpdatePaymentCard = "UPDATE payment_card SET";
-                System.out.println(rst.next());
-                if (!rst.next()) {
+                //System.out.println(rst.next());
+                boolean check = rst.next();
+                if (!check) {
                     System.out.println("no payment info, inserting");
                     sqlUpdatePaymentCard  = "INSERT into payment_card (userID, cardType, cardNumber, expirationDate, billingAddress) VALUES (" + userID + ", ";
                 }
                 if (pi.paymentMethod != null && !pi.paymentMethod.isEmpty()) {
-                    sqlUpdatePaymentCard += (rst.next() ? " cardType = \"" + pi.paymentMethod + "\"," : "\"" + pi.paymentMethod + "\", ");
+                    sqlUpdatePaymentCard += (check ? " cardType = \"" + pi.paymentMethod + "\"," : "\"" + pi.paymentMethod + "\", ");
                 }
                 if (paymentInfoEncrypted != null && !paymentInfoEncrypted.isEmpty()) {
-                    sqlUpdatePaymentCard += (rst.next() ?" cardNumber = \"" + paymentInfoEncrypted + "\"," : "\"" + paymentInfoEncrypted + "\", ");
+                    sqlUpdatePaymentCard += (check ?" cardNumber = \"" + paymentInfoEncrypted + "\"," : "\"" + paymentInfoEncrypted + "\", ");
                 }
                 if (pi.expirationDate != null && !pi.expirationDate.isEmpty()) {
-                    sqlUpdatePaymentCard += (rst.next() ? " expirationDate = \"" + pi.expirationDate + "\"," : "\"" +pi.expirationDate + "\", ");
+                    sqlUpdatePaymentCard += (check ? " expirationDate = \"" + pi.expirationDate + "\"," : "\"" +pi.expirationDate + "\", ");
                 }
                 if (pi.address != null && !pi.address.isEmpty()) {
-                    sqlUpdatePaymentCard += (rst.next() ? " billingAddress = \"" + pi.address + "\"," : "\"" + pi.address + "\"");
+                    sqlUpdatePaymentCard += (check ? " billingAddress = \"" + pi.address + "\"," : "\"" + pi.address + "\"");
                 }
                 // Remove the last comma if there are columns to update
                 if (sqlUpdatePaymentCard.endsWith(",")) {
