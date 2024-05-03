@@ -72,6 +72,7 @@ function MovieTickets() {
         }
         getData();
     }, [movieId])
+    
 
     // Update show times when the selected date changes
     useEffect(() => {

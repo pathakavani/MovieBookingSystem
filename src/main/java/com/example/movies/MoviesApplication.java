@@ -290,7 +290,7 @@ public class MoviesApplication {
                 sqlUpdateUser += " password = \"" + passwordEncrypted + "\",";
             }
             sqlUpdateUser += " enrollforPromotions = " + pi.promotion + ",";
-
+            //System.out.println(pi.phoneNumber);
             if (pi.phoneNumber != null && !pi.phoneNumber.isEmpty()) {
                 sqlUpdateUser += " phone = \"" + pi.phoneNumber + "\",";
             }
@@ -397,7 +397,8 @@ public class MoviesApplication {
                         decodeCardNumber + "\t" +
                         resultSet.getInt("enrollForPromotions") + "\t" +
                         (check? resultSet.getDate("expirationDate") : null) + "\t" +
-                        (check ? resultSet.getString("billingAddress") : "");
+                        (check ? resultSet.getString("billingAddress") : "") + "\t"+
+                        resultSet.getString("phone");
             }
             // return pi;
         } catch (Exception e) {

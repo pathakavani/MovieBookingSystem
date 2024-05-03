@@ -29,7 +29,8 @@ function EditProfile() {
                 paymentInfo: data[5],
                 promotion: data[6],
                 expirationDate:data[7],
-                address: data[8]}));
+                address: data[8],
+            phoneNumber: data[9]}));
             })
             .catch(error => console.error('Error fetching profile data:', error));
     }, []);
