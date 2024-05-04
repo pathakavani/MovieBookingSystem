@@ -18,6 +18,7 @@ function SignupPage() {
         expirationDate: '',
         promotion: 1 // Default value for promotions
     });
+    const [showPaymentFields, setShowPaymentFields] = useState(false);
     const handlefn = (event) => {
         setFormData({...formData, firstName: event.target.value})
         // console.log(event.target.value)
@@ -90,7 +91,7 @@ function SignupPage() {
         await fetch("http://localhost:8080/postInfo",options)
         .then((response) => console.log(response))
         .catch(err=> console.log(err))
-        
+
     }
 
     const handleSubmit = async (event) => {
@@ -98,6 +99,10 @@ function SignupPage() {
         validatePassword();
         navigate('/RegConfirmation'); // Use navigate function to redirect to '/RegConfirmation'
     }
+
+    const togglePaymentFields = () => {
+        setShowPaymentFields(!showPaymentFields);
+    };
 
     return (
         <div>
@@ -137,6 +142,11 @@ function SignupPage() {
                     <input type="text" class="form-control" id="address" name="address" onChange={handleadd}/>
                     <small class="form-text text-muted">Example: 123 Movie St.</small>
                 </div>
+                <button type="button" className="btn btn-primary mb-3" onClick={togglePaymentFields}>
+                    Add Card
+                </button>
+                {showPaymentFields && (
+                    <>
                 <div class="mb-3">
                     <label for="cardType" class="form-label">Card Type <sup> (optional)</sup></label>
                     <select class="form-select" id="cardType" name="cardType" onChange={handlect}>
@@ -154,13 +164,15 @@ function SignupPage() {
                     <label for="expiration_date" class="form-label">Expiration Date <sup> (optional)</sup></label>
                     <input type="date" class="form-control" id="expiration_date" name="paymentcard" minlength="16" maxlength="16" onChange={handleed}/>
                 </div>
+                    </>
+                )}
                 <div class="mb-3">
                     <label for="promostatus" class="form-label">Sign Up for Promotions?</label>
                     <select class="form-select" id="promostatus" name="promostatus" onChange={handlest}>
                         <option value="yes">Yes</option>
                         <option value="no">No</option>
                     </select>
-                </div>                            
+                </div>
                 <button type="submit" className="custom-signup-button btn btn-primary btn-block">Sign Up</button>
                         </form>
                         <p className="mt-3">Already have an account? <a href="Login">Log In</a></p>

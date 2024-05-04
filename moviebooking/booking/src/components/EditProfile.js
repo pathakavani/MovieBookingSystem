@@ -13,6 +13,7 @@ function EditProfile() {
         phoneNumber: '',
         expirationDate:""
     });
+    const [showPaymentFields, setShowPaymentFields] = useState(false);
     const [data, setData] = useState("");
     //password
     const [wrong, setWrong] = useState(false)
@@ -84,6 +85,9 @@ function EditProfile() {
         await fetch("http://localhost:8080/updateInfo",options)
         .catch(err => console.log(err));
      }
+    const togglePaymentFields = () => {
+        setShowPaymentFields(!showPaymentFields);
+    };
 
     return (
         <div className="container mt-5">
@@ -112,30 +116,65 @@ function EditProfile() {
                             <label htmlFor="npassword" className="form-label">New Password</label>
                             <input type="password" className="form-control" id="npassword" name="npassword"  onChange={handleInputChange} />
                         </div>
-                        <div className="mb-3">
-                            <label htmlFor="paymentMethod" className="form-label">Card Type</label>
-                            <select className="form-select" id="paymentMethod" name="paymentMethod" placeholder={profile.paymentMethod} onChange={handleInputChange}>
-                            <option value="Visa">Visa</option>
-                            <option value="MasterCard">MasterCard</option>
-                            <option value="AmericanExpress">American Express</option>
-                            <option value="Discover">Discover</option>
-                            </select>
-                        </div>
-                        <div className="mb-3">
-                            <label htmlFor="paymentInfo" className="form-label">Payment Information</label>
-                            <input type="text" className="form-control" id="paymentInfo" name="paymentInfo" onChange={handleInputChange} placeholder={profile.paymentInfo}/>
-                        </div>
-                        <div className="mb-3">
-                            <label htmlFor="address" className="form-label">Billing Address</label>
-                            <input type="text" className="form-control" id="address" name="address" onChange={handleInputChange} placeholder={profile.address}  />
-                        </div>
-                        <div class="mb-3">
-                            <label for="expirationDate" class="form-label">Expiration Date </label>
-                            <input type="date" class="form-control" id="expirationDate" name="expirationDate" minlength="16" maxlength="16" onChange={handleInputChange} value={profile.expirationDate}/>
-                        </div>
+                        {/*<div className="mb-3">*/}
+                        {/*    <label htmlFor="paymentMethod" className="form-label">Card Type</label>*/}
+                        {/*    <select className="form-select" id="paymentMethod" name="paymentMethod" placeholder={profile.paymentMethod} onChange={handleInputChange}>*/}
+                        {/*    <option value="Visa">Visa</option>*/}
+                        {/*    <option value="MasterCard">MasterCard</option>*/}
+                        {/*    <option value="AmericanExpress">American Express</option>*/}
+                        {/*    <option value="Discover">Discover</option>*/}
+                        {/*    </select>*/}
+                        {/*</div>*/}
+                        {/*<div className="mb-3">*/}
+                        {/*    <label htmlFor="paymentInfo" className="form-label">Payment Information</label>*/}
+                        {/*    <input type="text" className="form-control" id="paymentInfo" name="paymentInfo" onChange={handleInputChange} placeholder={profile.paymentInfo}/>*/}
+                        {/*</div>*/}
+                        {/*<div className="mb-3">*/}
+                        {/*    <label htmlFor="address" className="form-label">Billing Address</label>*/}
+                        {/*    <input type="text" className="form-control" id="address" name="address" onChange={handleInputChange} placeholder={profile.address}  />*/}
+                        {/*</div>*/}
+                        {/*<div class="mb-3">*/}
+                        {/*    <label for="expirationDate" class="form-label">Expiration Date </label>*/}
+                        {/*    <input type="date" class="form-control" id="expirationDate" name="expirationDate" minlength="16" maxlength="16" onChange={handleInputChange} value={profile.expirationDate}/>*/}
+                        {/*</div>*/}
+                        <button type="button" className="btn btn-primary mb-3" onClick={togglePaymentFields}>
+                            Edit Card
+                        </button>
+                        {showPaymentFields && (
+                            <>
+                                <div className="mb-3">
+                                    <label htmlFor="paymentMethod" className="form-label">Card Type</label>
+                                    <select className="form-select" id="paymentMethod" name="paymentMethod"
+                                            placeholder={profile.paymentMethod} onChange={handleInputChange}>
+                                        <option value="Visa">Visa</option>
+                                        <option value="MasterCard">MasterCard</option>
+                                        <option value="AmericanExpress">American Express</option>
+                                        <option value="Discover">Discover</option>
+                                    </select>
+                                </div>
+                                <div className="mb-3">
+                                    <label htmlFor="paymentInfo" className="form-label">Payment Information</label>
+                                    <input type="text" className="form-control" id="paymentInfo" name="paymentInfo"
+                                           onChange={handleInputChange} placeholder={profile.paymentInfo}/>
+                                </div>
+                                <div className="mb-3">
+                                    <label htmlFor="address" className="form-label">Billing Address</label>
+                                    <input type="text" className="form-control" id="address" name="address"
+                                           onChange={handleInputChange} placeholder={profile.address}/>
+                                </div>
+                                <div className="mb-3">
+                                    <label htmlFor="expirationDate" className="form-label">Expiration Date</label>
+                                    <input type="date" className="form-control" id="expirationDate"
+                                           name="expirationDate" minLength="16" maxLength="16"
+                                           onChange={handleInputChange} value={profile.expirationDate}/>
+                                </div>
+                            </>
+                        )}
                         <div className="mb-3">
                             <label htmlFor="phoneNumber" className="form-label">Phone Number</label>
-                            <input type="text" className="form-control" id="phoneNumber" name="phoneNumber" value={profile.phoneNumber} onChange={handleInputChange} placeholder={profile.phoneNumber} />
+                            <input type="text" className="form-control" id="phoneNumber" name="phoneNumber"
+                                   value={profile.phoneNumber} onChange={handleInputChange}
+                                   placeholder={profile.phoneNumber}/>
                         </div>
                         <div class="mb-3">
                             <label for="promostatus" class="form-label">Sign Up for Promotions?</label>

@@ -24,8 +24,8 @@
 
         .orderbox {
             display: grid;
-            width: 1000px;
-            height: 700px;
+            width: 1300px;
+            height: 1000px;
             background-color: #01161E;
             margin-left: auto;
             margin-right: auto;
@@ -62,6 +62,17 @@
             width: 200px;
             height: 110px;
             background-color: white;
+            color: black;
+            margin-top: 30px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .paymentform {
+            width: 600px;
+            height: 110px;
+            background-color: white;
+            color: black;
             margin-top: 30px;
             border-radius: 10px;
             text-align: center;
@@ -82,7 +93,7 @@
         .rightbox {
             display: grid;
             grid-template-rows: 1fr 1fr 1fr;
-            justify-content: center;
+            /*justify-content: center;*/
         }
 
         .rightbox label {
@@ -99,4 +110,14 @@
         a {
             text-decoration: none;
             color: black;
+        }
+
+        .promo {
+            width: 200px;
+            height: 110px;
+            background-color: white;
+            color: black;
+            margin-top: 30px;
+            border-radius: 10px;
+            text-align: center;
         }
