@@ -1,15 +1,11 @@
 
-        
-        .navbar {
-            background-color: #01161E;
-        }
         .navbar-brand {
             font-family: 'fantasy';
         }
         body {
             font-family: Arial, sans-serif;
-            background-color: white;
-                    /*#124559;*/
+            background-color: #B5C9C3;
+
         }
 
         .login-container {
@@ -24,29 +20,21 @@
         }
 
         .orderbox {
-            display: grid;
-            width: 1300px;
-            height: 1100px;
-            /*background-color: #01161E;*/
-            background-color: #B5C9C3;
-            margin-left: auto;
-            margin-right: auto;
-            border-radius: 10px;
-            margin-top: 100px;
-            grid-template-columns: 1fr 1fr;
+            margin: 3%;
+            display: flex;
+            flex-direction: row;
             text-align: center;
             align-items: center;
             justify-content: center;
-            padding: 50px;
-            margin-bottom: 20px;
+            width: 100%;
+            height: 100%;
         }
 
         .orderdetails {
-            padding-top: 20px;
+            margin-right:5%;
             background-color: white;
             height: 500px;
             width: 400px;
-            margin-bottom: 300px;
             border-radius: 10px;
             color: black
         }
@@ -56,9 +44,13 @@
         }
 
         .paymentmethodsgrid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            margin-left: 15px;
+            display: flex;
+            flex-direction: row;
+            /* grid-template-columns: 1fr 1fr; */
+            /* padding: 3%; */
+        }
+        .space {
+            margin: 2%;
         }
         
         .paymentmethod {
@@ -94,9 +86,9 @@
         }
 
         .rightbox {
-            display: grid;
-            grid-template-rows: 1fr 1fr 1fr;
-            /*justify-content: center;*/
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .rightbox label {
@@ -116,7 +108,15 @@
             margin-top: 10px;
         }
 
+        .cards{ 
+            align-items: center;
+            background-color: rgba(0, 255, 17, 0.512);
+            border-radius: 20px;
+            margin: 5%;
+            box-shadow: 2px 2px 2px 2px grey;
+            color:#01161E
 
+        }
         a {
             text-decoration: none;
             color: black;
@@ -134,9 +134,11 @@
 
         .manage-promotions {
             /*max-width: 700px;*/
-            margin: 30px auto;
-            padding: 20px;
-            background-color: #598392; /* Intermediate color for form background */
+            margin: 6%;
+            padding: 2%;
+            /*background-color: #598392; Intermediate color for form background */
             border-radius: 8px;
             box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+            height: fit-content;
+            width: fit-content;
         }

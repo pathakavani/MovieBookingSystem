@@ -44,10 +44,9 @@ function MovieTickets() {
             });
             if (response.status == 200)
             {
+                console.log("movie id: ",response.data)
                 setMovieID(response.data)
             }
-            console.log(movieId)
-            
         }
         fetchdata()
     }, []);
@@ -57,7 +56,7 @@ function MovieTickets() {
             .then(response => response.json())
             .then(data => {
                 console.log("data:",data);
-                const dates = Object.keys(data);
+                const dates = Object.keys(data)
                 setShowDates(dates)
 
                 // Set initial show times for the first date

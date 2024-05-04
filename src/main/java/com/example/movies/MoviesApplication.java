@@ -87,10 +87,35 @@ public class MoviesApplication {
     public int getMovieID(@RequestParam("title") String title) {
         for (Movies movie : movies) {
             if (title.equals(movie.title)) {
+                System.out.println("Movie ID: " + movie.id);
                 return movie.id;
             }
         }
         return -1;
+    }
+
+    /**
+     * Get's all the current user's payment cards.
+     */
+    @GetMapping("/getPaymentCards")
+    @ResponseBody
+    public List<String> getPaymentCards(@RequestParam("userID") int userID) {
+        try {
+        String sql = "SELECT cardType, cardNumber, expirationDate FROM payment_cards WHERE user_id = "+userID;
+        PreparedStatement stmt = connection.prepareStatement(sql);
+        ResultSet rs = stmt.executeQuery();
+        if (rs.next()) {
+            List<String> cards = new ArrayList<>();
+            cards.add(rs.getString("cardType"));
+            cards.add(rs.getString("cardNumber"));
+            cards.add(rs.getString("expirationDate"));
+            return cards;
+            }
+        }
+        catch (SQLException e) {
+                    e.printStackTrace();
+        }
+        return null;
     }
 
     /**
@@ -208,6 +233,54 @@ public class MoviesApplication {
         }
     }
 
+
+    /**
+     * Get user id based on email
+     * @param pi
+     */
+    @GetMapping("/getUserID")
+    @ResponseBody
+    public int getUserID(@RequestParam("email") String email) {
+        try {
+            String getId = "SELECT UserID FROM user WHERE email = \"" + email + "\"";
+            PreparedStatement ps = connection.prepareStatement(getId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                userID =  rs.getInt("UserID");
+                return userID;
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    /**
+     * Get user's cards
+     * @return paymentCards
+     */
+    @GetMapping("/getCards")
+    @ResponseBody
+    public List <String> getPaymentCards() {
+        List <String> cards = new ArrayList<>();
+        try {
+            String getCards = "SELECT expirationDate, cardType, cardNumber FROM payment_card WHERE userID="  + userID;
+            PreparedStatement ps = connection.prepareStatement(getCards);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()) {
+                cards.add(
+                    rs.getString("cardType") + "\t"+
+                    new String(Base64.getDecoder().decode(rs.getString("cardNumber"))) + "\t" +
+                    rs.getString("expirationDate"));
+            }
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
+        return cards;
+    }
+
+
     /**
      * Handles the POST request to insert user information into the database.
      *
@@ -234,12 +307,8 @@ public class MoviesApplication {
 
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.executeUpdate();
-            String getID = "SELECT UserID FROM user WHERE email = \"" + pi.email + "\"";
-            statement = connection.prepareStatement(getID);
-            ResultSet rst = statement.executeQuery();
-            while (rst.next()) {
-                userID = rst.getInt("UserID");
-            }
+            
+                userID = getUserID(pi.email);
             if (pi.expirationDate != null && !pi.expirationDate.isEmpty()) {
                 String paymentInfoEncrypted = Base64.getEncoder().encodeToString(pi.paymentInfo.getBytes());
                 String sql2 = "INSERT into payment_card (UserID, cardType, cardNumber, expirationDate, billingAddress) VALUES ("
@@ -259,6 +328,10 @@ public class MoviesApplication {
             System.out.println(e);
         }
     }
+
+    // @GetMapping("/order")
+    // @ResponseBody
+    //     public List<Movies> getOrder() {
 
     /**
      * Handles the POST request to update user information in the database.
