@@ -8,7 +8,8 @@
         }
         body {
             font-family: Arial, sans-serif;
-            background-color: #124559;
+            background-color: white;
+                    /*#124559;*/
         }
 
         .login-container {
@@ -25,8 +26,9 @@
         .orderbox {
             display: grid;
             width: 1300px;
-            height: 1000px;
-            background-color: #01161E;
+            height: 1100px;
+            /*background-color: #01161E;*/
+            background-color: #B5C9C3;
             margin-left: auto;
             margin-right: auto;
             border-radius: 10px;
@@ -36,6 +38,7 @@
             align-items: center;
             justify-content: center;
             padding: 50px;
+            margin-bottom: 20px;
         }
 
         .orderdetails {
@@ -101,11 +104,18 @@
         }
 
         .confirmcancelbuttons{
+            align-items: center;
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
-            margin-left: 50px;
+            margin-left: 350px;
             color: black;
+            /*.container {*/
+            /*    display: flex;*/
+                justify-content: center;
+            /*}*/
+            margin-top: 10px;
         }
+
 
         a {
             text-decoration: none;
@@ -120,4 +130,13 @@
             margin-top: 30px;
             border-radius: 10px;
             text-align: center;
+        }
+
+        .manage-promotions {
+            /*max-width: 700px;*/
+            margin: 30px auto;
+            padding: 20px;
+            background-color: #598392; /* Intermediate color for form background */
+            border-radius: 8px;
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
         }
