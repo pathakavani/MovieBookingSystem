@@ -14,6 +14,9 @@ function EditProfile() {
         expirationDate:""
     });
     const [showPaymentFields, setShowPaymentFields] = useState(false);
+    const [showAddPaymentFields, setAddShowPaymentFields] = useState(false);
+    const [editCardCount, setEditCardCount] = useState(0);
+    const [addCardCount, setAddCardCount] = useState(0);
     const [data, setData] = useState("");
     //password
     const [wrong, setWrong] = useState(false)
@@ -85,9 +88,73 @@ function EditProfile() {
         await fetch("http://localhost:8080/updateInfo",options)
         .catch(err => console.log(err));
      }
+    // const togglePaymentFields = () => {
+    //     setShowPaymentFields(!showPaymentFields);
+    // };
     const togglePaymentFields = () => {
-        setShowPaymentFields(!showPaymentFields);
+        // if (editCardCount < 3) { // Check if "Edit Card" button has been clicked less than 3 times
+            setShowPaymentFields(!showPaymentFields);
+            // setEditCardCount(count => count + 1); // Increment the counter
+        // }
     };
+
+    const toggleAddPaymentFields = () => {
+        if (addCardCount === 0 || addCardCount < 6) {
+            setAddShowPaymentFields(!showAddPaymentFields);
+            setAddCardCount(count => count + 1);
+            renderAddPaymentFields();
+        } else {
+            setAddShowPaymentFields(false);
+            alert("Already three cards added...");
+            // setAddCardCount(count => count + 1);
+        }
+    };
+    const renderAddPaymentFields = () => {
+        const fields = [];
+        // for (let i = 0; i < 3; i++) {
+            fields.push(
+                <React.Fragment >
+                    {/*<button type="button" className="btn btn-primary mb-3" onClick={toggleAddPaymentFields}>*/}
+                    {/*    Add Card*/}
+                    {/*</button>*/}
+                    {showAddPaymentFields && (
+                        <>
+                            <div className="mb-3">
+                                <label htmlFor="paymentMethod" className="form-label">Card Type</label>
+                                <select className="form-select" id="paymentMethod" name="paymentMethod"
+                                        placeholder={profile.paymentMethod} onChange={handleInputChange}>
+                                    <option value="Visa">Visa</option>
+                                    <option value="MasterCard">MasterCard</option>
+                                    <option value="AmericanExpress">American Express</option>
+                                    <option value="Discover">Discover</option>
+                                </select>
+                            </div>
+                            <div className="form-group">
+                        {/*<label htmlFor="cardName">Name on Card</label>*/}
+                        <input type="text" id="cardName" name="cardName" placeholder="Name on Card" required/>
+                      </div>
+
+                      <div className="form-group">
+                        {/*<label htmlFor="cardNumber">Card Number</label>*/}
+                        <input type="password" id="cardNumber" name="cardNumber" placeholder="Card Number"
+                               pattern="\d{16}" required
+                               style={{ width: "100%" }}/>
+                      </div>
+                            <div className="mb-3">
+                                <label htmlFor="expirationDate" className="form-label">Expiration Date</label>
+                                <input type="date" className="form-control" id="expirationDate"
+                                       name="expirationDate" minLength="16" maxLength="16"
+                                       onChange={handleInputChange} />
+                            </div>
+                            
+                        </>
+                    )}
+                </React.Fragment>
+            );
+        // }
+        return fields;
+    }
+
 
     return (
         <div className="container mt-5">
@@ -95,26 +162,31 @@ function EditProfile() {
                 <div className="col-md-6">
                     <h1>Edit Profile</h1>
                     <form onSubmit={handleSubmit}>
-                        {wrong && <p style={{color:'red'}}><i>Wrong Password</i></p>}
+                        {wrong && <p style={{color: 'red'}}><i>Wrong Password</i></p>}
                         <div className="mb-3">
                             <label htmlFor="firstName" className="form-label">First Name</label>
-                            <input type="text" className="form-control" id="firstName" name="firstName" onChange={handleInputChange} placeholder={profile.firstName} />
+                            <input type="text" className="form-control" id="firstName" name="firstName"
+                                   onChange={handleInputChange} placeholder={profile.firstName}/>
                         </div>
                         <div className="mb-3">
                             <label htmlFor="lastName" className="form-label">Last Name</label>
-                            <input type="text" className="form-control" id="lastName" name="lastName" onChange={handleInputChange} placeholder={profile.lastName} />
+                            <input type="text" className="form-control" id="lastName" name="lastName"
+                                   onChange={handleInputChange} placeholder={profile.lastName}/>
                         </div>
                         <div className="mb-3">
                             <label htmlFor="email" className="form-label">Email</label>
-                            <input type="email" className="form-control" id="email" name="email" value={profile.email} placeholder="Your Email" readOnly/>
+                            <input type="email" className="form-control" id="email" name="email" value={profile.email}
+                                   placeholder="Your Email" readOnly/>
                         </div>
                         <div className="mb-3">
                             <label htmlFor="password" className="form-label">Password</label>
-                            <input type="password" className="form-control" id="password" name="password"  onChange={handleInputChange} />
+                            <input type="password" className="form-control" id="password" name="password"
+                                   onChange={handleInputChange}/>
                         </div>
                         <div className="mb-3">
                             <label htmlFor="npassword" className="form-label">New Password</label>
-                            <input type="password" className="form-control" id="npassword" name="npassword"  onChange={handleInputChange} />
+                            <input type="password" className="form-control" id="npassword" name="npassword"
+                                   onChange={handleInputChange}/>
                         </div>
                         {/*<div className="mb-3">*/}
                         {/*    <label htmlFor="paymentMethod" className="form-label">Card Type</label>*/}
@@ -152,16 +224,17 @@ function EditProfile() {
                                         <option value="Discover">Discover</option>
                                     </select>
                                 </div>
-                                <div className="mb-3">
-                                    <label htmlFor="paymentInfo" className="form-label">Payment Information</label>
-                                    <input type="text" className="form-control" id="paymentInfo" name="paymentInfo"
-                                           onChange={handleInputChange} placeholder={profile.paymentInfo}/>
-                                </div>
-                                <div className="mb-3">
-                                    <label htmlFor="address" className="form-label">Billing Address</label>
-                                    <input type="text" className="form-control" id="address" name="address"
-                                           onChange={handleInputChange} placeholder={profile.address}/>
-                                </div>
+                                <div className="form-group">
+                        {/*<label htmlFor="cardName">Name on Card</label>*/}
+                        <input type="text" id="cardName" name="cardName" placeholder="Name on Card" required/>
+                      </div>
+
+                      <div className="form-group">
+                        {/*<label htmlFor="cardNumber">Card Number</label>*/}
+                        <input type="password" id="cardNumber" name="cardNumber" placeholder="Card Number"
+                               pattern="\d{16}" required
+                               style={{ width: "100%" }}/>
+                      </div>
                                 <div className="mb-3">
                                     <label htmlFor="expirationDate" className="form-label">Expiration Date</label>
                                     <input type="date" className="form-control" id="expirationDate"
@@ -170,6 +243,45 @@ function EditProfile() {
                                 </div>
                             </>
                         )}
+                        {/*<button type="button" className="btn btn-primary mb-3" onClick={toggleAddPaymentFields}>*/}
+                        {/*    Add Card*/}
+                        {/*</button>*/}
+                        {/*{showAddPaymentFields && (*/}
+                        {/*    <>*/}
+                        {/*        <div className="mb-3">*/}
+                        {/*            <label htmlFor="paymentMethod" className="form-label">Card Type</label>*/}
+                        {/*            <select className="form-select" id="paymentMethod" name="paymentMethod"*/}
+                        {/*                    placeholder={profile.paymentMethod} onChange={handleInputChange}>*/}
+                        {/*                <option value="Visa">Visa</option>*/}
+                        {/*                <option value="MasterCard">MasterCard</option>*/}
+                        {/*                <option value="AmericanExpress">American Express</option>*/}
+                        {/*                <option value="Discover">Discover</option>*/}
+                        {/*            </select>*/}
+                        {/*        </div>*/}
+                        {/*        <div className="mb-3">*/}
+                        {/*            <label htmlFor="paymentInfo" className="form-label">Payment Information</label>*/}
+                        {/*            <input type="text" className="form-control" id="paymentInfo" name="paymentInfo"*/}
+                        {/*                   onChange={handleInputChange} placeholder={profile.paymentInfo}/>*/}
+                        {/*        </div>*/}
+                        {/*        <div className="mb-3">*/}
+                        {/*            <label htmlFor="address" className="form-label">Billing Address</label>*/}
+                        {/*            <input type="text" className="form-control" id="address" name="address"*/}
+                        {/*                   onChange={handleInputChange} placeholder={profile.address}/>*/}
+                        {/*        </div>*/}
+                        {/*        <div className="mb-3">*/}
+                        {/*            <label htmlFor="expirationDate" className="form-label">Expiration Date</label>*/}
+                        {/*            <input type="date" className="form-control" id="expirationDate"*/}
+                        {/*                   name="expirationDate" minLength="16" maxLength="16"*/}
+                        {/*                   onChange={handleInputChange}/>*/}
+                        {/*        </div>*/}
+                        {/*    </>*/}
+                        {/*)}*/}
+
+                        <button type="button" className="btn btn-primary mb-3" onClick={toggleAddPaymentFields}>
+                            Add Card
+                        </button>
+
+                        {renderAddPaymentFields()}
                         <div className="mb-3">
                             <label htmlFor="phoneNumber" className="form-label">Phone Number</label>
                             <input type="text" className="form-control" id="phoneNumber" name="phoneNumber"
@@ -178,11 +290,12 @@ function EditProfile() {
                         </div>
                         <div class="mb-3">
                             <label for="promostatus" class="form-label">Sign Up for Promotions?</label>
-                            <select class="form-select" id="promostatus" name="promostatus" onChange={handleInputChange}>
+                            <select class="form-select" id="promostatus" name="promostatus"
+                                    onChange={handleInputChange}>
                                 <option value="yes">Yes</option>
                                 <option value="no">No</option>
                             </select>
-                        </div>     
+                        </div>
                         <button type="submit" className="btn btn-primary">Update Profile</button>
                     </form>
                 </div>
