@@ -312,7 +312,7 @@ public class MoviesApplication {
     @PostMapping("/addCard")
     @ResponseBody
     public void addCard(@RequestBody PaymentCard pc) {
-        System.out.println(pc.billingAddress);
+        System.out.println(pc.cardType);
         try {
             String addCards = "INSERT into payment_card (cardType, cardNumber, expirationDate, billingAddress, userID) VALUES (?,?,?,?,?)";
             PreparedStatement ps = connection.prepareStatement(addCards);
@@ -320,7 +320,7 @@ public class MoviesApplication {
             ps.setString(2, Base64.getEncoder().encodeToString(pc.cardNumber.getBytes()));
             ps.setString(3, pc.expirationDate);
             ps.setString(4, pc.billingAddress);
-            ps.setInt(4, Integer.parseInt(pc.userID));
+            ps.setInt(5, Integer.parseInt(pc.userID));
             ps.executeUpdate();
         }catch(Exception e) {
             e.printStackTrace();
@@ -338,7 +338,7 @@ public class MoviesApplication {
         System.out.println("data: " + pureData);
         try{
             String [] order = pureData.split(", ");
-            String addToBooking = "INSERT into booking (userID, promotion, orderTotal, cardID, adults, children, senior, movie, promotion) VALUES (?,?,?,?,?,?,?,?,?)"; 
+            String addToBooking = "INSERT into booking (userID, promotion, orderTotal, cardID, adults, children, senior, movie) VALUES (?,?,?,?,?,?,?,?)"; 
             PreparedStatement ps = connection.prepareStatement(addToBooking);
             ps.setInt(1, Integer.parseInt(order[0]));
             ps.setString(2, (order[1]));
@@ -1255,14 +1255,13 @@ public class MoviesApplication {
                 while (resultSet.next()) {
                     Map<String, Object> order = new HashMap<>();
                     order.put("bookingID", resultSet.getInt("bookingID"));
-                    order.put("bookingNumber", resultSet.getString("bookingNumber"));
                     order.put("userID", resultSet.getInt("userID"));
-                    order.put("showID", resultSet.getInt("showID"));
-                    order.put("promoID", resultSet.getInt("promoID"));
-                    order.put("ticketPrice", resultSet.getDouble("ticketPrice"));
-                    order.put("salesTax", resultSet.getDouble("salesTax"));
-                    order.put("onlineFee", resultSet.getDouble("onlineFee"));
                     order.put("orderTotal", resultSet.getDouble("orderTotal"));
+                    order.put("adults", resultSet.getInt("adults"));
+                    order.put("children", resultSet.getInt("children"));
+                    order.put("senior", resultSet.getInt("senior"));
+                    order.put("promotion", resultSet.getString("promotion"));
+                    order.put("movie", resultSet.getString("movie"));
                     orders.add(order);
                 }
             }

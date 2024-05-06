@@ -175,7 +175,7 @@ function OrderPage() {
   }
 //userID, promoID, orderTotal, cardID, adults, children, senior
   const payWithExistingCard = (card) => {
-    const input = id + ", " + promo+", "+ costs.total.toFixed(2) + ", " + card.id + ", " + adults + ", " + children + ", " + senior + ", " + movie;
+    const input = id + ", " + promo+", "+ costs.total.toFixed(2) + ", " + card.id + ", " + adults + ", " + children + ", " + senior + ", " + (movie?movie:"none");
     console.log(input)
     axios.post("http://localhost:8080/addTicket", {input})
     .catch(err => console.log(err));

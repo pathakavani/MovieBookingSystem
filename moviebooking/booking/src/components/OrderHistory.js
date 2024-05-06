@@ -40,24 +40,24 @@ function OrderHistory() {
           <tr>
             <th>Booking Number</th>
             <th>Movie</th>
-            <th>Promo ID</th>
-            <th>Ticket Price</th>
-            <th>Sales Tax</th>
-            <th>Online Fees</th>
+            <th>Promotion</th>
+            <th>Adults</th>
+            <th>Children</th>
+            <th>Senior</th>
             <th>Order Total</th>
           </tr>
         </thead>
         <tbody>
           {orders.map((order) => (
-            <tr key={order.bookingNumber}>
-              <td>{order.bookingNumber}</td>
+            <tr key={order.bookingID}>
+              <td>{order.bookingID}</td>
               <td>
-                <MovieTitleLoader showID={order.showID} fetchMovieTitle={fetchMovieTitle} />
+                {order.movie}
               </td>
-              <td>{order.promoID}</td>
-              <td>{order.ticketPrice}</td>
-              <td>{order.salesTax}</td>
-              <td>{order.onlineFee}</td>
+              <td>{order.promotion}</td>
+              <td>{order.adults}</td>
+              <td>{order.children}</td>
+              <td>{order.senior}</td>
               <td>{order.orderTotal}</td>
             </tr>
           ))}
