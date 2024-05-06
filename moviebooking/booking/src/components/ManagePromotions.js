@@ -36,23 +36,33 @@ function ManagePromotions() {
       <form onSubmit={handleSubmit}>
         <label>
           Title:
-          <input type="text" name="title" value={promotion.title} onChange={handleChange} />
+          <div classname="input-container">
+          <input type="text" name="title" value={promotion.title} onChange={handleChange} required/>
+        </div>
         </label>
         <label>
           Discount Code:
-          <input type="text" name="promoCode" value={promotion.promoCode} onChange={handleChange} />
+          <div classname="input-container">
+          <input type="text" name="promoCode" value={promotion.promoCode} onChange={handleChange} required/>
+        </div>
         </label>
         <label>
           Discount amount:
-          <input type="text" name="discount" value={promotion.discount} onChange={handleChange} />
+          <div classname="input-container">
+          <input type="text" name="discount" value={promotion.discount} onChange={handleChange} required/>
+        </div>
         </label>
         <label>
           Start date:
-          <input type="date" name="startDate" value={promotion.startDate} onChange={handleChange} />
+          <div classname="input-container">
+          <input type="date" name="startDate" value={promotion.startDate} onChange={handleChange} required/>
+        </div>
         </label>
         <label>
           Valid Until:
-          <input type="date" name="endDate" value={promotion.endDate} onChange={handleChange} />
+          <div classname="input-container">
+          <input type="date" name="endDate" value={promotion.endDate} onChange={handleChange} required/>
+        </div>
         </label>
         <button type="submit">Submit Promotion</button>
       </form>

@@ -58,13 +58,16 @@ body {
     margin-right: 10px;
     border-radius: 4px;
     border: 1px solid #AEC3B0; /* Lighter color for borders */
-    background-color: #EFF6E0; /* Lightest color for input backgrounds */
+    background-color: white; /* Lightest color for input backgrounds */
     color: #01161E; /* Dark text for readability */
   }
   
-  .form-group input[type="text"]:last-child {
+  .form-group input[type="text"]:last-child,
+  .form-group input[type="email"]:last-child,
+  .form-group input[type="password"]:last-child {
     margin-right: 0;
   }
+  
   
   .form-group button {
     padding: 10px 20px;
@@ -94,7 +97,7 @@ body {
   
   .table-users th {
     background-color: #01161E; /* Darkest color for table headers */
-    color: #EFF6E0; /* Light text for table headers */
+    color: white; /* Light text for table headers */
   }
   
   .table-users tr:hover {

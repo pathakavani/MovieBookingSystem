@@ -106,41 +106,46 @@ function SignupPage() {
 
     return (
         <div>
-
-            <div className="container signup-container">
+            <div className="signup-container">
                 <div className="card">
-                    <div className="card-body" style={{ backgroundColor: '#AEC3B0' }}>
-                        <h5 className="card-title">Sign Up</h5>
+                    <div className="card-body" style={{ backgroundColor: 'white' }}>
+                        <h3 className="card-title">Sign Up</h3>
                         <form id="signupForm" onSubmit={handleSubmit}>
                             <div className="mb-3">
-                                <label htmlFor="firstName" className="form-label">First Name<sup> *required</sup></label>
-                                <input type="text" className="form-control" id="firstname" name="firstName" onChange={handlefn} required />
+                                <label htmlFor="firstName" className="form-label">First Name</label>
+                                <input type="text" className="form-control" id="firstname" name="firstName" onChange={handlefn}placeholder='John' required />
                             </div>
                             <div class="mb-3">
-                    <label for="lastName" class="form-label">Last Name<sup> *required</sup></label>
-                    <input type="text" class="form-control" id="lastname" name="lastname" onChange={handleln}required/>
+                    <label for="lastName" class="form-label">Last Name</label>
+                    <input type="text" class="form-control" id="lastname" name="lastname" onChange={handleln}placeholder='Doe'required/>
                 </div>
                 <div class="mb-3">
-                    <label for="email" class="form-label">Email Address<sup> *required</sup></label>
-                    <input type="email" class="form-control" id="email" name="email" onChange={handleem}required/>
+                    <label for="email" class="form-label">Email Address</label>
+                    <input type="email" class="form-control" id="email" name="email" onChange={handleem} placeholder='Email Address'required/>
                 </div>
                 <div class="mb-3">
-                    <label for="password" class="form-label">Password<sup> *required</sup></label>
-                    <input type="password" class="form-control" id="password" name="password" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" onChange={handlepw}/>
-                    <small class="form-text text-muted">Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one number.</small>
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" name="password" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" onChange={handlepw} placeholder='Password'/>
+                    <div class="bullets">
+                        <ul>
+                            <li>At least 8 characters</li>
+                            <li>At least 1 uppercase letter</li>
+                            <li>At least 1 lowercase letter</li>
+                            <li>At least 1 number</li>
+                        </ul>
+                    </div>
                 </div>
                 <div class="mb-3">
-                    <label for="password" class="form-label">Confirm Password<sup> *required</sup></label>
-                    <input type="password" class="form-control" id="confirm" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" onChange={handlecp}/>
+                    <label for="password" class="form-label">Confirm Password</label>
+                    <input type="password" class="form-control" id="confirm" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" onChange={handlecp}placeholder='Password'/>
                 </div>
                 <div class="mb-3">
-                    <label for="phoneNumber" class="form-label">Phone Number <sup> *required</sup></label>
-                    <input type="text" class="form-control" id="phoneNumber" name="phoneNumber" onChange={handleph}/>
+                    <label for="phoneNumber" class="form-label">Phone Number</label>
+                    <input type="text" class="form-control" id="phoneNumber" name="phoneNumber" onChange={handleph}placeholder='Phone Number'/>
                 </div>
                 <div class="mb-3">
-                    <label for="address" class="form-label">Address <sup> (optional)</sup></label>
-                    <input type="text" class="form-control" id="address" name="address" onChange={handleadd}/>
-                    <small class="form-text text-muted">Example: 123 Movie St.</small>
+                    <label for="address" class="form-label">Address (optional)</label>
+                    <input type="text" class="form-control" id="address" name="address" onChange={handleadd} placeholder='123 Movie St.'/>
                 </div>
                 <button type="button" className="btn btn-primary mb-3" onClick={togglePaymentFields}>
                     Add Card
@@ -148,7 +153,9 @@ function SignupPage() {
                 {showPaymentFields && (
                     <>
                 <div class="mb-3">
-                    <label for="cardType" class="form-label">Card Type <sup> (optional)</sup></label>
+                    <div class="card-type">
+                    <label for="cardType" class="form-label">Card Type (optional)</label>
+                    </div>
                     <select class="form-select" id="cardType" name="cardType" onChange={handlect}>
                         <option value="Visa">Visa</option>
                         <option value="MasterCard">MasterCard</option>
@@ -157,17 +164,19 @@ function SignupPage() {
                     </select>
                 </div>
                 <div class="mb-3">
-                    <label for="paymentcard" class="form-label">Payment Card <sup> (optional)</sup></label>
+                    <label for="paymentcard" class="form-label">Payment Card (optional)</label>
                     <input type="text" class="form-control" id="paymentcard" name="paymentcard" onChange={handlepc}/>
                 </div>
                 <div class="mb-3">
-                    <label for="expiration_date" class="form-label">Expiration Date <sup> (optional)</sup></label>
+                    <label for="expiration_date" class="form-label">Expiration Date (optional)</label>
                     <input type="date" class="form-control" id="expiration_date" name="paymentcard" minlength="16" maxlength="16" onChange={handleed}/>
                 </div>
                     </>
                 )}
                 <div class="mb-3">
+                    <div class="promo-label">
                     <label for="promostatus" class="form-label">Sign Up for Promotions?</label>
+                    </div>
                     <select class="form-select" id="promostatus" name="promostatus" onChange={handlest}>
                         <option value="yes">Yes</option>
                         <option value="no">No</option>

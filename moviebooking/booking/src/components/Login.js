@@ -63,7 +63,6 @@ function Login() {
 
   return (
     <div>
-        {/* HTML header */}
         <head>
             <meta charSet="UTF-8" />
             <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -75,9 +74,9 @@ function Login() {
         </head>
         <div>
         {/* Login Card */}
-        <div className="container login-container" style={{ maxWidth: '700px', margin: '0 auto', marginTop: '50px' }}>
+        <div className="login-container" style={{ maxWidth: '700px', margin: '0 auto', marginTop: '50px' }}>
             <div className="card">
-            <div className="card-body" style={{ backgroundColor: '#AEC3B0' }}>
+            <div className="card-body">
                 <h2 className="card-title">Login</h2>
                 <form onSubmit={handleSubmit}>
                 <div className="mb-3">

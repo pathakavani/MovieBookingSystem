@@ -106,9 +106,17 @@ function OrderPage() {
 
   return (
       <div>
+         <div className="manage-promotions">
+                  <form>
+                    <label htmlFor="promo">Promo Code</label>
+                    <input type="text" id="promo" name="promo" placeholder="Enter promo code"/>
+                    <button>Apply</button>
+                    {/*  implement on click*/}
+                  </form>
+            </div>
         <div className="orderbox">
           <div className="orderdetails">
-            <p style={{display: 'inline-block'}}><b>Order Details:</b></p>
+            <p><b>Order Details:</b></p>
             <h1><b>{movie}</b></h1>
             <br/>
             <p>Tickets:</p>
@@ -125,39 +133,8 @@ function OrderPage() {
             <p>Total - ${costs.total.toFixed(2)}</p>
           </div>
           <div className="rightbox">
-            <div className="manage-promotions">
-              {/*className="manage-promotions-container"*/}
-              <button onClick={togglePromoForm}>Apply Promo</button>
-              {showPromoForm && (
-                  <form>
-                    <label htmlFor="promo" style={{marginTop: '50px'}}>Promo Code</label>
-                    <input type="text" id="promo" name="promo" placeholder="Enter your promo code here..."/>
-                    <button>Apply</button>
-                    {/*  implement on click*/}
-                  </form>
-              )}
-            </div>
             <div className="paymentmethodsgrid">
-              <div className='space'>
-              <button className='paymentmethod' onClick={getUsersCards}>Existing Payment Info</button>
-              {showCards &&
-                cards.map((card) => 
-                {if (card.cardNumber!=="") return(
-                  <div className='cards'>
-                    <h3 >{card.cardType}</h3>
-                    <p>{card.cardNumber}</p>
-                    <p><i>{card.expirationDate}</i></p>
-                    </div>
-                )})
-              }
-              </div>
-              <div className='space'>
-              <button className='paymentmethod' onClick={togglePaymentForm}>Payment Method</button>
-              {/* Add Apply Promo button */}
-              {showPaymentForm && (
-                  // <form id="paymentForm" onSubmit={handleSubmit}>
-                  //   {/* Payment details form */}
-                  // </
+            <div className='space'>
                   <div className='paymentform'>
                     <form id="paymentForm" onSubmit={handleSubmit}>
                       <h2>Payment Details</h2>
@@ -191,19 +168,24 @@ function OrderPage() {
                         <input type="checkbox" id="saveCard" name="saveCard"/>
                         <label htmlFor="saveCard">Save this card for future payments</label>
                       </div>
-
                       <button type="submit">Submit Payment</button>
                     </form>
                   </div>
-              )}
+              </div>
+              <div className='space'>
+              <button className='paymentmethod' onClick={getUsersCards}>Existing Payment Info</button>
+              {showCards &&
+                cards.map((card) => 
+                {if (card.cardNumber!=="") return(
+                  <div className='cards'>
+                    <h3 >{card.cardType}</h3>
+                    <p>{card.cardNumber}</p>
+                    <p><i>{card.expirationDate}</i></p>
+                    </div>
+                )})
+              }
               </div>
             </div>
-
-            {/*<form>*/}
-            {/*  <label htmlFor="promo" style={{marginTop: '70px'}}>Promo Code</label>*/}
-            {/*  <input type="text" id="promo" name="promo" placeholder="Enter your promo code here..."/>*/}
-            {/*</form>*/}
-
           </div>
         </div>
         <div className="confirmcancelbuttons">
@@ -215,7 +197,7 @@ function OrderPage() {
               style={{backgroundColor: 'white', width: '120px', height: '40px', borderRadius: '5px', color: 'black'}}
               onClick={(e) => handleLogout(e)}>Cancel
           </button>
-          <button style={{backgroundColor: 'white', width: '120px', height: '40px', borderRadius: '5px'}}><a
+          <button style={{backgroundColor: 'white', width: '120px', height: '40px', borderRadius: '5px', color: 'black'}}><a
               href="ConfirmationPage">Confirm Order</a></button>
         </div>
       </div>

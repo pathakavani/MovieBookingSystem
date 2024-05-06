@@ -124,51 +124,69 @@ function ManageMovie() {
           <form onSubmit={handleSubmit}>
             <label>
               Title:
-              <input type="text" name="title" value={movie.title} onChange={handleChange} />
+              <div classname="input-container">
+                <input type="text" name="title" value={movie.title} onChange={handleChange} required/>
+              </div>
             </label>
             <label>
               Category:
-              <input type="text" name="category" value={movie.category} onChange={handleChange} />
+              <div classname="input-container">
+                <input type="text" name="category" value={movie.category} onChange={handleChange} required/>
+              </div>
             </label>
             <label>
               Cast:
-              <input type="text" name="cast" value={movie.cast} onChange={handleChange} />
+              <div classname="input-container">
+                <input type="text" name="cast" value={movie.cast} onChange={handleChange} required/>
+              </div>
             </label>
             <label>
               Director:
-              <input type="text" name="director" value={movie.director} onChange={handleChange} />
+              <div classname="input-container">
+               <input type="text" name="director" value={movie.director} onChange={handleChange} required/>
+              </div>
             </label>
             <label>
               Producer:
-              <input type="text" name="producer" value={movie.producer} onChange={handleChange} />
+              <div classname="input-container">
+                <input type="text" name="producer" value={movie.producer} onChange={handleChange} required/>
+              </div>
             </label>
             <label>
               Release Date:
-              <input type="date" name="release_date" value={movie.release_date} onChange={handleChange} />
+              <div classname="input-container">
+               <input type="date" name="release_date" value={movie.release_date} onChange={handleChange} required/>
+              </div>
             </label>
             <label>
               Duration:
-              <input type="text" name="duration" value={movie.duration} onChange={handleChange} />
+              <div classname="input-container">
+                <input type="text" name="duration" value={movie.duration} onChange={handleChange} required/>
+              </div>
             </label>
             <label>
               Synopsis:
-              <textarea name="synopsis" value={movie.synopsis} onChange={handleChange} />
+              <textarea name="synopsis" value={movie.synopsis} onChange={handleChange} required/>
             </label>
             <label>
               Reviews:
-              <textarea name="reviews" value={movie.reviews} onChange={handleChange} />
+              <textarea name="reviews" value={movie.reviews} onChange={handleChange} required/>
             </label>
             <label>
               Poster URL:
-              <input type="text" name="url" value={movie.url} onChange={handleChange} placeholder="Enter URL for the movie poster" />
+              <div classname="input-container">
+                <input type="text" name="url" value={movie.url} onChange={handleChange} placeholder="Enter URL for the movie poster" required/>
+              </div>
             </label>
             <label>
               Trailer URL:
-              <input type="text" name="trailer" value={movie.trailer} onChange={handleChange} placeholder="Enter YouTube URL for the trailer" />
+              <div classname="input-container">
+                <input type="text" name="trailer" value={movie.trailer} onChange={handleChange} placeholder="Enter YouTube URL for the trailer" required/>
+              </div>
             </label>
             <label>
               MPAA Rating:
-              <select name="mpaa_rating" value={movie.mpaa_rating} onChange={handleChange}>
+              <select name="mpaa_rating" value={movie.mpaa_rating} onChange={handleChange} required>
                 <option value="">Select Rating</option>
                 <option value="G">G</option>
                 <option value="PG">PG</option>

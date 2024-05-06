@@ -26,14 +26,6 @@ function ConfirmationPage() {
   return (
     
     <div className='body'>
-      <nav className="navbar navbar-expand-lg">
-        <div className="container-fluid">
-          <a className="navbar-brand active" style={{ color: 'white', fontFamily: 'Lato, sans-serif', fontFamily: 'Lilita One, cursive' }} href="Main.php">
-            <i><img src="https://i.ibb.co/jy62Srz/36a17f9402f64b66ba11ad785ec9ff3e.png" alt="logo" /></i> MovieHub
-          </a>
-        </div>
-      </nav>
-      {/* <div className="orderbox"> */}
         <div className="confirmationtext">
           <p>Your order has been placed!</p>
           <p>Order ID: 2147</p>

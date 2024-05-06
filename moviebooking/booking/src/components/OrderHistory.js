@@ -18,7 +18,9 @@ function OrderHistory() {
 
   return (
     <div className="order-history-container">
-      <h2>Order History</h2>
+      <div className='title'>
+        <h2>Order History</h2>
+      </div>
       <table>
         <thead>
           <tr>

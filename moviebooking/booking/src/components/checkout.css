@@ -1,144 +1,111 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f8f8;
+}
 
-        .navbar-brand {
-            font-family: 'fantasy';
-        }
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #B5C9C3;
+.orderbox {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-start;
+    padding: 20px;
+    margin: 20px auto;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 1200px;
+}
 
-        }
+.orderdetails {
+    color: black;
+    flex: 1;
+    padding: 20px;
+    text-align: center;
+}
 
-        .login-container {
-            max-width: 400px;
-            margin: 0 auto;
-            margin-top: 50px;
-        }
+.orderdetails h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
 
-        i img {
-            width: 25px; 
-            height: 25px;
-        }
+.orderdetails p {
+    font-size: 16px;
+    margin-bottom: 10px;
+}
 
-        .orderbox {
-            margin: 3%;
-            display: flex;
-            flex-direction: row;
-            text-align: center;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            height: 100%;
-        }
+.rightbox {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
 
-        .orderdetails {
-            margin-right:5%;
-            background-color: white;
-            height: 500px;
-            width: 400px;
-            border-radius: 10px;
-            color: black
-        }
+.manage-promotions,
+.paymentmethodsgrid {
+    margin-top: 20px;
+    color: black;
+    text-align: center;
+}
 
-        .orderbox p {
-            font-size: 14pt;
-        }
+.manage-promotions form,
+.paymentform {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
 
-        .paymentmethodsgrid {
-            display: flex;
-            flex-direction: row;
-            /* grid-template-columns: 1fr 1fr; */
-            /* padding: 3%; */
-        }
-        .space {
-            margin: 2%;
-        }
-        
-        .paymentmethod {
-            width: 200px;
-            height: 110px;
-            background-color: white;
-            color: black;
-            margin-top: 30px;
-            border-radius: 10px;
-            text-align: center;
-        }
+.paymentform h2 {
+    font-size: 20px;
+    margin-bottom: 20px;
+}
 
-        .paymentform {
-            width: 600px;
-            height: 110px;
-            background-color: white;
-            color: black;
-            margin-top: 30px;
-            border-radius: 10px;
-            text-align: center;
-        }
+.paymentform button {
+    width: 100%;
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
 
-        .paymentmethod p {
-            font-size: 14pt;
-            margin-top: 40px;
-            color: black;
-        }
+.paymentform button:hover {
+    background-color: #0056b3;
+}
 
-        input[type=text] {
-            width: 420px;
-            box-sizing: border-box;
-            border-radius: 10px;
-        }
+.paymentmethod,
+.cards {
+    background-color: #f0f0f0;
+    color: black;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+    width: 100%;
+}
 
-        .rightbox {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+.confirmcancelbuttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
 
-        .rightbox label {
-            padding: 20px;
-        }
+.confirmcancelbuttons button {
+    margin: 0 10px;
+    padding: 10px 20px;
+    background-color: white;
+    border: 1px solid #007bff;
+    border-radius: 5px;
+    color: black;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
 
-        .confirmcancelbuttons{
-            align-items: center;
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            margin-left: 350px;
-            color: black;
-            /*.container {*/
-            /*    display: flex;*/
-                justify-content: center;
-            /*}*/
-            margin-top: 10px;
-        }
-
-        .cards{ 
-            align-items: center;
-            background-color: rgba(0, 255, 17, 0.512);
-            border-radius: 20px;
-            margin: 5%;
-            box-shadow: 2px 2px 2px 2px grey;
-            color:#01161E
-
-        }
-        a {
-            text-decoration: none;
-            color: black;
-        }
-
-        .promo {
-            width: 200px;
-            height: 110px;
-            background-color: white;
-            color: black;
-            margin-top: 30px;
-            border-radius: 10px;
-            text-align: center;
-        }
-
-        .manage-promotions {
-            /*max-width: 700px;*/
-            margin: 6%;
-            padding: 2%;
-            /*background-color: #598392; Intermediate color for form background */
-            border-radius: 8px;
-            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-            height: fit-content;
-            width: fit-content;
-        }
+.confirmcancelbuttons button:hover {
+    background-color: #0056b3;
+    color: white;
+}
