@@ -1140,4 +1140,53 @@ public class MoviesApplication {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error adding promotion.");
         }
     }
+
+    @GetMapping("/getMovieTitle")
+    @ResponseBody
+    public String getMovieTitle(@RequestParam("showID") int showID) {
+        String movieTitle = "";
+        try {
+            // Query to get title based on show_id from the shows table and movies table using JOIN
+            String movieTitleQuery = "SELECT m.title FROM shows s JOIN movies m ON s.movieID = m.movieID WHERE s.showID = ?";
+            PreparedStatement statement = connection.prepareStatement(movieTitleQuery);
+            statement.setInt(1, showID);
+            ResultSet resultSet = statement.executeQuery();
+            
+            if (resultSet.next()) {
+                movieTitle = resultSet.getString("title");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return movieTitle;
+    }
+
+
+    @GetMapping("/getUserOrders")
+    @ResponseBody
+    public List<Map<String, Object>> getUserOrders(@RequestParam("userID") int userID) {
+        List<Map<String, Object>> orders = new ArrayList<>();
+        try {
+            String sql = "SELECT * FROM booking WHERE userID = ?";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, userID);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                Map<String, Object> order = new HashMap<>();
+                order.put("bookingID", resultSet.getInt("bookingID"));
+                order.put("bookingNumber", resultSet.getString("bookingNumber"));
+                order.put("userID", resultSet.getInt("userID"));
+                order.put("showID", resultSet.getInt("showID"));
+                order.put("promoID", resultSet.getInt("promoID"));
+                order.put("ticketPrice", resultSet.getDouble("ticketPrice"));
+                order.put("salesTax", resultSet.getDouble("salesTax"));
+                order.put("onlineFee", resultSet.getDouble("onlineFee"));
+                order.put("orderTotal", resultSet.getDouble("orderTotal"));
+                orders.add(order);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return orders;
+    }
 }
