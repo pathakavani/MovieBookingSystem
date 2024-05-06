@@ -16,10 +16,12 @@ body {
 }
 
 .orderdetails {
+    position: relative;
     color: black;
     flex: 1;
     padding: 20px;
     text-align: center;
+    font-weight: 2;
 }
 
 .orderdetails h1 {
@@ -76,9 +78,17 @@ body {
     background-color: #0056b3;
 }
 
-.paymentmethod,
-.cards {
+.paymentmethod{
     background-color: #f0f0f0;
+    color: black;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+    width: 100%;
+}
+.cards {
+    background-color: #ffffff46;
     color: black;
     padding: 20px;
     border-radius: 10px;

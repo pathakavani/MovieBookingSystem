@@ -66,15 +66,13 @@ public class MoviesApplication {
      */
     public MoviesApplication() {
         movies = new ArrayList<>();
-        String jdbcUrl = "jdbc:mysql://localhost:3306/Final_Movie_Booking"; // jdbc:mysql://localhost:33306/Movie_Booking
+        String jdbcUrl = "jdbc:mysql://localhost:33306/Final_Movie_Booking"; // jdbc:mysql://localhost:33306/Movie_Booking
         String username = "root";// change this
         String password = "bathinda"; // and that, pass: root123@ (for my reference - ruchitha)
 
         try {
             connection = DriverManager.getConnection(jdbcUrl, username, password);
             System.out.println("Database connection secured");
-
-            // Movie
             getAllMovies();
 
         } catch (SQLException e) {
@@ -95,21 +93,46 @@ public class MoviesApplication {
     }
 
     /**
+     * 
+     * Get promotion discount
+     */
+    @GetMapping("/getPromotion")
+    @ResponseBody
+    public int getPromotion(@RequestParam("promotion") String promotion) {
+        System.out.println(promotion);
+        try {
+            String sql = "SELECT discount FROM promotion WHERE promoCode = ?";
+
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            stmt.setString(1, promotion);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("discount");
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 100;
+    }
+
+
+    /**
      * Get's all the current user's payment cards.
      */
     @GetMapping("/getPaymentCards")
     @ResponseBody
     public List<String> getPaymentCards(@RequestParam("userID") int userID) {
         try {
-        String sql = "SELECT cardType, cardNumber, expirationDate FROM payment_cards WHERE user_id = "+userID;
-        PreparedStatement stmt = connection.prepareStatement(sql);
-        ResultSet rs = stmt.executeQuery();
-        if (rs.next()) {
-            List<String> cards = new ArrayList<>();
-            cards.add(rs.getString("cardType"));
-            cards.add(rs.getString("cardNumber"));
-            cards.add(rs.getString("expirationDate"));
-            return cards;
+            String sql = "SELECT cardType, cardNumber, expirationDate FROM payment_cards WHERE user_id = "+userID;
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                List<String> cards = new ArrayList<>();
+                cards.add(rs.getString("cardType"));
+                cards.add(rs.getString("cardNumber"));
+                cards.add(rs.getString("expirationDate"));
+                return cards;
             }
         }
         catch (SQLException e) {
@@ -247,6 +270,7 @@ public class MoviesApplication {
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 userID =  rs.getInt("UserID");
+                System.out.println("UserID: "+ userID);
                 return userID;
             }
         }
@@ -280,6 +304,51 @@ public class MoviesApplication {
         return cards;
     }
 
+    /**
+     * Add payment method
+     * @param PaymentCard
+     */
+    @PostMapping("/addCard")
+    @ResponseBody
+    public void addCard(@RequestBody PaymentCard pc) {
+        try {
+            String addCards = "INSERT into payment_info (cardType, cardNumber, expirationDate, billingAddress) VALUES (?,?,?,?)";
+            PreparedStatement ps = connection.prepareStatement(addCards);
+            ps.setString(1, pc.cardType);
+            ps.setString(2, pc.cardNumber);
+            ps.setString(3, pc.expirationDate);
+            ps.setString(4, pc.billingAddress);
+            ps.executeUpdate();
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Add into Order History (table: booking)
+     * @param data
+     */
+    @PostMapping("/addTicket")
+    @ResponseBody
+    public void addTicket(@RequestBody String data) {
+        try{
+        String [] order = data.split(",");
+        String addToBooking = "INSERT into booking (userID, promoID, orderTotal, cardID, adults, children, senior) VALUES (?,?,?,?,?,?,?)"; 
+        PreparedStatement ps = connection.prepareStatement(addToBooking);
+        ps.setInt(1, Integer.parseInt(order[0]));
+        ps.setInt(2, Integer.parseInt(order[1]));
+        ps.setInt(3, Integer.parseInt(order[2]));
+        ps.setInt(4, Integer.parseInt(order[3]));
+        ps.setInt(5, Integer.parseInt(order[4]));
+        ps.setInt(6, Integer.parseInt(order[5]));
+        ps.setInt(7, Integer.parseInt(order[6]));
+        ps.executeUpdate();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
 
     /**
      * Handles the POST request to insert user information into the database.

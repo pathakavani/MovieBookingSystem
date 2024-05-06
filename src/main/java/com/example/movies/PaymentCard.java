@@ -5,9 +5,11 @@ public class PaymentCard implements Serializable{
     String expirationDate;
     String cardType;
     String cardNumber;
-    PaymentCard(String ct, String cn, String ed) {
+    String billingAddress;
+    PaymentCard(String ct, String cn, String ed, String billingAddy) {
         expirationDate = ed;
         cardType = ct;
         cardNumber = cn;
+        billingAddress = billingAddy;
     }
 }

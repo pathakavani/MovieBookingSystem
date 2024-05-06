@@ -8,9 +8,9 @@ import axios from 'axios';
 function MovieTickets() {
     const dispatch = useDispatch();
     const [ticketCounts, setTicketCounts] = useState({
-        child: 0,
-        Adult: 0,
-        senior: 0
+        child: useSelector((state) => state.cart.children),
+        Adult: useSelector((state) => state.cart.adults),
+        senior: useSelector((state) => state.cart.senior)
     });
 
     const [selectedSeats, setSelectedSeats] = useState([]);
