@@ -66,7 +66,7 @@ public class MoviesApplication {
      */
     public MoviesApplication() {
         movies = new ArrayList<>();
-        String jdbcUrl = "jdbc:mysql://localhost:33306/Final_Movie_Booking"; // jdbc:mysql://localhost:33306/Movie_Booking
+        String jdbcUrl = "jdbc:mysql://localhost:3306/Final_Movie_Booking"; // jdbc:mysql://localhost:33306/Movie_Booking
         String username = "root";// change this
         String password = "bathinda"; // and that, pass: root123@ (for my reference - ruchitha)
 
@@ -1213,47 +1213,56 @@ public class MoviesApplication {
         }
     }
 
+    /**
+     * 
+     * get movie title from the showID
+     */
     @GetMapping("/getMovieTitle")
     @ResponseBody
     public String getMovieTitle(@RequestParam("showID") int showID) {
-        String movieTitle = "";
         try {
-            // Query to get title based on show_id from the shows table and movies table using JOIN
-            String movieTitleQuery = "SELECT m.title FROM shows s JOIN movies m ON s.movieID = m.movieID WHERE s.showID = ?";
-            PreparedStatement statement = connection.prepareStatement(movieTitleQuery);
+            String sql = "SELECT m.title FROM movies m JOIN shows s ON m.movie_id = s.movieID WHERE s.showID = ?";
+            PreparedStatement statement = connection.prepareStatement(sql);
             statement.setInt(1, showID);
             ResultSet resultSet = statement.executeQuery();
-            
             if (resultSet.next()) {
-                movieTitle = resultSet.getString("title");
+                return resultSet.getString("title");
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return movieTitle;
+        return "";
     }
-
-
+    /**
+     * 
+     * Fetch current user's order details
+     */
     @GetMapping("/getUserOrders")
     @ResponseBody
-    public List<Map<String, Object>> getUserOrders(@RequestParam("userID") int userID) {
+    public List<Map<String, Object>> getUserOrders(@RequestParam("email") String email) {
         List<Map<String, Object>> orders = new ArrayList<>();
         try {
-            String sql = "SELECT * FROM booking WHERE userID = ?";
-            PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setInt(1, userID);
-            ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()) {
-                Map<String, Object> order = new HashMap<>();
-                order.put("bookingID", resultSet.getInt("bookingID"));
-                order.put("userID", resultSet.getInt("userID"));
-                order.put("promoID", resultSet.getInt("promoID"));
-                order.put("orderTotal", resultSet.getDouble("orderTotal"));
-                order.put("cardID", resultSet.getInt("cardID"));
-                order.put("adults", resultSet.getInt("adults"));
-                order.put("children", resultSet.getInt("children"));
-                order.put("seniors", resultSet.getInt("seniors"));
-                orders.add(order);
+            // Get the userID based on the provided email
+            int userID = getUserID(email);
+
+            if (userID != -1) {
+                String sql = "SELECT * FROM booking WHERE userID = ?";
+                PreparedStatement statement = connection.prepareStatement(sql);
+                statement.setInt(1, userID);
+                ResultSet resultSet = statement.executeQuery();
+                while (resultSet.next()) {
+                    Map<String, Object> order = new HashMap<>();
+                    order.put("bookingID", resultSet.getInt("bookingID"));
+                    order.put("bookingNumber", resultSet.getString("bookingNumber"));
+                    order.put("userID", resultSet.getInt("userID"));
+                    order.put("showID", resultSet.getInt("showID"));
+                    order.put("promoID", resultSet.getInt("promoID"));
+                    order.put("ticketPrice", resultSet.getDouble("ticketPrice"));
+                    order.put("salesTax", resultSet.getDouble("salesTax"));
+                    order.put("onlineFee", resultSet.getDouble("onlineFee"));
+                    order.put("orderTotal", resultSet.getDouble("orderTotal"));
+                    orders.add(order);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
