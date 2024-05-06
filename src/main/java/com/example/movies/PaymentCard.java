@@ -6,10 +6,12 @@ public class PaymentCard implements Serializable{
     String cardType;
     String cardNumber;
     String billingAddress;
-    PaymentCard(String ct, String cn, String ed, String billingAddy) {
+    String userID;
+    PaymentCard(String ct, String cn, String ed, String billingAddy, String userID) {
         expirationDate = ed;
         cardType = ct;
         cardNumber = cn;
         billingAddress = billingAddy;
+        this.userID = userID;
     }
 }

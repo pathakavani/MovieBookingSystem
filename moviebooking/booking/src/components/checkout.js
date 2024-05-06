@@ -50,20 +50,26 @@ function OrderPage() {
       tax: ((adults*14.99 + children*9.99 + senior*8.99)*0.08),
       total: ((((adults*14.99 + children*9.99 + senior*8.99)+((adults*14.99 + children*9.99 + senior*8.99)*0.08))*(1-(discount*.01)))*(1+onlineFee))
     });
+    
+
+  },[]);
+  useEffect(() => {
+    if (showPaymentForm){
     window.addEventListener("scroll", () => {
       if (window.scrollY < window.screen.height*0.37) {
         setPos(window.scrollY)
       }
     })
-    return () => {
+  }
+  
+    if (!showPaymentForm){
       window.removeEventListener('scroll',  () => {
         if (window.scrollY < window.screen.height*0.37) {
           setPos(window.scrollY)
         }
       });
-  };
-
-  },[]);
+    }
+  }, [showPaymentForm])
 
   useEffect(() => {
     if (isLoggedIn === "") {
@@ -123,9 +129,9 @@ function OrderPage() {
       data.map((item) => {
           tempCard.push({
             cardType:item.split("\t")[0],
-        cardNumber:item.split("\t")[1],
-        expirationDate:item.split("\t")[2],
-        id: item.split("\t")[3]
+            cardNumber:item.split("\t")[1],
+            expirationDate:item.split("\t")[2],
+            id: item.split("\t")[3]
           })
       })
       if (cards !== tempCard)
@@ -141,24 +147,31 @@ function OrderPage() {
     .then((data) => setDiscount(data))
     .catch(err=>console.log(err))
 
-    console.log(discount)
-
   }
 
   const submitWithNewCard = () => {
       axios.post("http://localhost:8080/addCard", {
-        expirationDate: ed,
-        cardNumber: cn,
-        cardType: ct,
-        billingAddress: billAddy
+        ed,
+        cn,
+        ct,
+        billAddy
+      })
+      .then(() => {
+        console.log("submitted")
+      getUsersCards();
       })
       .catch((err) => console.log(err))
       
-
-
+  }
+//userID, promoID, orderTotal, cardID, adults, children, senior
+  const payWithExistingCard = (card) => {
+    const input = id + ", " + promo+", "+ costs.total.toFixed(2) + ", " + card.id + ", " + adults + ", " + children + ", " + senior;
+    console.log(input)
+    axios.post("http://localhost:8080/addTicket", {input})
+    .catch(err => console.log(err));
   }
   return (
-      <div>
+      <div className='fullScreen'>
           <div className="manage-promotions">
             <form>
             <label htmlFor="promo">Promo Code</label>
@@ -197,7 +210,7 @@ function OrderPage() {
               {showCards&& !showPaymentForm &&
                 cards.map((card) => 
                 {if (card.cardNumber!=="") return(
-                  <div className='cards' onClick={payWithExistingCard(card)}>
+                  <div className='cards' onClick={()=>payWithExistingCard(card)}>
                     <h3 >{card.cardType}</h3>
                     <p>{card.cardNumber}</p>
                     <p><i>{card.expirationDate}</i></p>
@@ -208,7 +221,7 @@ function OrderPage() {
               <div className='space'>
               <button className='paymentmethod' onClick={togglePaymentForm}>New Payment Method</button>
                   {showPaymentForm && <div className='paymentform'>
-                    <form id="paymentForm" onSubmit={handleSubmit}>
+                    <form id="paymentForm" onSubmit={submitWithNewCard}>
                       <h2>Payment Details</h2>
 
                       <div className="form-group">
@@ -245,7 +258,7 @@ function OrderPage() {
                         <label htmlFor="saveCard">Save this card for future payments</label>
                       </div>
 
-                      <button type="submit" onClick={submitWithNewCard}>Submit Payment</button>
+                      <button type="submit">Submit Payment</button>
                     </form>
                   </div>}
               </div>

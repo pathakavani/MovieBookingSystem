@@ -97,6 +97,14 @@ body {
     width: 100%;
 }
 
+.fullScreen{
+    height: 100%;
+}
+
+.card:hover {
+    cursor:pointer;
+}
+
 .confirmcancelbuttons {
     display: flex;
     justify-content: center;

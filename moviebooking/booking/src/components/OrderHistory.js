@@ -1,22 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import './OrderHistory.css';
 import axios from 'axios';
+import { useSelector } from 'react-redux';
 
 function OrderHistory({ currentUserID }) {
   const [orders, setOrders] = useState([]);
+  const {id} = useSelector(state => state.login)
 
   useEffect(() => {
     // Ensure currentUserID is a valid integer before parsing
-    if (!Number.isInteger(currentUserID)) {
+    if (!Number.isInteger(id)) {
       console.error('currentUserID must be a valid integer.');
       return;
     }
 
     // Fetch the user's order history from the backend
     axios
-      .get(`http://localhost:8080/getUserOrders?userID=${parseInt(currentUserID)}`)
+      .get(`http://localhost:8080/getUserOrders?userID=${id}`)
       .then((response) => {
         setOrders(response.data);
+        console.log(response.data)
       })
       .catch((error) => {
         console.error('Error fetching order history:', error);
@@ -54,11 +57,12 @@ function OrderHistory({ currentUserID }) {
           {orders.map(async (order) => (
             <tr key={order.bookingNumber}>
               <td>{order.bookingNumber}</td>
-              <td>{await fetchMovieTitle(order.showID)}</td>
-              <td>{order.promoID}</td>
-              <td>{order.ticketPrice}</td>
-              <td>{order.salesTax}</td>
-              <td>{order.onlineFee}</td>
+              <td>{order.promotion}</td>
+              <td>{order.adults}</td>
+
+              <td>{order.children}</td>
+              <td>{order.seniors}</td>
+
               <td>{order.orderTotal}</td>
             </tr>
           ))}

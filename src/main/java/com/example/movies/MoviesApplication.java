@@ -289,14 +289,15 @@ public class MoviesApplication {
     public List <String> getPaymentCards() {
         List <String> cards = new ArrayList<>();
         try {
-            String getCards = "SELECT expirationDate, cardType, cardNumber FROM payment_card WHERE userID="  + userID;
+            String getCards = "SELECT expirationDate, cardType, cardNumber, paymentID FROM payment_card WHERE userID="  + userID;
             PreparedStatement ps = connection.prepareStatement(getCards);
             ResultSet rs = ps.executeQuery();
             while(rs.next()) {
                 cards.add(
                     rs.getString("cardType") + "\t"+
                     new String(Base64.getDecoder().decode(rs.getString("cardNumber"))) + "\t" +
-                    rs.getString("expirationDate"));
+                    rs.getString("expirationDate") + "\t" +
+                    rs.getInt("paymentID"));
             }
         }catch(Exception e) {
             e.printStackTrace();
@@ -311,13 +312,14 @@ public class MoviesApplication {
     @PostMapping("/addCard")
     @ResponseBody
     public void addCard(@RequestBody PaymentCard pc) {
+        System.out.println(pc.billingAddress);
         try {
-            String addCards = "INSERT into payment_info (cardType, cardNumber, expirationDate, billingAddress) VALUES (?,?,?,?)";
+            String addCards = "INSERT into payment_card (cardType, cardNumber, expirationDate, billingAddress, userID) VALUES (?,?,?,?)";
             PreparedStatement ps = connection.prepareStatement(addCards);
             ps.setString(1, pc.cardType);
             ps.setString(2, pc.cardNumber);
             ps.setString(3, pc.expirationDate);
-            ps.setString(4, pc.billingAddress);
+            ps.setString(4, pc.userID);
             ps.executeUpdate();
         }catch(Exception e) {
             e.printStackTrace();
@@ -331,23 +333,24 @@ public class MoviesApplication {
     @PostMapping("/addTicket")
     @ResponseBody
     public void addTicket(@RequestBody String data) {
+        String pureData = data.substring(10, data.length()-2);
+        System.out.println("data: " + pureData);
         try{
-        String [] order = data.split(",");
-        String addToBooking = "INSERT into booking (userID, promoID, orderTotal, cardID, adults, children, senior) VALUES (?,?,?,?,?,?,?)"; 
-        PreparedStatement ps = connection.prepareStatement(addToBooking);
-        ps.setInt(1, Integer.parseInt(order[0]));
-        ps.setInt(2, Integer.parseInt(order[1]));
-        ps.setInt(3, Integer.parseInt(order[2]));
-        ps.setInt(4, Integer.parseInt(order[3]));
-        ps.setInt(5, Integer.parseInt(order[4]));
-        ps.setInt(6, Integer.parseInt(order[5]));
-        ps.setInt(7, Integer.parseInt(order[6]));
-        ps.executeUpdate();
+            String [] order = pureData.split(", ");
+            String addToBooking = "INSERT into booking (userID, promotion, orderTotal, cardID, adults, children, senior) VALUES (?,?,?,?,?,?,?)"; 
+            PreparedStatement ps = connection.prepareStatement(addToBooking);
+            ps.setInt(1, Integer.parseInt(order[0]));
+            ps.setString(2, (order[1]));
+            ps.setDouble(3, Double.parseDouble(order[2]));
+            ps.setInt(4, Integer.parseInt(order[3]));
+            ps.setInt(5, Integer.parseInt(order[4]));
+            ps.setInt(6, Integer.parseInt(order[5]));
+            ps.setInt(7, Integer.parseInt(order[6]));
+            ps.executeUpdate();
         }
         catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     /**
@@ -1243,14 +1246,13 @@ public class MoviesApplication {
             while (resultSet.next()) {
                 Map<String, Object> order = new HashMap<>();
                 order.put("bookingID", resultSet.getInt("bookingID"));
-                order.put("bookingNumber", resultSet.getString("bookingNumber"));
                 order.put("userID", resultSet.getInt("userID"));
-                order.put("showID", resultSet.getInt("showID"));
                 order.put("promoID", resultSet.getInt("promoID"));
-                order.put("ticketPrice", resultSet.getDouble("ticketPrice"));
-                order.put("salesTax", resultSet.getDouble("salesTax"));
-                order.put("onlineFee", resultSet.getDouble("onlineFee"));
                 order.put("orderTotal", resultSet.getDouble("orderTotal"));
+                order.put("cardID", resultSet.getInt("cardID"));
+                order.put("adults", resultSet.getInt("adults"));
+                order.put("children", resultSet.getInt("children"));
+                order.put("seniors", resultSet.getInt("seniors"));
                 orders.add(order);
             }
         } catch (SQLException e) {
