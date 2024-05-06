@@ -3,32 +3,26 @@ import './OrderHistory.css';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 
-function OrderHistory({ currentUserID }) {
+function OrderHistory() {
   const [orders, setOrders] = useState([]);
-  const {id} = useSelector(state => state.login)
+  const { email } = useSelector((state) => state.login);
 
   useEffect(() => {
-    // Ensure currentUserID is a valid integer before parsing
-    if (!Number.isInteger(id)) {
-      console.error('currentUserID must be a valid integer.');
-      return;
-    }
-
     // Fetch the user's order history from the backend
     axios
-      .get(`http://localhost:8080/getUserOrders?userID=${id}`)
+      .get(`http://localhost:8080/getUserOrders?email=${email}`)
       .then((response) => {
         setOrders(response.data);
-        console.log(response.data)
+        console.log(response.data);
       })
       .catch((error) => {
         console.error('Error fetching order history:', error);
       });
-  }, [currentUserID]);
+  }, [email]);
 
   const fetchMovieTitle = async (showID) => {
     try {
-      const response = await axios.get(`http://localhost:8080/getMovieTitle?showID=${parseInt(showID)}`);
+      const response = await axios.get(`http://localhost:8080/getMovieTitle?showID=${showID}`);
       return response.data;
     } catch (error) {
       console.error('Error fetching movie title:', error);
@@ -54,15 +48,16 @@ function OrderHistory({ currentUserID }) {
           </tr>
         </thead>
         <tbody>
-          {orders.map(async (order) => (
+          {orders.map((order) => (
             <tr key={order.bookingNumber}>
               <td>{order.bookingNumber}</td>
-              <td>{order.promotion}</td>
-              <td>{order.adults}</td>
-
-              <td>{order.children}</td>
-              <td>{order.seniors}</td>
-
+              <td>
+                <MovieTitleLoader showID={order.showID} fetchMovieTitle={fetchMovieTitle} />
+              </td>
+              <td>{order.promoID}</td>
+              <td>{order.ticketPrice}</td>
+              <td>{order.salesTax}</td>
+              <td>{order.onlineFee}</td>
               <td>{order.orderTotal}</td>
             </tr>
           ))}
@@ -71,5 +66,19 @@ function OrderHistory({ currentUserID }) {
     </div>
   );
 }
+
+const MovieTitleLoader = ({ showID, fetchMovieTitle }) => {
+  const [movieTitle, setMovieTitle] = useState('Loading...');
+
+  useEffect(() => {
+    const fetchTitle = async () => {
+      const title = await fetchMovieTitle(showID);
+      setMovieTitle(title);
+    };
+    fetchTitle();
+  }, [showID, fetchMovieTitle]);
+
+  return <>{movieTitle}</>;
+};
 
 export default OrderHistory;
