@@ -66,7 +66,7 @@ public class MoviesApplication {
      */
     public MoviesApplication() {
         movies = new ArrayList<>();
-        String jdbcUrl = "jdbc:mysql://localhost:3306/Final_Movie_Booking"; // jdbc:mysql://localhost:33306/Movie_Booking
+        String jdbcUrl = "jdbc:mysql://localhost:33306/Final_Movie_Booking"; // jdbc:mysql://localhost:33306/Movie_Booking
         String username = "root";// change this
         String password = "bathinda"; // and that, pass: root123@ (for my reference - ruchitha)
 
@@ -314,12 +314,13 @@ public class MoviesApplication {
     public void addCard(@RequestBody PaymentCard pc) {
         System.out.println(pc.billingAddress);
         try {
-            String addCards = "INSERT into payment_card (cardType, cardNumber, expirationDate, billingAddress, userID) VALUES (?,?,?,?)";
+            String addCards = "INSERT into payment_card (cardType, cardNumber, expirationDate, billingAddress, userID) VALUES (?,?,?,?,?)";
             PreparedStatement ps = connection.prepareStatement(addCards);
             ps.setString(1, pc.cardType);
-            ps.setString(2, pc.cardNumber);
+            ps.setString(2, Base64.getEncoder().encodeToString(pc.cardNumber.getBytes()));
             ps.setString(3, pc.expirationDate);
-            ps.setString(4, pc.userID);
+            ps.setString(4, pc.billingAddress);
+            ps.setInt(4, Integer.parseInt(pc.userID));
             ps.executeUpdate();
         }catch(Exception e) {
             e.printStackTrace();
@@ -337,7 +338,7 @@ public class MoviesApplication {
         System.out.println("data: " + pureData);
         try{
             String [] order = pureData.split(", ");
-            String addToBooking = "INSERT into booking (userID, promotion, orderTotal, cardID, adults, children, senior) VALUES (?,?,?,?,?,?,?)"; 
+            String addToBooking = "INSERT into booking (userID, promotion, orderTotal, cardID, adults, children, senior, movie, promotion) VALUES (?,?,?,?,?,?,?,?,?)"; 
             PreparedStatement ps = connection.prepareStatement(addToBooking);
             ps.setInt(1, Integer.parseInt(order[0]));
             ps.setString(2, (order[1]));
@@ -346,6 +347,7 @@ public class MoviesApplication {
             ps.setInt(5, Integer.parseInt(order[4]));
             ps.setInt(6, Integer.parseInt(order[5]));
             ps.setInt(7, Integer.parseInt(order[6]));
+            ps.setString(8, order[7]);
             ps.executeUpdate();
         }
         catch (Exception e) {

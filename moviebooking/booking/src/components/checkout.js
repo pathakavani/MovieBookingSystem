@@ -149,13 +149,23 @@ function OrderPage() {
 
   }
 
-  const submitWithNewCard = () => {
-      axios.post("http://localhost:8080/addCard", {
-        ed,
-        cn,
-        ct,
-        billAddy
-      })
+  const submitWithNewCard = (e) => {
+      e.preventDefault();
+      console.log(billAddy)
+      const options = {
+        method: 'POST', // HTTP method
+        headers: {
+            'Content-Type': 'application/json' // Specify content type as JSON
+        },
+        body: JSON.stringify({
+          expirationDate: ed,
+          cardType: ct,
+          cardNumber: cn,
+          billingAddress: billAddy,
+          userID: id
+        }) // Convert data to JSON string
+    };
+      fetch("http://localhost:8080/addCard", options)
       .then(() => {
         console.log("submitted")
       getUsersCards();
@@ -165,7 +175,7 @@ function OrderPage() {
   }
 //userID, promoID, orderTotal, cardID, adults, children, senior
   const payWithExistingCard = (card) => {
-    const input = id + ", " + promo+", "+ costs.total.toFixed(2) + ", " + card.id + ", " + adults + ", " + children + ", " + senior;
+    const input = id + ", " + promo+", "+ costs.total.toFixed(2) + ", " + card.id + ", " + adults + ", " + children + ", " + senior + ", " + movie;
     console.log(input)
     axios.post("http://localhost:8080/addTicket", {input})
     .catch(err => console.log(err));

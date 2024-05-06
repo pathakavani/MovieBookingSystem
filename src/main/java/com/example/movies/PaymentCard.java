@@ -1,7 +1,10 @@
 package com.example.movies;
 
 import java.io.Serializable;
-public class PaymentCard implements Serializable{
+
+import org.springframework.beans.factory.annotation.Autowired;
+public class PaymentCard{
+    @Autowired
     String expirationDate;
     String cardType;
     String cardNumber;
