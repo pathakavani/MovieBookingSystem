@@ -1,27 +1,27 @@
 /* OrderHistory.css */
 .order-history-container {
-    margin: 20px;
-  }
-  
-  table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  
-  table, th, td {
-    border: 1px solid black;
-  }
-  
-  th, td {
-    padding: 8px;
-    text-align: left;
-  }
-  
-  th {
-    background-color: #124559;
-  }
+  margin: 20px;
+}
 
-  .title {
-    padding: 10px;
-  }
-  
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table, th, td {
+  border: 1px solid black;
+  color: black; /* Set text color to black */
+}
+
+th, td {
+  padding: 8px;
+  text-align: left;
+}
+
+th {
+  background-color: #124559;
+}
+
+.title {
+  padding: 10px;
+}
