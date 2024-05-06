@@ -18,6 +18,7 @@ h2 {
 
 form {
   display: flex;
+  align-content: center;
   max-width: 700px;
   margin: 20px auto;
   padding: 20px;
@@ -127,4 +128,8 @@ button:hover {
 
 .input-container {
   display: flex;
+}
+
+.form-container {
+  margin: 0 auto; /* Center the form container horizontally */
 }
