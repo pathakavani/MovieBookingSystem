@@ -1,24 +1,41 @@
 import React, { useState, useEffect } from 'react';
-import './OrderHistory.css'; // Import the CSS file
-import axios from 'axios'; // Import axios for making HTTP requests
+import './OrderHistory.css';
+import axios from 'axios';
 
-function OrderHistory() {
+function OrderHistory({ currentUserID }) {
   const [orders, setOrders] = useState([]);
 
   useEffect(() => {
+    // Ensure currentUserID is a valid integer before parsing
+    if (!Number.isInteger(currentUserID)) {
+      console.error('currentUserID must be a valid integer.');
+      return;
+    }
+
     // Fetch the user's order history from the backend
-    axios.get('http://localhost:8080/orders')
-      .then(response => {
+    axios
+      .get(`http://localhost:8080/getUserOrders?userID=${parseInt(currentUserID)}`)
+      .then((response) => {
         setOrders(response.data);
       })
-      .catch(error => {
+      .catch((error) => {
         console.error('Error fetching order history:', error);
       });
-  }, []);
+  }, [currentUserID]);
+
+  const fetchMovieTitle = async (showID) => {
+    try {
+      const response = await axios.get(`http://localhost:8080/getMovieTitle?showID=${parseInt(showID)}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching movie title:', error);
+      return '';
+    }
+  };
 
   return (
     <div className="order-history-container">
-      <div className='title'>
+      <div className="title">
         <h2>Order History</h2>
       </div>
       <table>
@@ -34,14 +51,14 @@ function OrderHistory() {
           </tr>
         </thead>
         <tbody>
-          {orders.map(order => (
+          {orders.map(async (order) => (
             <tr key={order.bookingNumber}>
               <td>{order.bookingNumber}</td>
-              <td>{order.movie}</td>
+              <td>{await fetchMovieTitle(order.showID)}</td>
               <td>{order.promoID}</td>
               <td>{order.ticketPrice}</td>
               <td>{order.salesTax}</td>
-              <td>{order.onlineFees}</td>
+              <td>{order.onlineFee}</td>
               <td>{order.orderTotal}</td>
             </tr>
           ))}
