@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import './EditProfile.css';
+
 function EditProfile() {
     const [profile, setProfile] = useState({
         firstName: '',
@@ -155,12 +157,11 @@ function EditProfile() {
         return fields;
     }
 
-
     return (
-        <div className="container mt-5">
-            <div className="row justify-content-center">
-                <div className="col-md-6">
-                    <h1>Edit Profile</h1>
+        <div>
+        <h3 className='edit-profile-header'>Edit Profile</h3>
+        <div className="container">
+            <div className="form-container">
                     <form onSubmit={handleSubmit}>
                         {wrong && <p style={{color: 'red'}}><i>Wrong Password</i></p>}
                         <div className="mb-3">
@@ -300,7 +301,7 @@ function EditProfile() {
                     </form>
                 </div>
             </div>
-        </div>
+            </div>
     );
 }
 
