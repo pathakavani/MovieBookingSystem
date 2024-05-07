@@ -287,7 +287,7 @@ function EditProfile() {
                         <div className="mb-3">
                             <label htmlFor="email" className="form-label">Email</label>
                             <input type="email" className="form-control" id="email" name="email" 
-                                   placeholder="Your Email" readOnly/>
+                                   placeholder={profile.email}readOnly/>
                         </div>
                         <div className="mb-3">
                             <label htmlFor="password" className="form-label">Password</label>
