@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './EditProfile.css';
 
+
 function EditProfile() {
     const [profile, setProfile] = useState({
         firstName: '',
@@ -62,6 +63,7 @@ function EditProfile() {
         //console.log(profile.expirateDate);
     }
 
+
     const handleSubmit = (event) => {
         event.preventDefault();
         //for comparison if data changed
@@ -69,8 +71,8 @@ function EditProfile() {
         profile.lastName +", " +
         profile.email +", " +
         profile.password +", " +
-        profile.paymentMethod +", " + 
-        profile.paymentInfo +", " + 
+        profile.paymentMethod +", " +
+        profile.paymentInfo +", " +
         profile.address +", "+
         profile.phoneNumber;
         if (profileString !== data) {
@@ -100,6 +102,7 @@ function EditProfile() {
         // }
     };
 
+
     const toggleAddPaymentFields = () => {
         if (addCardCount === 0 || addCardCount < 6) {
             setAddShowPaymentFields(!showAddPaymentFields);
@@ -116,9 +119,6 @@ function EditProfile() {
         // for (let i = 0; i < 3; i++) {
             fields.push(
                 <React.Fragment >
-                    {/*<button type="button" className="btn btn-primary mb-3" onClick={toggleAddPaymentFields}>*/}
-                    {/*    Add Card*/}
-                    {/*</button>*/}
                     {showAddPaymentFields && (
                         <>
                             <div className="mb-3">
@@ -132,12 +132,11 @@ function EditProfile() {
                                 </select>
                             </div>
                             <div className="form-group">
-                        {/*<label htmlFor="cardName">Name on Card</label>*/}
                         <input type="text" id="cardName" name="cardName" placeholder="Name on Card" required/>
                       </div>
 
+
                       <div className="form-group">
-                        {/*<label htmlFor="cardNumber">Card Number</label>*/}
                         <input type="password" id="cardNumber" name="cardNumber" placeholder="Card Number"
                                pattern="\d{16}" required
                                style={{ width: "100%" }}/>
@@ -148,7 +147,7 @@ function EditProfile() {
                                        name="expirationDate" minLength="16" maxLength="16"
                                        onChange={handleInputChange} />
                             </div>
-                            
+                           
                         </>
                     )}
                 </React.Fragment>
@@ -156,6 +155,7 @@ function EditProfile() {
         // }
         return fields;
     }
+
 
     return (
         <div>
@@ -167,12 +167,12 @@ function EditProfile() {
                         <div className="mb-3">
                             <label htmlFor="firstName" className="form-label">First Name</label>
                             <input type="text" className="form-control" id="firstName" name="firstName"
-                                   onChange={handleInputChange} placeholder={profile.firstName}/>
+                                value={profile.firstName} onChange={handleInputChange} placeholder={profile.firstName}/>
                         </div>
                         <div className="mb-3">
                             <label htmlFor="lastName" className="form-label">Last Name</label>
                             <input type="text" className="form-control" id="lastName" name="lastName"
-                                   onChange={handleInputChange} placeholder={profile.lastName}/>
+                                   value={profile.lastName} onChange={handleInputChange} placeholder={profile.lastName}/>
                         </div>
                         <div className="mb-3">
                             <label htmlFor="email" className="form-label">Email</label>
@@ -230,6 +230,7 @@ function EditProfile() {
                         <input type="text" id="cardName" name="cardName" placeholder="Name on Card" required/>
                       </div>
 
+
                       <div className="form-group">
                         {/*<label htmlFor="cardNumber">Card Number</label>*/}
                         <input type="password" id="cardNumber" name="cardNumber" placeholder="Card Number"
@@ -278,9 +279,11 @@ function EditProfile() {
                         {/*    </>*/}
                         {/*)}*/}
 
+
                         <button type="button" className="btn btn-primary mb-3" onClick={toggleAddPaymentFields}>
                             Add Card
                         </button>
+
 
                         {renderAddPaymentFields()}
                         <div className="mb-3">
@@ -304,5 +307,6 @@ function EditProfile() {
             </div>
     );
 }
+
 
 export default EditProfile;

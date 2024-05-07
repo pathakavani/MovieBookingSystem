@@ -1,31 +1,33 @@
-.navbar {
-    background-color: #01161E;
+.body {
+    background-color: white;
 }
-
-.navbar-brand {
-    font-family: 'fantasy';
-}
-
-body {
-    font-family: Arial, sans-serif;
-    background-color: #ecf4ed;
-}
-
-.login-container {
+  .orderbox {
     max-width: 400px;
     margin: 0 auto;
-    margin-top: 50px;
-}
-
-i img {
-    width: 25px; /* Adjust the width and height as needed */
-    height: 25px;
-}
-
-.confirmationtext {
-    font-size: 30px;
+    margin-top: 100px; /* Adjust top margin for spacing */
+    padding: 20px;
+    background-color: #fff; /* White background for the box */
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+  }
+ 
+  .confirmationtext {
+    font-size: 24px;
     text-align: center;
-    border: 5px solid #01161E;
-    margin-top: 15%;
-    color: #000; /* Set text color to black */
-}
+    margin-bottom: 20px; /* Add some bottom margin */
+  }
+ 
+  /* Confirmation message styling */
+  .confirmation-message {
+    margin-top: 20px; /* Add space between confirmation text and login link */
+    text-align: center;
+  }
+ 
+  .confirmation-message a {
+    color: #3a7bfd; /* Blue color for the login link */
+    text-decoration: none;
+  }
+ 
+  .confirmation-message a:hover {
+    text-decoration: underline; /* Add underline on hover */
+  }
