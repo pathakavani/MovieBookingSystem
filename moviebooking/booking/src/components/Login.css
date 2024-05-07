@@ -15,14 +15,13 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh; /* Adjust this value if needed */
+
+    margin-top: auto;
   }
   
   .card {
-    width: 400px; /* Adjust the width of the card */
+    width: 400px;
   }
-  
-  /* Add additional styles as needed */
   
 
 i img {
