@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './EditProfile.css';
 import Navbar from './Navbar';
+import { useSelector } from 'react-redux';
 
 
 function EditProfile() {
@@ -17,6 +18,8 @@ function EditProfile() {
         phoneNumber: '',
         expirationDate:""
     });
+    const {id} = useSelector((state) => state.login)
+    
     const [openEdit, setOE] = useState(false)
     const [showPaymentFields, setShowPaymentFields] = useState(false);
     const [showAddPaymentFields, setAddShowPaymentFields] = useState(false);
@@ -35,6 +38,7 @@ function EditProfile() {
     useEffect(() => {
         axios.get("http://localhost:8080/getInfo")
             .then(response => {
+                console.log("Response: ", response.data)
                 const data = response.data.split("\t");
                 console.log(data)
                 setProfile(profile => ({firstName: data[0],
@@ -59,7 +63,7 @@ function EditProfile() {
                 await fetch("http://localhost:8080/getCards")
                 .then((response) => response.json())
                 .then(data => {
-                console.log(data);
+                console.log("data",data);
                 data.map((item) => {
                     tempCard.push({
                         cardType:item.split("\t")[0],
@@ -77,28 +81,72 @@ function EditProfile() {
     }, []);
 
     useEffect(() => {
+        if (profile.paymentInfo)
         setLastFourDigits(profile.paymentInfo.slice(-4));
     }, [profile.paymentInfo]);
 
+    const submitWithNewCard = (e) => {
+        e.preventDefault();
+        console.log({
+            expirationDate: ed,
+            cardType: ct,
+            cardNumber: cn,
+            billingAddress: billAddy,
+            userID: id
+          })
+        const options = {
+          method: 'POST', // HTTP method
+          headers: {
+              'Content-Type': 'application/json' // Specify content type as JSON
+          },
+          body: JSON.stringify({
+            expirationDate: ed,
+            cardType: ct,
+            cardNumber: cn,
+            billingAddress: billAddy,
+            userID: id
+          }) // Convert data to JSON string
+      };
+        fetch("http://localhost:8080/addCard", options)
+        .then(() => {
+          console.log("submitted")
+        })
+        .catch((err) => console.log(err))
+        
+    }
     const handleInputChange = (event) => {
         const { name, value, type, checked } = event.target;
-        if (name === "promostatus") {
-            var val = event.target.value === "yes" ? 1 : 0;
-            setProfile(prevState => ({
-                ...prevState,
-                "promotion": val
-            }));
-        } else if (name === "npassword" && value !== profile.password ) {
-            if (document.getElementById("password").value === data.split(", ")[3]) {
-                setProfile({ ...profile, password: value });
-            }
-            else {
-                setWrong(true)
-            }
+        console.log(name + " " + value)
+        if (name === "billingAddress") {
+            
+            setBD(value)
         }
-        else {
-            setProfile({...profile, [name]:value})
+        else if (name === "expirationDate") {
+            setED(value)
         }
+        else if (name === "cardNumber") {
+            setCN(value)
+        }
+        else if (name === "paymentMethod") {
+            setCT(value)
+        }
+        // if (name === "promostatus") {
+        //     var val = event.target.value === "yes" ? 1 : 0;
+        //     setProfile(prevState => ({
+        //         ...prevState,
+        //         "promotion": val
+        //     }));
+        // } else if (name === "npassword" && value !== profile.password ) {
+        //     if (document.getElementById("password").value === data.split(", ")[3]) {
+        //         setProfile({ ...profile, password: value });
+        //     }
+        //     else {
+        //         setWrong(true)
+        //     }
+        // }
+        // else {
+        //     setProfile({...profile, [name]:value})
+        // }
         //console.log(profile.expirateDate);
     }
 
@@ -153,27 +201,20 @@ function EditProfile() {
             // setAddCardCount(count => count + 1);
         }
     };
-    const changeCardInfo = (e) => {
-        e.preventDefault();
-        setOE(!openEdit)
-        console.log(prevCard)
+    const changeCardInfo = (card) => {
         const options = {
             method: 'POST', // HTTP method
             headers: {
                 'Content-Type': 'application/json' // Specify content type as JSON
             },
-            body: JSON.stringify({
-              expirationDate: ed,
-              cardType: ct,
-              cardNumber: (cn!==""?cn : prevCard),
-              billingAddress: billAddy,
-              prevCardNumber: prevCard
-            }) // Convert data to JSON string
+            body: JSON.stringify(card) // Convert data to JSON string
         };
-         fetch("http://localhost:8080/updateCard",
+        fetch("http://localhost:8080/updateCard",
             options
         )
-        .then(() => console.log("success"))
+        .then(() => {console.log("success");
+        //window.location.reload();
+    })
         .catch((err) => console.log(err))
     }
     const renderAddPaymentFields = () => {
@@ -194,14 +235,19 @@ function EditProfile() {
                                 </select>
                             </div>
                             <div className="form-group">
-                        <input type="text" id="cardName" name="cardName" placeholder="Name on Card" required/>
+                        <input type="text" id="cardName" name="cardName" placeholder="Name on Card" required />
                       </div>
 
 
                       <div className="form-group">
-                        <input type="password" id="cardNumber" name="cardNumber" placeholder="Card Number"
+                        <input type="text" id="cardNumber" name="cardNumber" placeholder="Card Number"
                                pattern="\d{16}" required
-                               style={{ width: "100%" }}/>
+                               style={{ width: "100%" }} onChange={(word) => setCN(word.target.value)}/>
+                      </div>
+                      <div className="form-group">
+                        <input type="text" id="billingAddress" name="billingAddress" placeholder="Billing Address"
+                               required
+                               style={{ width: "100%" }} onChange={(word) => setBD(word.target.value)}/>
                       </div>
                             <div className="mb-3">
                                 <label htmlFor="expirationDate" className="form-label">Expiration Date</label>
@@ -209,6 +255,9 @@ function EditProfile() {
                                        name="expirationDate" minLength="16" maxLength="16"
                                        onChange={handleInputChange} />
                             </div>
+                            <button type="button" className="btn btn-primary mb-3" onClick={submitWithNewCard}>
+                            Add Card
+                        </button>
                            
                         </>
                     )}
@@ -276,28 +325,13 @@ function EditProfile() {
                             cards.map((card) => 
                             {if (card.cardNumber!=="") return(
                                 <div className='btn btn-primary mb-3'>
-                                    {!openEdit &&<div> <h3 >{card.cardType}</h3> 
+                                    <div> <h3 >{card.cardType}</h3> 
                                     <p>XXXX - XXXX - XXXX - {lastFourDigits}</p> 
                                     <p><i>{card.expirationDate}</i></p>
                                     <p><i>{card.billingAddress}</i></p>
-                                    </div>}
-                                    {openEdit && 
-                                    <form>
-                                        <label>Card Type: </label>
-                                        <input type="text" value={card.cardType} onChange={(e) => setCT(e.target.value) }/>
-                                        <label>Card Number: </label>
-                                        <input type="text" value={card.cardNumber} onChange={(e) => {
-                                            setCN(e.target.value); setPC(card.cardNumber)
-                                        }}/>
-                                        <label>Card Expiration Date: </label>
-                                        <input type="date" value={card.expirationDate} onChange={(e) => setED(e.target.value)}/>
-                                        <label>Billing Address: </label>
-                                        <input type="text" value={card.billingAddress} onChange={(e) => setBD(e.target.value)}/>
-                                        <button onClick={changeCardInfo}>Edit</button>
-                                    </form>
-                                    }
-                                    <button type="button" className="btn btn-primary mb-3" onClick={() => setOE(!openEdit)}>
-                                        Edit Card
+                                    </div>
+                                    <button type="button" className="btn btn-primary mb-3" onClick={changeCardInfo(card)}>
+                                        Delete Card
                                     </button>
                                 </div>
                             )})
@@ -370,7 +404,7 @@ function EditProfile() {
 
 
                         <button type="button" className="btn btn-primary mb-3" onClick={toggleAddPaymentFields}>
-                            Add Card
+                            Add New Card Form <span>&#9660;</span>
                         </button>
 
 

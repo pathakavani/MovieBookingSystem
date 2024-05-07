@@ -333,16 +333,12 @@ public class MoviesApplication {
      */
     @PostMapping("/updateCard")
     @ResponseBody
-    public void updateCard(@RequestBody UpdatePaymentCard pc) {
-        System.out.println("Updating:" + pc.cardType);
+    public void updateCard(@RequestBody PaymentCard pc) {
+        System.out.println("Updating:" + pc.cardNumber);
         try {
-            String addCards = "UPDATE payment_card set cardType = ?, cardNumber = ?, expirationDate = ?, billingAddress = ? where userID = " + userID + " and cardNumber = ?";
+            String addCards = "DELETE FROM payment_card WHERE cardNumber = ?";
             PreparedStatement ps = connection.prepareStatement(addCards);
-            ps.setString(1, pc.cardType);
-            ps.setString(2, Base64.getEncoder().encodeToString(pc.cardNumber.getBytes()));
-            ps.setString(3, pc.expirationDate);
-            ps.setString(4, pc.billingAddress);
-            ps.setString(5, pc.prevCardNumber);
+            ps.setString(1, Base64.getEncoder().encodeToString(pc.cardNumber.getBytes()));
             ps.executeUpdate();
         }catch(Exception e) {
             e.printStackTrace();
@@ -539,23 +535,15 @@ public class MoviesApplication {
         try {
             boolean check = false;
             System.out.println("userID: " + userID);
-            String sql = "SELECT * FROM user natural join payment_card WHERE UserID = " + userID;
+            String sql = "SELECT * FROM user WHERE UserID = " + userID;
             PreparedStatement statement = connection.prepareStatement(sql);
             ResultSet resultSet = statement.executeQuery();
-            //System.out.println(!resultSet.next());
-            check = resultSet.next();
-            if (!check) {
-                System.out.println("Fetching data");
-                sql = "SELECT * FROM user WHERE UserID = " + userID;
-                statement = connection.prepareStatement(sql);
-                resultSet = statement.executeQuery();
-                check = true;
-            }
-            
-            if (check) {
                 System.out.println(sql);
+            if (resultSet.next()){
                 String decodePassword = new String(Base64.getDecoder().decode(resultSet.getString("password")));
                 String decodeCardNumber = "";
+                System.out.println("Checkpoint1");
+
                 if (check) {
                     decodeCardNumber = new String(Base64.getDecoder().decode(resultSet.getString("cardNumber")));
                 }
@@ -563,11 +551,11 @@ public class MoviesApplication {
                         resultSet.getString("lastName") + "\t" +
                         resultSet.getString("email") + "\t" +
                         decodePassword + "\t" +
-                        (check? resultSet.getString("cardType") : "")+ "\t" +
+                        (check? resultSet.getString("cardType") : " ")+ "\t" +
                         decodeCardNumber + "\t" +
                         resultSet.getInt("enrollForPromotions") + "\t" +
                         (check? resultSet.getDate("expirationDate") : null) + "\t" +
-                        (check ? resultSet.getString("billingAddress") : "") + "\t"+
+                        (check ? resultSet.getString("billingAddress") : " ") + "\t"+
                         resultSet.getString("phone");
             }
             // return pi;
@@ -1263,11 +1251,11 @@ public class MoviesApplication {
      */
     @GetMapping("/getUserOrders")
     @ResponseBody
-    public List<Map<String, Object>> getUserOrders(@RequestParam("email") String email) {
+    public List<Map<String, Object>> getUserOrders() {
         List<Map<String, Object>> orders = new ArrayList<>();
         try {
             // Get the userID based on the provided email
-            int userID = getUserID(email);
+            //int userID = getUserID(email);
 
             if (userID != -1) {
                 String sql = "SELECT * FROM booking WHERE userID = ?";
@@ -1275,6 +1263,15 @@ public class MoviesApplication {
                 statement.setInt(1, userID);
                 ResultSet resultSet = statement.executeQuery();
                 while (resultSet.next()) {
+                    String cn = "";
+                    for (String data : getPaymentCards()) {
+                        String current = data.split("\t")[3];
+                        if (Integer.parseInt(current) == (resultSet.getInt("cardID"))) {
+                            System.out.println(data.split("\t")[1]);
+
+                            cn = data.split("\t")[1];
+                        }
+                    }
                     Map<String, Object> order = new HashMap<>();
                     order.put("bookingID", resultSet.getInt("bookingID"));
                     order.put("userID", resultSet.getInt("userID"));
@@ -1284,6 +1281,7 @@ public class MoviesApplication {
                     order.put("senior", resultSet.getInt("senior"));
                     order.put("promotion", resultSet.getString("promotion"));
                     order.put("movie", resultSet.getString("movie"));
+                    order.put("cardNumber", cn);
                     orders.add(order);
                 }
             }

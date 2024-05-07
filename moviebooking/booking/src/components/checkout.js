@@ -46,16 +46,17 @@ function OrderPage() {
     const subtotal = adults * 14.99 + children * 9.99 + senior * 8.99;
     const tax = subtotal * 0.08;
     const totalBeforeDiscount = subtotal + tax;
-    const discountAmount = totalBeforeDiscount - (discount *.1);
+    const discountAmount = totalBeforeDiscount * ((discount!== 100? discount : 0) *.01);
     const total = totalBeforeDiscount - discountAmount;
     const totalWithOnlineFee = total * (1 + onlineFee);
   
-    console.log("Subtotal:", subtotal);
-    console.log("Tax:", tax);
-    console.log("Total before discount:", totalBeforeDiscount);
-    console.log("Discount amount:", discountAmount);
-    console.log("Total:", total);
-    console.log("Total with online fee:", totalWithOnlineFee);
+    // console.log("Subtotal:", subtotal);
+    // console.log("Tax:", tax);
+    // console.log("Total before discount:", totalBeforeDiscount);
+    // console.log("Discount amount:", discountAmount);
+    // console.log("Discount: " + discount)
+    // console.log("Total:", total);
+    // console.log("Total with online fee:", totalWithOnlineFee);
   
     setCosts({
       tadults: adults * 14.99,
@@ -163,6 +164,7 @@ function OrderPage() {
         // Ensure data is retrieved properly and contains the discount value
         if (data.discount) {
           setDiscount(data.discount);
+          console.log(data.discount)
         } else {
           // Handle error or invalid data response from the server
           console.error("Invalid response from server:", data);
@@ -217,6 +219,10 @@ function OrderPage() {
             <h1><b>{movie}</b></h1>
             <br/>
             <p>Tickets:</p>
+            <br>
+            </br>
+            <p>Date: {date} at {time}</p>
+            <br></br>
             <p>Adults x {adults} - ${costs.tadults}</p>
             <br/>
             <p>Children x {children} - ${costs.tchildren}</p>

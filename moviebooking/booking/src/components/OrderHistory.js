@@ -6,14 +6,16 @@ import { useSelector } from 'react-redux';
 function OrderHistory() {
   const [orders, setOrders] = useState([]);
   const { email } = useSelector((state) => state.login);
+  const [cardNumber, setCardNumber] = useState()
 
   useEffect(() => {
     // Fetch the user's order history from the backend
     axios
-      .get(`http://localhost:8080/getUserOrders?email=${email}`)
+      .get(`http://localhost:8080/getUserOrders`)
       .then((response) => {
         setOrders(response.data);
         console.log(response.data);
+        //setCardNumber(response.data.cardNumber.substring(response.data.cardNumber.length-5, response.data.cardNumber.length))
       })
       .catch((error) => {
         console.error('Error fetching order history:', error);
@@ -41,6 +43,7 @@ function OrderHistory() {
             <th>Booking Number</th>
             <th>Movie</th>
             <th>Promotion</th>
+            <th>Card Number</th>
             <th>Adults</th>
             <th>Children</th>
             <th>Senior</th>
@@ -55,6 +58,7 @@ function OrderHistory() {
                 {order.movie}
               </td>
               <td>{order.promotion}</td>
+              <td>{order.cardNumber}</td>
               <td>{order.adults}</td>
               <td>{order.children}</td>
               <td>{order.senior}</td>
