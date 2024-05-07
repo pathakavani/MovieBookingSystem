@@ -15,7 +15,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh; /* Adjust this value if needed */
+    height: 50vh; /* Adjust this value if needed */
   }
   
   .card {
