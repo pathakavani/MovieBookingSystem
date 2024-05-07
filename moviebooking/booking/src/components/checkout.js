@@ -48,7 +48,7 @@ function OrderPage() {
       tsenior:(senior*8.99),
       sub: (adults*14.99 + children*9.99 + senior*8.99),
       tax: ((adults*14.99 + children*9.99 + senior*8.99)*0.08),
-      total: ((((adults*14.99 + children*9.99 + senior*8.99)+((adults*14.99 + children*9.99 + senior*8.99)*0.08))*(1-(discount*.01)))*(1+onlineFee))
+      total: ((((adults*14.99 + children*9.99 + senior*8.99)+((adults*14.99 + children*9.99 + senior*8.99)*0.08)))*(1+onlineFee))*(1-(discount!==100?discount:0))
     });
     
 
