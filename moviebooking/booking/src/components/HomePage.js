@@ -80,7 +80,7 @@ function HomePage({ route, navigation }) {
 
   return (
     <div>
-      <h1>Movie Ticket Booking Website</h1>
+      <h1>MovieHub</h1>
       <div className="search-container">
         <input
           className="search-input"
