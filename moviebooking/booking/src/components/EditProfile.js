@@ -277,16 +277,16 @@ function EditProfile() {
                         <div className="mb-3">
                             <label htmlFor="firstName" className="form-label">First Name</label>
                             <input type="text" className="form-control" id="firstName" name="firstName"
-                                value={profile.firstName} onChange={handleInputChange} placeholder={profile.firstName}/>
+                                 onChange={handleInputChange} placeholder={profile.firstName}/>
                         </div>
                         <div className="mb-3">
                             <label htmlFor="lastName" className="form-label">Last Name</label>
                             <input type="text" className="form-control" id="lastName" name="lastName"
-                                   value={profile.lastName} onChange={handleInputChange} placeholder={profile.lastName}/>
+                                    onChange={handleInputChange} placeholder={profile.lastName}/>
                         </div>
                         <div className="mb-3">
                             <label htmlFor="email" className="form-label">Email</label>
-                            <input type="email" className="form-control" id="email" name="email" value={profile.email}
+                            <input type="email" className="form-control" id="email" name="email" 
                                    placeholder="Your Email" readOnly/>
                         </div>
                         <div className="mb-3">
@@ -412,7 +412,7 @@ function EditProfile() {
                         <div className="mb-3">
                             <label htmlFor="phoneNumber" className="form-label">Phone Number</label>
                             <input type="text" className="form-control" id="phoneNumber" name="phoneNumber"
-                                   value={profile.phoneNumber} onChange={handleInputChange}
+                                    onChange={handleInputChange}
                                    placeholder={profile.phoneNumber}/>
                         </div>
                         <div class="mb-3">

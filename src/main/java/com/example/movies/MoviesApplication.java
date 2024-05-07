@@ -49,6 +49,8 @@ public class MoviesApplication {
     List<Movies> movies;
     PersonalInfo pi;
     int userID = 2;// default
+    String email = "";
+    String [] order;
 
     @Autowired
     private JavaMailSender emailSender;
@@ -256,6 +258,30 @@ public class MoviesApplication {
         }
     }
 
+    /**
+     * Sends an update confirmation email to the user after profile update.
+     *
+     * @param name           The user's name.
+     * @param recipientEmail The recipient's email address.
+     */
+    @PostMapping("/orderConfirmed")
+    @ResponseBody
+    public void sendCheckoutConfirmation() {
+        MimeMessage message = emailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message);
+
+        try {
+            helper.setTo(email);
+            helper.setSubject("Your Ticket");
+            helper.setText("Your Ticket: \n\n Movie: "+ order[6]  + "\n Adults:" + order[3]  + "\n Children: " + order[4] + "\n Seniors: "+  order[5] + "\n Total: " + order[2]);
+            emailSender.send(message);
+            System.out.println("Sent ticket confirmation!");
+        } catch (MessagingException e) {
+            e.printStackTrace();
+            System.err.println("Failed to send update confirmation email: " + e.getMessage());
+        }
+    }
+
 
     /**
      * Get user id based on email
@@ -355,7 +381,7 @@ public class MoviesApplication {
         String pureData = data.substring(10, data.length()-2);
         System.out.println("data: " + pureData);
         try{
-            String [] order = pureData.split(", ");
+            order = pureData.split(", ");
             String addToBooking = "INSERT into booking (userID, promotion, orderTotal, cardID, adults, children, senior, movie) VALUES (?,?,?,?,?,?,?,?)"; 
             PreparedStatement ps = connection.prepareStatement(addToBooking);
             ps.setInt(1, Integer.parseInt(order[0]));
@@ -872,6 +898,7 @@ public class MoviesApplication {
                 int status = resultSet.getInt("status");
                 int userType = resultSet.getInt("userType");
                 userID = resultSet.getInt("UserID");
+                email = resultSet.getString("email");
                 System.out.println("UserID : " + resultSet.getInt("UserID"));
                 String dbPassword = resultSet.getString("password");
                 byte[] dbBytes = Base64.getDecoder().decode(dbPassword);

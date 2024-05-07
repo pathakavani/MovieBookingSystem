@@ -197,6 +197,11 @@ function OrderPage() {
       .catch((err) => console.log(err))
       
   }
+  const orderConfirmed = () => {
+    fetch("http://localhost:8080/orderConfirmed")
+    .then(() => console.log("confirmation sent"))
+    .catch((err) => console.log(err))
+  }
 //userID, promoID, orderTotal, cardID, adults, children, senior
   const payWithExistingCard = (card) => {
     const input = id + ", " + promo+", "+ costs.total.toFixed(2) + ", " + card.id + ", " + adults + ", " + children + ", " + senior + ", " + (movie?movie:"none");
@@ -323,7 +328,7 @@ function OrderPage() {
               onClick={(e) => handleLogout(e)}>Cancel
           </button>
           <button style={{backgroundColor: 'white', width: '120px', height: '40px', borderRadius: '5px', color: 'black'}}><a
-              href="ConfirmationPage">Confirm Order</a></button>
+              href="ConfirmationPage" onClick={orderConfirmed}>Confirm Order</a></button>
         </div>
       </div>
       </div>
