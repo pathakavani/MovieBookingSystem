@@ -3,6 +3,7 @@ body {
     background-color: #f8f8f8;
 }
 
+
 .orderbox {
     display: flex;
     justify-content: space-around;
@@ -15,24 +16,26 @@ body {
     max-width: 1200px;
 }
 
+
 .orderdetails {
-    position: relative;
     color: black;
     flex: 1;
     padding: 20px;
     text-align: center;
-    font-weight: 2;
 }
+
 
 .orderdetails h1 {
     font-size: 24px;
     margin-bottom: 20px;
 }
 
+
 .orderdetails p {
     font-size: 16px;
     margin-bottom: 10px;
 }
+
 
 .rightbox {
     flex: 1;
@@ -42,12 +45,14 @@ body {
     align-items: center;
 }
 
+
 .manage-promotions,
 .paymentmethodsgrid {
     margin-top: 20px;
     color: black;
     text-align: center;
 }
+
 
 .manage-promotions form,
 .paymentform {
@@ -57,10 +62,12 @@ body {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+
 .paymentform h2 {
     font-size: 20px;
     margin-bottom: 20px;
 }
+
 
 .paymentform button {
     width: 100%;
@@ -74,11 +81,14 @@ body {
     transition: background-color 0.3s;
 }
 
+
 .paymentform button:hover {
     background-color: #0056b3;
 }
 
-.paymentmethod{
+
+.paymentmethod,
+.cards {
     background-color: #f0f0f0;
     color: black;
     padding: 20px;
@@ -87,20 +97,7 @@ body {
     margin-top: 20px;
     width: 100%;
 }
-.cards {
-    background-color: #ffffff46;
-    color: black;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin-top: 20px;
-    width: 100%;
-}
 
-
-.card:hover {
-    cursor:pointer;
-}
 
 .confirmcancelbuttons {
     display: flex;
@@ -109,16 +106,19 @@ body {
     margin-top: 20px;
 }
 
-.confirmcancelbuttons button {
-    margin: 0 10px;
-    padding: 10px 20px;
+
+.confirmcancelbuttons {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
     background-color: white;
-    border: 1px solid #007bff;
-    border-radius: 5px;
-    color: black;
-    cursor: pointer;
-    transition: background-color 0.3s, color 0.3s;
-}
+    padding: 10px;
+    display: flex;
+    justify-content: space-evenly;
+  }
+ 
+
 
 .confirmcancelbuttons button:hover {
     background-color: #0056b3;

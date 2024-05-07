@@ -1,31 +1,48 @@
-.navbar {
-    background-color: #01161E;
-}
-
-.navbar-brand {
-    font-family: 'fantasy';
-}
-
+/* Background color for the body */
 body {
     font-family: Arial, sans-serif;
     background-color: #ecf4ed;
-}
-
-.login-container {
-    max-width: 400px;
-    margin: 0 auto;
-    margin-top: 50px;
-}
-
-i img {
-    width: 25px; /* Adjust the width and height as needed */
-    height: 25px;
-}
-
-.confirmationtext {
-    font-size: 30px;
+    outline: none !important;
+  }
+  
+  /* Container for the activation page */
+  .orderbox {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    color: white;
+  }
+  
+  /* Styling for the confirmation text */
+  .confirmationtext {
     text-align: center;
-    border: 5px solid #01161E;
-    margin-top: 15%;
-    color: #000; /* Set text color to black */
-}
+  }
+  
+  /* Custom style for the activation button */
+  .activation-button {
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 20px;
+    transition: background-color 0.3s;
+  }
+  
+  .activation-button:hover {
+    background-color: #00334e; /* Darker shade on hover */
+  }
+  
+  /* Link to login page */
+  .login-link {
+    color: #3a7bfd;
+    font-size: 14px;
+    text-decoration: underline;
+  }
+  
+  .login-link:hover {
+    text-decoration: underline;
+    color: black;
+  }
+  

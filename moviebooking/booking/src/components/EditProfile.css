@@ -1,53 +1,61 @@
 /* EditProfile.css */
 
+
 .container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 10px; /* Add top margin to create space between the box and the navbar */
-  }
-  
-  .form-container {
-    max-width: 800px;
-    width: 100%;
-    padding: 20px;
-  }
-  
-  .form-label {
-    font-weight: bold;
-  }
-  
-  .btn-primary {
-    margin-bottom: 10px; /* Add margin to create space between buttons */
-  }
-  
-  .form-control {
-    width: 100%;
-    padding: 0.375rem 0.75rem;
-    font-size: 1rem;
-    line-height: 1.5;
-    color: #495057;
-    background-color: #fff;
-    background-clip: padding-box;
-    border: 1px solid #ced4da;
-    border-radius: 0.25rem;
-    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-  }
-  
-  .form-control:focus {
-    color: #495057;
-    background-color: #fff;
-    border-color: #80bdff;
-    outline: 0;
-    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-  }
-  
-  .navbar {
-    margin-bottom: 20px; /* Add bottom margin to navbar to create space between the box and the navbar */
-  }
-  
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin-top: 70px;
+  padding-top: 50px;
+}
+.form-container {
+  max-width: 800px;
+  width: 100%;
+  padding: 20px;
+}
+
+/* Rest of your CSS styles */
+
+
+.form-label {
+  font-weight: bold;
+}
+
+.btn-primary {
+  margin-bottom: 10px; /* Add margin to create space between buttons */
+}
+
+.form-control {
+  width: 100%;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #495057;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-control:focus {
+  color: #495057;
+  background-color: #fff;
+  border-color: #80bdff;
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.navbar {
+  margin-bottom: 20px; /* Add bottom margin to navbar to create space between the box and the navbar */
+}
+
 .edit-profile-header {
-    color: black;
-    text-align: center;
-    margin-top: 15px;
+  color: black;
+  display: block;
+  text-align: center;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  margin: 15px;
 }

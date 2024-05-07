@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-//import 'bootstrap/dist/css/bootstrap.min.css';
-import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
+import './ForgotPassword.css';
+
 
 const ForgotPassword = () => {
     const [email, setEmail] = useState('');
@@ -19,7 +19,7 @@ const ForgotPassword = () => {
             if (response.status === 200) {
                 console.log(response.data); // Handle the response as needed
                 navigate('/EmailConfirmation');
-                
+               
             }
         } catch (error) {
             console.error('Error:', error);
@@ -27,17 +27,13 @@ const ForgotPassword = () => {
         }
     };
 
+
     return (
         <>
-            {/* Navbar */}
-            <nav className="navbar navbar-expand-lg" style={{ backgroundColor: '#01161E' }}>
-                {/* Navbar content */}
-            </nav>
-
             {/* Forgot Password Card */}
             <div className="container login-container">
                 <div className="card">
-                    <div className="card-body" style={{ backgroundColor: '#AEC3B0' }}>
+                    <div className="card-body" style={{ backgroundColor: 'white' }}>
                         <h5 className="card-title">Forgot Password</h5>
                         <form onSubmit={handleSubmit}>
                             <div className="mb-3">
@@ -64,5 +60,6 @@ const ForgotPassword = () => {
         </>
     );
 }
+
 
 export default ForgotPassword;
