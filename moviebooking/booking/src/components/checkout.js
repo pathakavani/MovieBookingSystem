@@ -46,7 +46,7 @@ function OrderPage() {
     const subtotal = adults * 14.99 + children * 9.99 + senior * 8.99;
     const tax = subtotal * 0.08;
     const totalBeforeDiscount = subtotal + tax;
-    const discountAmount = totalBeforeDiscount - (discount *.1);
+    const discountAmount = totalBeforeDiscount - (discount *.01);
     const total = totalBeforeDiscount - discountAmount;
     const totalWithOnlineFee = total * (1 + onlineFee);
   
