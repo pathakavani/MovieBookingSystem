@@ -12,10 +12,16 @@ body {
 }
 
 .login-container {
-    max-width: 400px;
-    margin: 0 auto;
-    margin-top: 50px;
-}
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50vh; /* Adjust this value if needed */
+  }
+  
+  .card {
+    width: 400px;
+  }
+  
 
 i img {
     width: 25px;

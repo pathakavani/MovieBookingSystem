@@ -106,3 +106,17 @@ a:hover {
 .card-type {
   margin-top: 10px;
 }
+
+.signup-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin-top: 100px;
+}
+
+.card {
+  width: 100%;
+  max-width: 600px;
+}
+
