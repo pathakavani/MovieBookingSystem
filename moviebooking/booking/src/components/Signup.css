@@ -111,10 +111,11 @@ a:hover {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  margin-top: 250px;
+  height: 100vh; /* Adjust this value if needed */
 }
 
 .card {
-  width: 600px;
+  width: 100%; /* Set the card width to 100% */
+  max-width: 600px; /* Adjust the maximum width of the card */
 }
+
