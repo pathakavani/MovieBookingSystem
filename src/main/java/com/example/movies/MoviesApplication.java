@@ -900,7 +900,7 @@ public class MoviesApplication {
                 int status = resultSet.getInt("status");
                 int userType = resultSet.getInt("userType");
                 userID = resultSet.getInt("UserID");
-                email = resultSet.getString("email");
+                this.email = email;
                 System.out.println("UserID : " + resultSet.getInt("UserID"));
                 String dbPassword = resultSet.getString("password");
                 byte[] dbBytes = Base64.getDecoder().decode(dbPassword);
