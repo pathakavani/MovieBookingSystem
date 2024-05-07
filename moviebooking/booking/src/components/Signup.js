@@ -113,11 +113,11 @@ function SignupPage() {
                         <form id="signupForm" onSubmit={handleSubmit}>
                             <div className="mb-3">
                                 <label htmlFor="firstName" className="form-label">First Name</label>
-                                <input type="text" className="form-control" id="firstname" name="firstName" onChange={handlefn}placeholder='John' required />
+                                <input type="text" className="form-control" id="firstname" name="firstName" onChange={handlefn}placeholder='First Name' required />
                             </div>
                             <div class="mb-3">
                     <label for="lastName" class="form-label">Last Name</label>
-                    <input type="text" class="form-control" id="lastname" name="lastname" onChange={handleln}placeholder='Doe'required/>
+                    <input type="text" class="form-control" id="lastname" name="lastname" onChange={handleln}placeholder='Last Name'required/>
                 </div>
                 <div class="mb-3">
                     <label for="email" class="form-label">Email Address</label>
