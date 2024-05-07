@@ -28,6 +28,7 @@ function EditProfile() {
     const [prevCard, setPC] = useState("")
     const [ed, setED] = useState("")
     const [data, setData] = useState("");
+    const [lastFourDigits, setLastFourDigits] = useState('');
     //password
     const [wrong, setWrong] = useState(false)
     useEffect(() => {
@@ -73,6 +74,11 @@ function EditProfile() {
             }
             getCards();
     }, []);
+
+    useEffect(() => {
+        setLastFourDigits(profile.paymentInfo.slice(-4));
+    }, [profile.paymentInfo]);
+
     const handleInputChange = (event) => {
         const { name, value, type, checked } = event.target;
         if (name === "promostatus") {
@@ -271,7 +277,7 @@ function EditProfile() {
                             {if (card.cardNumber!=="") return(
                                 <div className='btn btn-primary mb-3'>
                                     {!openEdit &&<div> <h3 >{card.cardType}</h3> 
-                                    <p>{card.cardNumber}</p> 
+                                    <p>XXXX - XXXX - XXXX - {lastFourDigits}</p> 
                                     <p><i>{card.expirationDate}</i></p>
                                     <p><i>{card.billingAddress}</i></p>
                                     </div>}
