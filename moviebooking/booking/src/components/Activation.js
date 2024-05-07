@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './Activation.css';
+import "./Activation.css";
 
 const Activation = () => {
     const [emailId, setEmail] = useState('');
@@ -39,28 +39,20 @@ const Activation = () => {
         }
     };
 
-  return (
-    <div>
-  <nav className="navbar navbar-expand-lg">
-    <div className="container-fluid">
-      <a className="navbar-brand active" href="Main.php">
-        <i><img src="https://i.ibb.co/jy62Srz/36a17f9402f64b66ba11ad785ec9ff3e.png" alt="MovieHub Logo" /></i> MovieHub
-      </a>
-    </div>
-  </nav>
-  <div className="orderbox">
-    <div className="confirmationtext">
-      <form onSubmit={handleSubmit}>
-        <button type="submit" className="btn btn-primary btn-block mt-4" style={{ fontSize: '16px' }}>
-          Click to Activate
-        </button>
-        <p style={{ fontSize: '14px' }}>Login to continue. <a href="Login" style={{ color: 'red' }}>Log In</a></p>
-      </form>
-    </div>
-  </div>
-</div>
-
-  );
+    return (
+        <div style={{ justifyContent: 'center', alignItems: 'center', height: '100vh', backgroundColor: '#ecf4ed', color: 'white' }}>
+            <div style={{ textAlign: 'center' }}>
+                <form onSubmit={handleSubmit}>
+                    <button type="submit" className="activation-button">
+                        Click to Activate
+                    </button>
+                    <div style={{ padding: 20}}>
+                    <p>Login to continue. <a href="Login" className="login-link">Log In</a></p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    );
 };
 
 export default Activation;
