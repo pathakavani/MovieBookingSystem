@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './EditProfile.css';
+import Navbar from './Navbar';
 
 
 function EditProfile() {
@@ -216,7 +217,6 @@ function EditProfile() {
         // }
         return fields;
     }
-
 
     return (
         <div className='fullScreen'>

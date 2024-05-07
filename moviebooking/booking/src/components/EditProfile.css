@@ -47,10 +47,6 @@
   box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
 
-.navbar {
-  margin-bottom: 20px; /* Add bottom margin to navbar to create space between the box and the navbar */
-}
-
 .edit-profile-header {
   color: black;
   display: block;

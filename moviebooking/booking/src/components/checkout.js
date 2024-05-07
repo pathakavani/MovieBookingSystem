@@ -23,6 +23,7 @@ function OrderPage() {
   const [showPaymentForm, setShowPaymentForm] = useState(false);
   const [showPromoForm, setShowPromoForm] = useState(false); // Define showPromoForm state variable
   const isLoggedIn = useSelector((state) => state.login.email);
+  const [selectedCard, setSelectedCard] = useState(null);
   const {
     movie,
     date,
@@ -32,7 +33,7 @@ function OrderPage() {
     senior
   } = useSelector((state) => state.cart);
   const [costs, setCosts] = useState({
-    tadults:0, tchildren:0, tsenior:0, sub:0, tax:0, total:0
+    tadults:0, tchildren:0, tsenior:0, sub:0, tax:0, discount:0, total:0
   });
   const [billAddy, setBD] = useState("")
   const [cn, setCN] = useState("")
@@ -40,19 +41,34 @@ function OrderPage() {
   const [ed, setED] = useState("")
   const [add, setAdd] = useState(0);
   const [pos, setPos] = useState(0);//experiment
-  useEffect(() => {
-    setCosts({
-      ...costs,
-      tadults:(adults*14.99),
-      tchildren:(children*9.99),
-      tsenior:(senior*8.99),
-      sub: (adults*14.99 + children*9.99 + senior*8.99),
-      tax: ((adults*14.99 + children*9.99 + senior*8.99)*0.08),
-      total: ((((adults*14.99 + children*9.99 + senior*8.99)+((adults*14.99 + children*9.99 + senior*8.99)*0.08))*(1-(discount*.01)))*(1+onlineFee))
-    });
-    
 
-  },[]);
+  useEffect(() => {
+    const subtotal = adults * 14.99 + children * 9.99 + senior * 8.99;
+    const tax = subtotal * 0.08;
+    const totalBeforeDiscount = subtotal + tax;
+    const discountAmount = totalBeforeDiscount - (discount *.1);
+    const total = totalBeforeDiscount - discountAmount;
+    const totalWithOnlineFee = total * (1 + onlineFee);
+  
+    console.log("Subtotal:", subtotal);
+    console.log("Tax:", tax);
+    console.log("Total before discount:", totalBeforeDiscount);
+    console.log("Discount amount:", discountAmount);
+    console.log("Total:", total);
+    console.log("Total with online fee:", totalWithOnlineFee);
+  
+    setCosts({
+      tadults: adults * 14.99,
+      tchildren: children * 9.99,
+      tsenior: senior * 8.99,
+      sub: subtotal,
+      tax: tax,
+      total: totalWithOnlineFee,
+    });
+  }, [adults, children, senior, discount]);
+  
+  
+  
   useEffect(() => {
     if (showPaymentForm){
     window.addEventListener("scroll", () => {
@@ -141,13 +157,20 @@ function OrderPage() {
 
   const applyPromo = (e) => {
     e.preventDefault();
-    console.log(promo)
-    fetch("http://localhost:8080/getPromotion?promotion="+promo)
-    .then((response)=> response.json())
-    .then((data) => setDiscount(data))
-    .catch(err=>console.log(err))
-
-  }
+    fetch("http://localhost:8080/getPromotion?promotion=" + promo)
+      .then((response) => response.json())
+      .then((data) => {
+        // Ensure data is retrieved properly and contains the discount value
+        if (data.discount) {
+          setDiscount(data.discount);
+        } else {
+          // Handle error or invalid data response from the server
+          console.error("Invalid response from server:", data);
+        }
+      })
+      .catch((err) => console.log(err));
+  };
+  
 
   const submitWithNewCard = (e) => {
       e.preventDefault();
@@ -218,13 +241,24 @@ function OrderPage() {
               <button className='paymentmethod' onClick={getUsersCards}>Existing Payment Info</button>
               {showCards&& !showPaymentForm &&
                 cards.map((card) => 
-                {if (card.cardNumber!=="") return(
-                  <div className='cards' onClick={()=>payWithExistingCard(card)}>
+                {if (card.cardNumber!=="") {
+                  const isSelected = selectedCard && selectedCard.id === card.id;                
+                  return(
+                  <button
+                  key={card.id}
+                  className={`paymentmethod ${isSelected ? 'selected' : ''}`}
+                  onClick={() => {
+                    payWithExistingCard(card);
+                    setSelectedCard(card);
+                  }}
+                >
+                  <div className='cards'>
                     <h3 >{card.cardType}</h3>
                     <p>{card.cardNumber}</p>
                     <p><i>{card.expirationDate}</i></p>
                     </div>
-                )})
+                    </button>
+                )}})
               }
               </div>
               <div className='space'>
