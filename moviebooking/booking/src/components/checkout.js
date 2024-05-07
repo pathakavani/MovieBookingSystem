@@ -162,9 +162,9 @@ function OrderPage() {
       .then((response) => response.json())
       .then((data) => {
         // Ensure data is retrieved properly and contains the discount value
-        if (data.discount) {
-          setDiscount(data.discount);
-          console.log(data.discount)
+        if (data) {
+          setDiscount(data);
+          console.log(data)
         } else {
           // Handle error or invalid data response from the server
           console.error("Invalid response from server:", data);

@@ -109,6 +109,7 @@ public class MoviesApplication {
             stmt.setString(1, promotion);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
+                System.out.println(rs.getInt("discount"));
                 return rs.getInt("discount");
             }
         }
