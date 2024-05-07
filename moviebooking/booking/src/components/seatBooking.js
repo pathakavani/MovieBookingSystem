@@ -18,6 +18,7 @@ function MovieTickets() {
     const [selectedDate, setSelectedDate] = useState(''); // State to store selected date
     const [showErrorMessage, setShowErrorMessage] = useState(false); // State to toggle error message
     const isLoggedIn = useSelector((state) => state.login.email);
+    const [counter, setCounter] = useState(0);
     //console.log("isLoggedIn:", isLoggedIn);  
     const navigate = useNavigate();
     const [showDates, setShowDates] = useState([]);
@@ -99,6 +100,7 @@ function MovieTickets() {
     };
 
     const handleSeatClick = (row, column) => {
+        setCounter(counter + 1)
         const seatId = `${row}-${column}`;
         setSelectedSeats(prevSeats => prevSeats.includes(seatId)
             ? prevSeats.filter(id => id !== seatId)
@@ -113,11 +115,12 @@ function MovieTickets() {
             const row = [];
             for (let j = 1; j <= numColumns; j++) {
                 const seatId = `${i}-${j}`;
+                console.log(counter + " " + ticketCounts)
                 row.push(
                     <div
                         key={seatId}
                         className={`seat ${selectedSeats.includes(seatId) ? 'selected' : ''}`}
-                        onClick={() => handleSeatClick(i, j)}
+                        onClick={() => {if (counter < (ticketCounts.child + ticketCounts.Adult + ticketCounts.senior)) handleSeatClick(i, j)}}
                     ></div>
                 );
             }
@@ -261,7 +264,6 @@ function MovieTickets() {
                         {generateSeats()}
                         <p className="text">
                             You have selected <span id="count">{updateTotal().totalSelectedTickets}</span><br />
-                            Subtotal: $<span id="total">{updateTotal().totalPrice.toFixed(2)}</span>
                         </p>
                         <button className='continue' disabled={!isContinueEnabled()} onClick={handleCheckout}>Continue</button>
                     </div>

@@ -330,7 +330,7 @@ function EditProfile() {
                                     <p><i>{card.expirationDate}</i></p>
                                     <p><i>{card.billingAddress}</i></p>
                                     </div>
-                                    <button type="button" className="btn btn-primary mb-3" onClick={changeCardInfo(card)}>
+                                    <button type="button" className="btn btn-primary mb-3" onClick={() => changeCardInfo(card)}>
                                         Delete Card
                                     </button>
                                 </div>

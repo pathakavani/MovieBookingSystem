@@ -132,7 +132,8 @@ function OrderPage() {
   };
 
   const getUsersCards = () =>{
-    setShowCards(!showCards);
+    setShowCards(true);
+    console.log(showCards + " " + showPaymentForm)
     setShowPaymentForm(false)
     var tempCard = [{
       cardType:"",
@@ -198,7 +199,7 @@ function OrderPage() {
       
   }
   const orderConfirmed = () => {
-    fetch("http://localhost:8080/orderConfirmed")
+    fetch("http://localhost:8080/orderConfirmed", {method:'POST'})
     .then(() => console.log("confirmation sent"))
     .catch((err) => console.log(err))
   }
@@ -328,7 +329,7 @@ function OrderPage() {
               onClick={(e) => handleLogout(e)}>Cancel
           </button>
           <button style={{backgroundColor: 'white', width: '120px', height: '40px', borderRadius: '5px', color: 'black'}}><a
-              href="ConfirmationPage" onClick={orderConfirmed}>Confirm Order</a></button>
+              href="ConfirmationPage" onClick={() => orderConfirmed()}>Confirm Order</a></button>
         </div>
       </div>
       </div>

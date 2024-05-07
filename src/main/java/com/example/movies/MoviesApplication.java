@@ -268,6 +268,7 @@ public class MoviesApplication {
     @PostMapping("/orderConfirmed")
     @ResponseBody
     public void sendCheckoutConfirmation() {
+        System.out.println("Sending ticket");
         MimeMessage message = emailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message);
 
