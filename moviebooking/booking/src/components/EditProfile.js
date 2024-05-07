@@ -15,10 +15,17 @@ function EditProfile() {
         phoneNumber: '',
         expirationDate:""
     });
+    const [openEdit, setOE] = useState(false)
     const [showPaymentFields, setShowPaymentFields] = useState(false);
     const [showAddPaymentFields, setAddShowPaymentFields] = useState(false);
-    const [editCardCount, setEditCardCount] = useState(0);
+    const [cards, setCards] = useState([]);
     const [addCardCount, setAddCardCount] = useState(0);
+    const [billAddy, setBD] = useState("")
+    const [cn, setCN] = useState("")
+    const [ct, setCT] = useState("")
+    const [currentCard, setCC] = useState("")
+    const [prevCard, setPC] = useState("")
+    const [ed, setED] = useState("")
     const [data, setData] = useState("");
     //password
     const [wrong, setWrong] = useState(false)
@@ -39,6 +46,31 @@ function EditProfile() {
             phoneNumber: data[9]}));
             })
             .catch(error => console.error('Error fetching profile data:', error));
+            var tempCard = [{
+                cardType:"",
+                cardNumber:"",
+                expirationDate:"",
+                id:""
+            }]
+            const getCards = async() => {
+                await fetch("http://localhost:8080/getCards")
+                .then((response) => response.json())
+                .then(data => {
+                console.log(data);
+                data.map((item) => {
+                    tempCard.push({
+                        cardType:item.split("\t")[0],
+                        cardNumber:item.split("\t")[1],
+                        expirationDate:item.split("\t")[2],
+                        id: item.split("\t")[3],
+                        billingAddress: item.split("\t")[4]
+                    })
+                })
+                if (cards !== tempCard)
+                    setCards(tempCard)  
+                })
+            }
+            getCards();
     }, []);
     const handleInputChange = (event) => {
         const { name, value, type, checked } = event.target;
@@ -111,6 +143,29 @@ function EditProfile() {
             // setAddCardCount(count => count + 1);
         }
     };
+    const changeCardInfo = (e) => {
+        e.preventDefault();
+        setOE(!openEdit)
+        console.log(prevCard)
+        const options = {
+            method: 'POST', // HTTP method
+            headers: {
+                'Content-Type': 'application/json' // Specify content type as JSON
+            },
+            body: JSON.stringify({
+              expirationDate: ed,
+              cardType: ct,
+              cardNumber: (cn!==""?cn : prevCard),
+              billingAddress: billAddy,
+              prevCardNumber: prevCard
+            }) // Convert data to JSON string
+        };
+         fetch("http://localhost:8080/updateCard",
+            options
+        )
+        .then(() => console.log("success"))
+        .catch((err) => console.log(err))
+    }
     const renderAddPaymentFields = () => {
         const fields = [];
         // for (let i = 0; i < 3; i++) {
@@ -158,7 +213,7 @@ function EditProfile() {
     }
 
     return (
-        <div>
+        <div className='fullScreen'>
         <h3 className='edit-profile-header'>Edit Profile</h3>
         <div className="container">
             <div className="form-container">
@@ -210,9 +265,37 @@ function EditProfile() {
                         {/*    <label for="expirationDate" class="form-label">Expiration Date </label>*/}
                         {/*    <input type="date" class="form-control" id="expirationDate" name="expirationDate" minlength="16" maxlength="16" onChange={handleInputChange} value={profile.expirationDate}/>*/}
                         {/*</div>*/}
-                        <button type="button" className="btn btn-primary mb-3" onClick={togglePaymentFields}>
-                            Edit Card
-                        </button>
+                        
+                        {
+                            cards.map((card) => 
+                            {if (card.cardNumber!=="") return(
+                                <div className='btn btn-primary mb-3'>
+                                    {!openEdit &&<div> <h3 >{card.cardType}</h3> 
+                                    <p>{card.cardNumber}</p> 
+                                    <p><i>{card.expirationDate}</i></p>
+                                    <p><i>{card.billingAddress}</i></p>
+                                    </div>}
+                                    {openEdit && 
+                                    <form>
+                                        <label>Card Type: </label>
+                                        <input type="text" placeholder={card.cardType} onChange={(e) => setCT(e.target.value) }/>
+                                        <label>Card Number: </label>
+                                        <input type="text" placeholder={card.cardNumber} onChange={(e) => {
+                                            setCN(e.target.value); setPC(card.cardNumber)
+                                        }}/>
+                                        <label>Card Expiration Date: </label>
+                                        <input type="date" value={card.expirationDate} onChange={(e) => setED(e.target.value)}/>
+                                        <label>Billing Address: </label>
+                                        <input type="text" placeholder={card.billingAddress} onChange={(e) => setBD(e.target.value)}/>
+                                        <button onClick={changeCardInfo}>Edit</button>
+                                    </form>
+                                    }
+                                    <button type="button" className="btn btn-primary mb-3" onClick={() => setOE(!openEdit)}>
+                                        Edit Card
+                                    </button>
+                                </div>
+                            )})
+                        }
                         {showPaymentFields && (
                             <>
                                 <div className="mb-3">

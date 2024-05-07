@@ -4,8 +4,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    margin-top: 70px; /* Add top margin to create space between the box and the navbar */
+    margin-top: 10px; /* Add top margin to create space between the box and the navbar */
   }
   
   .form-container {

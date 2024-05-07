@@ -289,7 +289,7 @@ public class MoviesApplication {
     public List <String> getPaymentCards() {
         List <String> cards = new ArrayList<>();
         try {
-            String getCards = "SELECT expirationDate, cardType, cardNumber, paymentID FROM payment_card WHERE userID="  + userID;
+            String getCards = "SELECT expirationDate, cardType, cardNumber, paymentID, billingAddress FROM payment_card WHERE userID="  + userID;
             PreparedStatement ps = connection.prepareStatement(getCards);
             ResultSet rs = ps.executeQuery();
             while(rs.next()) {
@@ -297,7 +297,8 @@ public class MoviesApplication {
                     rs.getString("cardType") + "\t"+
                     new String(Base64.getDecoder().decode(rs.getString("cardNumber"))) + "\t" +
                     rs.getString("expirationDate") + "\t" +
-                    rs.getInt("paymentID"));
+                    rs.getInt("paymentID") + "\t" + 
+                    rs.getString("billingAddress"));
             }
         }catch(Exception e) {
             e.printStackTrace();
@@ -321,6 +322,27 @@ public class MoviesApplication {
             ps.setString(3, pc.expirationDate);
             ps.setString(4, pc.billingAddress);
             ps.setInt(5, Integer.parseInt(pc.userID));
+            ps.executeUpdate();
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
+    }
+    /**
+     * Add payment method
+     * @param PaymentCard
+     */
+    @PostMapping("/updateCard")
+    @ResponseBody
+    public void updateCard(@RequestBody UpdatePaymentCard pc) {
+        System.out.println("Updating:" + pc.cardType);
+        try {
+            String addCards = "UPDATE payment_card set cardType = ?, cardNumber = ?, expirationDate = ?, billingAddress = ? where userID = " + userID + " and cardNumber = ?";
+            PreparedStatement ps = connection.prepareStatement(addCards);
+            ps.setString(1, pc.cardType);
+            ps.setString(2, Base64.getEncoder().encodeToString(pc.cardNumber.getBytes()));
+            ps.setString(3, pc.expirationDate);
+            ps.setString(4, pc.billingAddress);
+            ps.setString(5, pc.prevCardNumber);
             ps.executeUpdate();
         }catch(Exception e) {
             e.printStackTrace();

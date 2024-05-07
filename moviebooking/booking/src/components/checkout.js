@@ -151,7 +151,6 @@ function OrderPage() {
 
   const submitWithNewCard = (e) => {
       e.preventDefault();
-      console.log(billAddy)
       const options = {
         method: 'POST', // HTTP method
         headers: {
