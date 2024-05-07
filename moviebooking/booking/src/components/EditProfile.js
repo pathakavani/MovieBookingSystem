@@ -284,15 +284,15 @@ function EditProfile() {
                                     {openEdit && 
                                     <form>
                                         <label>Card Type: </label>
-                                        <input type="text" placeholder={card.cardType} onChange={(e) => setCT(e.target.value) }/>
+                                        <input type="text" value={card.cardType} onChange={(e) => setCT(e.target.value) }/>
                                         <label>Card Number: </label>
-                                        <input type="text" placeholder={card.cardNumber} onChange={(e) => {
+                                        <input type="text" value={card.cardNumber} onChange={(e) => {
                                             setCN(e.target.value); setPC(card.cardNumber)
                                         }}/>
                                         <label>Card Expiration Date: </label>
                                         <input type="date" value={card.expirationDate} onChange={(e) => setED(e.target.value)}/>
                                         <label>Billing Address: </label>
-                                        <input type="text" placeholder={card.billingAddress} onChange={(e) => setBD(e.target.value)}/>
+                                        <input type="text" value={card.billingAddress} onChange={(e) => setBD(e.target.value)}/>
                                         <button onClick={changeCardInfo}>Edit</button>
                                     </form>
                                     }
